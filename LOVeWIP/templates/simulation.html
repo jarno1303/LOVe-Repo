@@ -1,334 +1,523 @@
 {% extends "base.html" %}
+
 {% block title %}Koesimulaatio - LOVe Enhanced{% endblock %}
-{% block head_extra %}
-<style>
-    /* Sivupalkin navigointinapit */
-    #question-nav .btn {
-        width: 40px;
-        height: 40px;
-        margin: 2px;
-        padding: 0;
-        font-weight: 500;
-    }
-    #question-nav .btn.answered {
-        background-color: var(--bs-success-bg-subtle);
-        border-color: var(--bs-success-border-subtle);
-        color: var(--bs-success-text-emphasis);
-    }
-    #question-nav .btn.active {
-        background-color: var(--bs-primary);
-        color: white;
-        border-color: var(--bs-primary);
-    }
-    .option-btn {
-        text-align: left;
-        white-space: normal;
-    }
-    /* Uudet tyylit yhteenvedolle */
-    .review-card {
-        border-left-width: 5px;
-    }
-    .review-card.border-success {
-        border-left-color: var(--bs-success) !important;
-    }
-    .review-card.border-danger {
-        border-left-color: var(--bs-danger) !important;
-    }
-</style>
-{% endblock %}
 
 {% block content %}
-<div id="simulation-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0">🎓 Koesimulaatio</h1>
-        <div id="timer-wrapper" class="text-end" style="display: none;">
-            <div id="timer" class="fw-bold fs-5 text-warning"></div>
-            <div id="progress-text" class="text-muted"></div>
+<div class="container mt-4">
+    <!-- ALOITUSRUUTU -->
+    <div id="start-screen" class="card shadow-lg border-0">
+        <div class="card-body text-center p-5">
+            <div class="mb-4">
+                <i class="fas fa-clipboard-check fa-4x text-primary"></i>
+            </div>
+            <h1 class="display-4 mb-4">Koesimulaatio</h1>
+            
+            <div class="alert alert-info mx-auto" style="max-width: 600px;">
+                <h5 class="alert-heading mb-3">
+                    <i class="fas fa-info-circle"></i> Koesimulaation säännöt
+                </h5>
+                <ul class="text-start list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-check text-success"></i> 
+                        <strong>50 kysymystä</strong> kaikista kategorioista ja vaikeustasoista
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-clock text-warning"></i> 
+                        <strong>60 minuuttia</strong> aikaa suorittaa koe
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-ban text-danger"></i> 
+                        <strong>Ei palaamista</strong> aiempiin kysymyksiin
+                    </li>
+                    <li>
+                        <i class="fas fa-chart-line text-info"></i> 
+                        <strong>Tulokset</strong> näytetään heti kokeen jälkeen
+                    </li>
+                </ul>
+            </div>
+
+            <div class="my-4">
+                <p class="lead text-muted">
+                    Valmistaudu testaamaan osaamistasi todellisen kokeen olosuhteissa.
+                </p>
+            </div>
+
+            <button id="start-simulation-btn" class="btn btn-primary btn-lg px-5 py-3 shadow">
+                <i class="fas fa-play-circle me-2"></i>
+                Aloita koesimulaatio
+            </button>
+
+            <div class="mt-4">
+                <a href="/dashboard" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Takaisin
+                </a>
+            </div>
         </div>
     </div>
 
-    <div id="start-screen" class="text-center p-5 bg-body-tertiary rounded-3">
-        <h2 class="h4">Oletko valmis testaamaan osaamisesi?</h2>
-        <p class="lead text-muted">Koe sisältää 50 kysymystä ja aikaraja on 60 minuuttia.</p>
-        <button id="start-button" class="btn btn-primary btn-lg mt-3">Aloita koe</button>
+    <!-- COUNTDOWN-RUUTU -->
+    <div id="countdown-screen" class="card shadow-lg border-0" style="display: none;">
+        <div class="card-body text-center p-5">
+            <h2 class="mb-4">Koe alkaa</h2>
+            <div id="countdown-number" class="display-1 fw-bold text-primary mb-4" style="font-size: 8rem;">
+                3
+            </div>
+            <p class="lead text-muted">Valmistaudu...</p>
+        </div>
     </div>
 
-    <div id="quiz-wrapper" style="display: none;">
-        <div id="loading-container" class="d-flex justify-content-center align-items-center py-5">
-            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Ladataan...</span></div>
-        </div>
-        <div class="row g-4" id="quiz-area" style="display: none;">
-            <div class="col-md-4 col-lg-3">
-                <div class="card shadow-sm">
-                    <div class="card-header fw-bold">Kysymykset</div>
-                    <div class="card-body">
-                        <div id="question-nav" class="d-flex flex-wrap justify-content-center"></div>
+    <!-- SIMULAATIORUUTU -->
+    <div id="simulation-screen" style="display: none;">
+        <!-- Yläpalkki: ajastin ja edistyminen -->
+        <div class="card mb-3 border-0 shadow-sm">
+            <div class="card-body py-3">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-clock fa-2x text-warning me-3"></i>
+                            <div>
+                                <small class="text-muted d-block">Aikaa jäljellä</small>
+                                <h4 id="timer" class="mb-0 fw-bold">60:00</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <small class="text-muted d-block">Edistyminen</small>
+                        <h5 id="progress-text" class="mb-0">0 / 50</h5>
+                        <div class="progress mt-2" style="height: 8px;">
+                            <div id="progress-bar" class="progress-bar bg-success" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button id="end-simulation-btn" class="btn btn-outline-danger">
+                            <i class="fas fa-stop-circle me-2"></i>
+                            Lopeta koe
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8 col-lg-9">
-                <div class="card shadow-sm">
-                    <div class="card-body p-4">
-                        <div id="question-container" class="alert alert-light fs-5 fw-bold"></div>
-                        <div id="options-container" class="d-grid gap-2 mt-4"></div>
+        </div>
+
+        <!-- Kysymyskortti -->
+        <div id="question-card" class="card shadow-lg border-0">
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <span id="category-badge" class="badge bg-primary"></span>
+                    <span id="difficulty-badge" class="badge bg-secondary ms-2"></span>
+                </div>
+
+                <h4 id="question-text" class="mb-4"></h4>
+
+                <div id="options-container" class="d-grid gap-2">
+                    <!-- Vaihtoehdot lisätään tähän JavaScriptillä -->
+                </div>
+
+                <div id="feedback-container" class="mt-4" style="display: none;">
+                    <!-- Palaute näytetään tässä -->
+                </div>
+
+                <div class="mt-4 text-end">
+                    <button id="next-question-btn" class="btn btn-primary" style="display: none;">
+                        Seuraava kysymys
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Häiriötekijämodaali -->
+        <div id="distractor-modal" class="modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Keskeytys
+                        </h5>
                     </div>
-                    <div class="card-footer d-flex justify-content-between">
-                        <button id="prev-button" class="btn btn-secondary">← Edellinen</button>
-                        <button id="next-button" class="btn btn-primary">Seuraava →</button>
-                        <button id="finish-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmFinishModal">🏁 Valmis</button>
+                    <div class="modal-body">
+                        <p id="distractor-scenario" class="lead"></p>
+                        <div id="distractor-options" class="d-grid gap-2">
+                            <!-- Häiriötekijän vaihtoehdot -->
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TULOSRUUTU -->
+    <div id="results-screen" style="display: none;">
+        <div class="card shadow-lg border-0">
+            <div class="card-body text-center p-5">
+                <div class="mb-4">
+                    <i id="result-icon" class="fas fa-trophy fa-4x"></i>
+                </div>
+                <h1 class="display-4 mb-4">Koesimulaatio suoritettu!</h1>
+                
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-8">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h2 id="final-score" class="display-3 fw-bold mb-2">0/50</h2>
+                                <h4 id="final-percentage" class="text-muted mb-0">0%</h4>
+                                <div class="progress mt-3" style="height: 20px;">
+                                    <div id="final-progress-bar" class="progress-bar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="result-message" class="alert mb-4"></div>
+
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="/stats" class="btn btn-primary btn-lg">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        Näytä tilastot
+                    </a>
+                    <button id="retry-simulation-btn" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-redo me-2"></i>
+                        Yritä uudelleen
+                    </button>
+                    <a href="/dashboard" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-home me-2"></i>
+                        Etusivulle
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div id="review-container" class="my-4" style="display: none;">
-    <!-- Yhteenveto rakennetaan tänne -->
-</div>
+<style>
+    #countdown-number {
+        animation: pulse 1s ease-in-out infinite;
+    }
 
-<div class="modal fade" id="confirmFinishModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Vahvista lopetus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>Haluatko varmasti lopettaa kokeen ja tarkistaa vastauksesi?</p>
-                <p class="text-muted" id="unanswered-warning"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
-                <button type="button" class="btn btn-success" id="confirm-finish-btn">Vahvista ja tarkista</button>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
 
-{% block scripts %}
+    .option-btn {
+        text-align: left;
+        padding: 1rem 1.5rem;
+        border: 2px solid #dee2e6;
+        background: white;
+        transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+        border-color: #5A67D8;
+        background: #f8f9ff;
+        transform: translateX(5px);
+    }
+
+    .option-btn.selected {
+        border-color: #5A67D8;
+        background: #e8ebff;
+    }
+
+    .option-btn.correct {
+        border-color: #28a745;
+        background: #d4edda;
+    }
+
+    .option-btn.incorrect {
+        border-color: #dc3545;
+        background: #f8d7da;
+    }
+
+    .option-btn:disabled {
+        cursor: not-allowed;
+    }
+
+    #timer.warning {
+        color: #dc3545 !important;
+        animation: blink 1s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+</style>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    let questions = [];
-    let userAnswers = [];
-    let currentQuestionIndex = 0;
-    let timerInterval;
+let questions = [];
+let currentQuestionIndex = 0;
+let answers = [];
+let timeRemaining = 60 * 60; // 60 minuuttia sekunteina
+let timerInterval;
+let distractorStartTime;
 
-    const elements = {
-        startButton: document.getElementById('start-button'),
-        startScreen: document.getElementById('start-screen'),
-        quizWrapper: document.getElementById('quiz-wrapper'),
-        timerWrapper: document.getElementById('timer-wrapper'),
-        loading: document.getElementById('loading-container'),
-        quizArea: document.getElementById('quiz-area'),
-        questionNav: document.getElementById('question-nav'),
-        questionContainer: document.getElementById('question-container'),
-        optionsContainer: document.getElementById('options-container'),
-        prevButton: document.getElementById('prev-button'),
-        nextButton: document.getElementById('next-button'),
-        finishButton: document.getElementById('finish-button'),
-        timer: document.getElementById('timer'),
-        progressText: document.getElementById('progress-text'),
-        simulationContainer: document.getElementById('simulation-container'),
-        confirmFinishBtn: document.getElementById('confirm-finish-btn'),
-        unansweredWarning: document.getElementById('unanswered-warning'),
-        reviewContainer: document.getElementById('review-container')
-    };
+// CSRF token
+const csrfToken = "{{ csrf_token() }}";
+
+// Aloita simulaatio
+document.getElementById('start-simulation-btn').addEventListener('click', startCountdown);
+
+function startCountdown() {
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('countdown-screen').style.display = 'block';
     
-    function startTimer(duration) {
-        let timeLeft = duration;
-        timerInterval = setInterval(() => {
-            const minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            seconds = seconds < 10 ? '0' + seconds : seconds;
-            elements.timer.textContent = `Aikaa jäljellä: ${minutes}:${seconds}`;
-            if (timeLeft <= 300) elements.timer.classList.add('text-danger');
-            if (--timeLeft < 0) {
-                clearInterval(timerInterval);
-                finishQuiz();
-            }
-        }, 1000);
-    }
+    let count = 3;
+    const countdownElement = document.getElementById('countdown-number');
+    
+    const countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            countdownElement.textContent = count;
+        } else {
+            clearInterval(countdownInterval);
+            loadQuestions();
+        }
+    }, 1000);
+}
 
-    function renderQuestion() {
-        const question = questions[currentQuestionIndex];
-        elements.progressText.innerText = `Kysymys ${currentQuestionIndex + 1} / ${questions.length}`;
-        elements.questionContainer.innerText = question.question;
-        elements.optionsContainer.innerHTML = '';
-        question.options.forEach((option, index) => {
-            const isSelected = userAnswers[currentQuestionIndex] === index;
-            const button = document.createElement('button');
-            button.className = `btn ${isSelected ? 'btn-primary' : 'btn-outline-secondary'} option-btn`;
-            button.innerHTML = `${String.fromCharCode(65 + index)}. ${option}`;
-            button.onclick = () => selectAnswer(index);
-            elements.optionsContainer.appendChild(button);
+async function loadQuestions() {
+    try {
+        const response = await fetch('/api/questions?limit=50&difficulties=helppo,keskivaikea,vaikea');
+        const data = await response.json();
+        questions = data.questions;
+        
+        if (questions.length < 50) {
+            alert('Tietokannassa ei ole tarpeeksi kysymyksiä koesimulaatioon (tarvitaan 50).');
+            window.location.href = '/dashboard';
+            return;
+        }
+        
+        // Alusta vastaukset
+        answers = new Array(questions.length).fill(null);
+        
+        // Näytä simulaatioruutu
+        document.getElementById('countdown-screen').style.display = 'none';
+        document.getElementById('simulation-screen').style.display = 'block';
+        
+        // Aloita ajastin
+        startTimer();
+        
+        // Näytä ensimmäinen kysymys
+        showQuestion();
+        
+    } catch (error) {
+        console.error('Virhe kysymysten lataamisessa:', error);
+        alert('Virhe kysymysten lataamisessa. Yritä uudelleen.');
+        window.location.href = '/dashboard';
+    }
+}
+
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeRemaining--;
+        
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        const timerElement = document.getElementById('timer');
+        timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Varoitus kun alle 5 minuuttia
+        if (timeRemaining <= 5 * 60) {
+            timerElement.classList.add('warning');
+        }
+        
+        // Aika loppui
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            finishSimulation();
+        }
+    }, 1000);
+}
+
+async function showQuestion() {
+    const question = questions[currentQuestionIndex];
+    
+    // Päivitä edistyminen
+    document.getElementById('progress-text').textContent = `${currentQuestionIndex + 1} / ${questions.length}`;
+    const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progressPercentage}%`;
+    
+    // Päivitä kysymyskortti
+    document.getElementById('category-badge').textContent = question.category;
+    document.getElementById('difficulty-badge').textContent = 
+        question.difficulty === 'helppo' ? 'Helppo' :
+        question.difficulty === 'keskivaikea' ? 'Keskivaikea' : 'Vaikea';
+    document.getElementById('question-text').textContent = question.question;
+    
+    // Luo vaihtoehdot
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    question.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn option-btn';
+        button.textContent = option;
+        button.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(button);
+    });
+    
+    // Piilota palaute ja seuraava-nappi
+    document.getElementById('feedback-container').style.display = 'none';
+    document.getElementById('next-question-btn').style.display = 'none';
+    
+    // EI häiriötekijöitä koesimulaatiossa - poistettu checkForDistractor()
+}
+
+async function checkForDistractor() {
+    try {
+        const response = await fetch('/api/check_distractor');
+        const data = await response.json();
+        
+        if (data.distractor) {
+            distractorStartTime = Date.now();
+            showDistractor(data.distractor);
+        }
+    } catch (error) {
+        console.error('Virhe häiriötekijän tarkistuksessa:', error);
+    }
+}
+
+function showDistractor(distractor) {
+    document.getElementById('distractor-scenario').textContent = distractor.scenario;
+    
+    const optionsContainer = document.getElementById('distractor-options');
+    optionsContainer.innerHTML = '';
+    
+    distractor.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-dark';
+        button.textContent = option;
+        button.onclick = () => handleDistractorChoice(distractor, index);
+        optionsContainer.appendChild(button);
+    });
+    
+    const modal = new bootstrap.Modal(document.getElementById('distractor-modal'));
+    modal.show();
+}
+
+async function handleDistractorChoice(distractor, choice) {
+    const responseTime = Date.now() - distractorStartTime;
+    
+    try {
+        await fetch('/api/submit_distractor', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                scenario: distractor.scenario,
+                user_choice: choice,
+                response_time: responseTime
+            })
         });
-        updateNav();
-        updateButtons();
+    } catch (error) {
+        console.error('Virhe häiriötekijän tallennuksessa:', error);
     }
+    
+    bootstrap.Modal.getInstance(document.getElementById('distractor-modal')).hide();
+}
 
-    function selectAnswer(index) {
-        userAnswers[currentQuestionIndex] = index;
-        renderQuestion();
+function selectAnswer(optionIndex) {
+    answers[currentQuestionIndex] = optionIndex;
+    
+    // Merkitse valittu
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach((btn, idx) => {
+        btn.classList.remove('selected');
+        if (idx === optionIndex) {
+            btn.classList.add('selected');
+        }
+    });
+    
+    // Näytä seuraava-nappi
+    document.getElementById('next-question-btn').style.display = 'block';
+}
+
+document.getElementById('next-question-btn').addEventListener('click', () => {
+    currentQuestionIndex++;
+    
+    if (currentQuestionIndex < questions.length) {
+        showQuestion();
+    } else {
+        finishSimulation();
     }
+});
 
-    function updateNav() {
-        elements.questionNav.innerHTML = '';
-        questions.forEach((q, index) => {
-            let classes = 'btn btn-sm';
-            if (userAnswers[index] !== undefined) classes += ' answered';
-            else classes += ' btn-outline-secondary';
-            if (index === currentQuestionIndex) classes += ' active';
-            const button = document.createElement('button');
-            button.className = classes;
-            button.innerText = index + 1;
-            button.onclick = () => navigateTo(index);
-            elements.questionNav.appendChild(button);
-        });
+document.getElementById('end-simulation-btn').addEventListener('click', () => {
+    if (confirm('Haluatko varmasti lopettaa kokeen? Vastaukset tallennetaan.')) {
+        finishSimulation();
     }
+});
 
-    function navigateTo(index) {
-        currentQuestionIndex = index;
-        renderQuestion();
-    }
-
-    function updateButtons() {
-        elements.prevButton.disabled = currentQuestionIndex === 0;
-        elements.nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Viimeinen kysymys' : 'Seuraava →';
-    }
-
-    async function finishQuiz() {
-        clearInterval(timerInterval);
-        const modalElement = document.getElementById('confirmFinishModal');
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        if (modal) modal.hide();
-        elements.simulationContainer.innerHTML = '<div class="text-center py-5"><div class="spinner-border"></div><p class="mt-2">Tarkistetaan vastauksia...</p></div>';
+async function finishSimulation() {
+    clearInterval(timerInterval);
+    
+    // Lähetä vastaukset palvelimelle
+    try {
         const response = await fetch('/api/submit_simulation', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify({
-                answers: userAnswers,
+                answers: answers,
                 questions: questions.map(q => q.id)
             })
         });
-        const results = await response.json();
-        renderResults(results);
+        
+        const result = await response.json();
+        showResults(result);
+        
+    } catch (error) {
+        console.error('Virhe tulosten tallennuksessa:', error);
+        alert('Virhe tulosten tallennuksessa. Yritä uudelleen.');
     }
+}
 
-    function renderResults(results) {
-        const passed = results.percentage >= 60;
-        let resultHTML = `
-        <div class="text-center p-4 p-md-5 rounded-3 ${passed ? 'bg-success-subtle' : 'bg-danger-subtle'}">
-            <h1 class="display-4">${passed ? '🎉 Hyväksytty!' : '❌ Hylätty'}</h1>
-            <p class="h2 fw-bold">${results.score} / ${results.total} oikein</p>
-            <p class="lead mb-4">Tuloksesi on ${results.percentage.toFixed(1)}%.</p>
-            <button id="review-button" class="btn btn-info btn-lg mb-2">Tarkista vastaukset</button>
-            <div>
-                <a href="/dashboard" class="btn btn-primary">Palaa kojelautaan</a>
-                <a href="/simulation" class="btn btn-secondary">Yritä uudelleen</a>
-            </div>
-        </div>`;
-        elements.simulationContainer.innerHTML = resultHTML;
-
-        document.getElementById('review-button').addEventListener('click', () => {
-            renderReview(results.detailed_results);
-        });
-    }
-
-    function renderReview(detailedResults) {
-        elements.simulationContainer.style.display = 'none';
-        elements.reviewContainer.style.display = 'block';
-        elements.reviewContainer.innerHTML = '<h2 class="mb-4">Vastausten yhteenveto</h2>';
-
-        detailedResults.forEach((result, index) => {
-            const cardBorderClass = result.is_correct ? 'border-success' : 'border-danger';
-            let optionsHTML = '';
-            result.options.forEach((option, i) => {
-                let optionClass = '';
-                let icon = '';
-                if (i === result.correct_answer) {
-                    optionClass = 'list-group-item-success';
-                    icon = '✅';
-                }
-                if (i === result.user_answer && !result.is_correct) {
-                    optionClass = 'list-group-item-danger';
-                    icon = '❌';
-                }
-                optionsHTML += `<li class="list-group-item ${optionClass}">${icon} ${String.fromCharCode(65 + i)}. ${option}</li>`;
-            });
-
-            const reviewCardHTML = `
-            <div class="card shadow-sm mb-4 review-card ${cardBorderClass}">
-                <div class="card-header">
-                    <strong>Kysymys ${index + 1}:</strong> ${result.question}
-                </div>
-                <div class="card-body">
-                    <ul class="list-group mb-3">
-                        ${optionsHTML}
-                    </ul>
-                    <p class="card-text"><strong>Selitys:</strong> ${result.explanation}</p>
-                </div>
-            </div>`;
-            elements.reviewContainer.innerHTML += reviewCardHTML;
-        });
-    }
-
-    async function initializeQuiz() {
-        try {
-            // ### KORJATTU KOHTA ALKAA ###
-            // Määritellään, että haetaan kaikista kategorioista ja vaikeustasoista
-            const categories = ""; // Tyhjä tarkoittaa kaikkia
-            const difficulties = "helppo,keskivaikea,vaikea";
-            const limit = 50;
-
-            const response = await fetch(`/api/questions?limit=${limit}&category=${encodeURIComponent(categories)}&difficulties=${encodeURIComponent(difficulties)}`);
-            // ### KORJATTU KOHTA LOPPUU ###
-
-            if (!response.ok) throw new Error('Verkkovirhe');
-            
-            const data = await response.json();
-            
-            if (!data.questions || data.questions.length < limit) {
-                 throw new Error(`Ei riittävästi kysymyksiä simulaatioon (löytyi ${data.questions ? data.questions.length : 0}, tarvitaan ${limit}).`);
-            }
-
-            questions = data.questions;
-            userAnswers = new Array(questions.length).fill(undefined);
-            
-            elements.loading.style.display = 'none';
-            elements.quizArea.style.display = 'flex';
-            elements.timerWrapper.style.display = 'block';
-            
-            renderQuestion();
-            startTimer(3600); // 60 minuuttia
-        } catch (error) {
-            elements.quizWrapper.innerHTML = `<div class="alert alert-danger">Simulaation lataus epäonnistui: ${error.message}. Yritä päivittää sivu.</div>`;
-            console.error(error);
-        }
-    }
+function showResults(result) {
+    document.getElementById('simulation-screen').style.display = 'none';
+    document.getElementById('results-screen').style.display = 'block';
     
-    elements.startButton.addEventListener('click', () => {
-        elements.startScreen.style.display = 'none';
-        elements.quizWrapper.style.display = 'block';
-        initializeQuiz();
-    });
-
-    elements.prevButton.addEventListener('click', () => {
-        if (currentQuestionIndex > 0) navigateTo(currentQuestionIndex - 1);
-    });
-
-    elements.nextButton.addEventListener('click', () => {
-        if (currentQuestionIndex < questions.length - 1) navigateTo(currentQuestionIndex + 1);
-        else elements.finishButton.click();
-    });
+    // Päivitä tulokset
+    document.getElementById('final-score').textContent = `${result.score}/${result.total}`;
+    document.getElementById('final-percentage').textContent = `${result.percentage.toFixed(1)}%`;
     
-    elements.finishButton.addEventListener('click', () => {
-        const unansweredCount = userAnswers.filter(a => a === undefined).length;
-        elements.unansweredWarning.textContent = unansweredCount > 0 ? `Varoitus: Sinulla on ${unansweredCount} vastaamatonta kysymystä.` : '';
-    });
+    const progressBar = document.getElementById('final-progress-bar');
+    progressBar.style.width = `${result.percentage}%`;
+    
+    // Väri ja ikoni prosenttien mukaan
+    const icon = document.getElementById('result-icon');
+    const message = document.getElementById('result-message');
+    
+    if (result.percentage >= 90) {
+        progressBar.className = 'progress-bar bg-success';
+        icon.className = 'fas fa-trophy fa-4x text-warning';
+        message.className = 'alert alert-success';
+        message.textContent = 'Erinomainen suoritus! Hallitset lääkehoidon erinomaisesti!';
+    } else if (result.percentage >= 75) {
+        progressBar.className = 'progress-bar bg-info';
+        icon.className = 'fas fa-award fa-4x text-info';
+        message.className = 'alert alert-info';
+        message.textContent = 'Hyvä suoritus! Osaat lääkehoidon perusteet hyvin.';
+    } else if (result.percentage >= 60) {
+        progressBar.className = 'progress-bar bg-warning';
+        icon.className = 'fas fa-check-circle fa-4x text-warning';
+        message.className = 'alert alert-warning';
+        message.textContent = 'Tyydyttävä suoritus. Jatka harjoittelua parantaaksesi tulosta.';
+    } else {
+        progressBar.className = 'progress-bar bg-danger';
+        icon.className = 'fas fa-times-circle fa-4x text-danger';
+        message.className = 'alert alert-danger';
+        message.textContent = 'Harjoittele lisää. Kertaa erityisesti haastavat kategoriat.';
+    }
+}
 
-    elements.confirmFinishBtn.addEventListener('click', finishQuiz);
+document.getElementById('retry-simulation-btn').addEventListener('click', () => {
+    window.location.reload();
 });
 </script>
 {% endblock %}

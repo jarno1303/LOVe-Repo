@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}403 - Pääsy kielletty{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1 class="display-1 fw-bold text-warning">403</h1>
+    <h2 class="mb-4">Pääsy kielletty</h2>
+    <p class="lead text-muted mb-4">
+        Sinulla ei ole tarvittavia oikeuksia tämän sisällön tarkasteluun.
+    </p>
+    <a href="{{ url_for('dashboard_route') if current_user.is_authenticated else url_for('index_route') }}" class="btn btn-primary btn-lg">
+        <i class="bi bi-house-door-fill"></i> Palaa etusivulle
+    </a>
+</div>
+{% endblock %}

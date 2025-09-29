@@ -3,6 +3,7 @@ import json
 import os
 from datetime import datetime
 from models.models import Question
+import random # Lisätty random-kirjaston tuonti
 
 class DatabaseManager:
     def __init__(self, db_path=None):
@@ -12,6 +13,9 @@ class DatabaseManager:
         if not os.path.exists(db_path):
             print("Tietokantaa ei löytynyt, alustetaan uusi...")
             self.init_database()
+        
+        # AJETAAN MIGRAATIO JOKA KÄYNNISTYKSESSÄ VARMUUDEN VUOKSI
+        self.migrate_database()
 
     def init_database(self):
         with sqlite3.connect(self.db_path) as conn:
@@ -34,6 +38,9 @@ class DatabaseManager:
                 password TEXT NOT NULL,
                 role TEXT NOT NULL DEFAULT 'user',
                 status TEXT NOT NULL DEFAULT 'active',
+                -- LISÄTYT SARAKKEET
+                distractors_enabled BOOLEAN NOT NULL DEFAULT 1,
+                distractor_probability INTEGER NOT NULL DEFAULT 25,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS user_question_progress (
@@ -59,6 +66,36 @@ class DatabaseManager:
                 FOREIGN KEY (question_id) REFERENCES questions (id) ON DELETE CASCADE
             );
             """)
+
+    def migrate_database(self):
+        """Tarkistaa ja lisää puuttuvat sarakkeet tietokantaan."""
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                cursor = conn.cursor()
+                cursor.execute("PRAGMA table_info(users)")
+                columns = [row[1] for row in cursor.fetchall()]
+                
+                if 'distractors_enabled' not in columns:
+                    print("Lisätään 'distractors_enabled'-sarake...")
+                    cursor.execute("ALTER TABLE users ADD COLUMN distractors_enabled BOOLEAN NOT NULL DEFAULT 1")
+                
+                if 'distractor_probability' not in columns:
+                    print("Lisätään 'distractor_probability'-sarake...")
+                    cursor.execute("ALTER TABLE users ADD COLUMN distractor_probability INTEGER NOT NULL DEFAULT 25")
+                
+                conn.commit()
+        except sqlite3.Error as e:
+            print(f"Tietokannan migraatiovirhe: {e}")
+
+    # --- UUSI METODI YHDEN KYSYMYKSEN HAKUUN ---
+    def get_next_question(self, user_id, categories=None, difficulties=None):
+        """Hakee yhden satunnaisen kysymyksen annettujen kriteerien perusteella."""
+        # Käytetään olemassa olevaa logiikkaa, mutta rajoitetaan tulos yhteen
+        questions = self.get_questions(user_id, categories, difficulties, limit=100) # Haetaan pieni erä
+        if not questions:
+            return None
+        # Palautetaan yksi satunnainen kysymys haetusta erästä
+        return random.choice(questions)
 
     def create_user(self, username, email, hashed_password):
         try:
@@ -110,12 +147,14 @@ class DatabaseManager:
         except Exception as e:
             return False, str(e)
 
+    # database_manager.py
+
     def get_questions(self, user_id, categories=None, difficulties=None, limit=None):
         query = """SELECT q.id, q.question, q.explanation, q.options, q.correct, q.category, q.difficulty, q.created_at, 
-                   p.times_shown, p.times_correct 
-                   FROM questions q 
-                   LEFT JOIN user_question_progress p ON q.id = p.question_id AND p.user_id = ? 
-                   WHERE 1=1"""
+                      p.times_shown, p.times_correct 
+                      FROM questions q 
+                      LEFT JOIN user_question_progress p ON q.id = p.question_id AND p.user_id = ? 
+                      WHERE 1=1"""
         params = [user_id]
         
         if categories:
@@ -140,17 +179,30 @@ class DatabaseManager:
         for row in rows:
             row_dict = dict(row)
             
-            options_raw = row_dict.get('options', '[]')
-            if isinstance(options_raw, str):
-                options = json.loads(options_raw)
-            else:
-                options = options_raw
-            
+            # Pura vastausvaihtoehdot JSON-muodosta
+            try:
+                options_raw = row_dict.get('options', '[]')
+                if isinstance(options_raw, str):
+                    options = json.loads(options_raw)
+                else:
+                    options = options_raw # Oletetaan, että se on jo lista
+            except json.JSONDecodeError:
+                print(f"--- VAROITUS: Ohitetaan virheellinen kysymys (ID: {row_dict.get('id')}). 'options'-kenttä ei ole validia JSON-dataa. ---")
+                continue # Siirry seuraavaan riviin
+
+            # --- TÄMÄ ON TÄRKEIN KORJAUS ---
+            # Tarkistetaan, että 'correct'-indeksi on kelvollinen
+            correct_index = row_dict.get('correct')
+            if not (isinstance(correct_index, int) and 0 <= correct_index < len(options)):
+                print(f"--- VAROITUS: Ohitetaan virheellinen kysymys (ID: {row_dict.get('id')}). 'correct'-indeksi ({correct_index}) on 'options'-listan ({len(options)} kpl) ulkopuolella. ---")
+                continue # Siirry seuraavaan kysymykseen, älä lisää tätä listalle
+            # --- KORJAUS LOPPUU ---
+
             question_fields = {
                 'id': row_dict.get('id'),
                 'question': row_dict.get('question'),
                 'options': options,
-                'correct': row_dict.get('correct'),
+                'correct': correct_index, # Käytetään tarkistettua indeksiä
                 'explanation': row_dict.get('explanation'),
                 'category': row_dict.get('category'),
                 'difficulty': row_dict.get('difficulty'),
@@ -164,10 +216,10 @@ class DatabaseManager:
 
     def get_question_by_id(self, question_id, user_id):
         query = """SELECT q.id, q.question, q.explanation, q.options, q.correct, q.category, q.difficulty, q.created_at, 
-                   p.times_shown, p.times_correct 
-                   FROM questions q 
-                   LEFT JOIN user_question_progress p ON q.id = p.question_id AND p.user_id = ? 
-                   WHERE q.id = ?"""
+                      p.times_shown, p.times_correct 
+                      FROM questions q 
+                      LEFT JOIN user_question_progress p ON q.id = p.question_id AND p.user_id = ? 
+                      WHERE q.id = ?"""
         
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -232,8 +284,8 @@ class DatabaseManager:
         try:
             with sqlite3.connect(self.db_path) as conn:
                 conn.execute("""
-                    UPDATE questions SET question = ?, explanation = ?, options = ?, correct = ?, category = ?, difficulty = ?
-                    WHERE id = ?
+                     UPDATE questions SET question = ?, explanation = ?, options = ?, correct = ?, category = ?, difficulty = ?
+                     WHERE id = ?
                 """, (
                     data['question'], data['explanation'], json.dumps(data['options']),
                     data['correct'], data['category'].lower(), data['difficulty'].lower(), question_id

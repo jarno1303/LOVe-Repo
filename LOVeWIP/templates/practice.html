@@ -1,575 +1,416 @@
 {% extends "base.html" %}
 
-{% block title %}Harjoitus - LOVe Enhanced{% endblock %}
-
-{% block head_extra %}
-<style>
-    .quiz-container {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .option-btn {
-        text-align: left;
-        white-space: normal;
-        transition: background-color 0.2s, border-color 0.2s;
-    }
-    
-    .explanation-box {
-        background: #f8f9fa;
-        border-left: 4px solid #007bff;
-        padding: 15px;
-        margin-top: 15px;
-        border-radius: 0 8px 8px 0;
-    }
-    
-    .correct-answer {
-        background-color: #d4edda !important;
-        border-color: #c3e6cb !important;
-        color: #155724 !important;
-    }
-    
-    .incorrect-answer {
-        background-color: #f8d7da !important;
-        border-color: #f5c6cb !important;
-        color: #721c24 !important;
-    }
-    
-    .options-disabled .option-btn {
-        pointer-events: none;
-    }
-    
-    .progress-info {
-        background: linear-gradient(45deg, #007bff, #6610f2);
-        color: white;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-    }
-    
-    .quiz-card {
-        border: none;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    
-    .quiz-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 20px;
-        text-align: center;
-    }
-    
-    .loading-spinner {
-        width: 3rem;
-        height: 3rem;
-        margin: 2rem auto;
-    }
-    
-    .distractor-modal .modal-content {
-        border: 3px solid #ffc107;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3);
-    }
-    
-    .distractor-header {
-        background: linear-gradient(45deg, #ffc107, #ff8c00);
-        color: white;
-        border-bottom: none;
-    }
-    
-    .distractor-scenario {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        border-radius: 8px;
-        padding: 15px;
-        margin: 15px 0;
-        font-style: italic;
-    }
-    
-    .distractor-option {
-        margin: 8px 0;
-        padding: 12px;
-        border: 2px solid #e9ecef;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    
-    .distractor-option:hover {
-        border-color: #ffc107;
-        background-color: #fff3cd;
-    }
-    
-    .distractor-option.selected {
-        border-color: #ffc107;
-        background-color: #fff3cd;
-    }
-    
-    .distractor-feedback {
-        margin-top: 15px;
-        padding: 15px;
-        border-radius: 8px;
-    }
-    
-    .distractor-feedback.correct {
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-    }
-    
-    .distractor-feedback.incorrect {
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-    }
-</style>
-{% endblock %}
+{% block title %}Harjoittele - LOVe Enhanced{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <div id="loading-screen" class="text-center">
-        <div class="quiz-card">
-            <div class="quiz-header">
-                <h2>🎯 Ladataan harjoitusta...</h2>
-            </div>
-            <div class="card-body">
-                <div class="loading-spinner spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Ladataan...</span>
-                </div>
-                <p class="mt-3">Valmistellaan kysymyksiä sinulle</p>
-            </div>
+<div class="container">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Ladataan...</span>
+        </div>
+        <p class="mt-3 text-muted">Ladataan kysymyksiä...</p>
+    </div>
+
+    <!-- Error Screen -->
+    <div id="errorScreen" class="text-center py-5" style="display: none;">
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+            <h4 class="alert-heading">Virhe kysymysten lataamisessa</h4>
+            <p id="errorMessage">Tapahtui odottamaton virhe.</p>
+            <hr>
+            <button class="btn btn-primary" onclick="location.reload()">
+                <i class="fas fa-redo me-2"></i>Yritä uudelleen
+            </button>
+            <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary">
+                <i class="fas fa-home me-2"></i>Palaa dashboardiin
+            </a>
         </div>
     </div>
 
-    <div id="error-screen" class="text-center d-none">
-        <div class="quiz-card">
-            <div class="quiz-header bg-danger">
-                <h2>❌ Virhe</h2>
+    <!-- Question Screen -->
+    <div id="questionScreen" style="display: none;">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="mb-0">
+                    <i class="fas fa-book-open text-primary me-2"></i>
+                    Harjoittele
+                </h2>
             </div>
-            <div class="card-body">
-                <p id="error-message">Virhe kysymysten lataamisessa. Yritä myöhemmin uudelleen.</p>
-                <button class="btn btn-primary" onclick="location.reload()">🔄 Yritä uudelleen</button>
-                <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary ms-2">← Palaa</a>
-            </div>
-        </div>
-    </div>
-
-    <div id="question-screen" class="d-none">
-        <div class="quiz-container">
-            <div class="progress-info">
-                <div class="d-flex justify-content-between align-items-center">
-                    <span id="progress-text">Kysymys 1 / 10</span>
-                    <span>📚 {{ category if category else 'Kaikki kategoriat' }}</span>
-                </div>
-            </div>
-
-            <div class="quiz-card">
-                <div class="quiz-header">
-                    <h4 id="question-container">Kysymystä ladataan...</h4>
-                </div>
-                <div class="card-body">
-                    <div id="options-container" class="d-grid gap-2">
-                        </div>
-                    
-                    <div id="explanation-container" class="d-none">
-                        <div class="explanation-box">
-                            <h6>💡 Selitys:</h6>
-                            <p id="explanation-text"></p>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center mt-3">
-                        <button id="next-button" class="btn btn-primary btn-lg d-none" onclick="nextQuestion()">
-                            Seuraava kysymys →
-                        </button>
+            <div class="col-md-4 text-end">
+                <div class="progress" style="height: 25px;">
+                    <div id="progressBar" class="progress-bar bg-primary" role="progressbar" 
+                         style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <span id="progressText">0/0</span>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Question Card -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-4" id="questionText">Kysymystä ladataan...</h4>
+                <div id="optionsContainer"></div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between">
+            <button id="submitBtn" class="btn btn-primary btn-lg" onclick="submitAnswer()">
+                <i class="fas fa-check me-2"></i>Vastaa
+            </button>
+            <button id="nextBtn" class="btn btn-success btn-lg" onclick="nextQuestion()" style="display: none;">
+                <i class="fas fa-arrow-right me-2"></i>Seuraava
+            </button>
+            <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-times me-2"></i>Lopeta
+            </a>
+        </div>
     </div>
 
-    <div id="results-screen" class="d-none">
-        <div class="quiz-card">
-            <div class="quiz-header">
-                <h2>🎉 Harjoitus valmis!</h2>
+    <!-- Results Screen -->
+    <div id="resultsScreen" style="display: none;">
+        <div class="text-center py-5">
+            <i id="resultsIcon" class="fas fa-trophy fa-5x text-warning mb-4"></i>
+            <h2 id="resultsTitle" class="mb-3">Hienoa työtä!</h2>
+            <div class="card shadow-sm d-inline-block">
+                <div class="card-body p-4">
+                    <h3 class="display-4 mb-2" id="scoreText">0/0</h3>
+                    <p class="text-muted mb-0" id="percentageText">0%</p>
+                </div>
             </div>
-            <div class="card-body text-center">
-                <div class="row">
-                    <div class="col-md-4">
-                        <h3 id="final-score" class="text-primary">0/0</h3>
-                        <p class="text-muted">Oikeat vastaukset</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h3 id="final-percentage" class="text-success">0%</h3>
-                        <p class="text-muted">Onnistumisprosentti</p>
-                    </div>
-                    <div class="col-md-4">
-                        <h3 id="final-time" class="text-info">0s</h3>
-                        <p class="text-muted">Kokonaisaika</p>
-                    </div>
-                </div>
-                
-                <div class="mt-4">
-                    <button class="btn btn-success me-2" onclick="startNewQuiz()">🔄 Uusi harjoitus</button>
-                    <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary">← Palaa</a>
-                </div>
+            <div class="mt-4">
+                <button class="btn btn-primary btn-lg me-2" onclick="location.reload()">
+                    <i class="fas fa-redo me-2"></i>Harjoittele uudelleen
+                </button>
+                <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-home me-2"></i>Palaa dashboardiin
+                </a>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade distractor-modal" id="distractorModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Explanation Modal -->
+<div class="modal fade" id="explanationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header distractor-header">
-                <h5 class="modal-title">⚠️ Keskeytys lääkkeenjaossa</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header" id="modalHeader">
+                <h5 class="modal-title" id="modalTitle">Selitys</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="alert alert-warning">
-                    <strong>🏥 Tilanne:</strong> Olet jakamassa lääkkeitä ja tapahtuu seuraava tilanne:
-                </div>
-                
-                <div class="distractor-scenario" id="distractor-scenario">
-                    </div>
-                
-                <p><strong>Miten toimit?</strong></p>
-                <div id="distractor-options">
-                    </div>
-                
-                <div id="distractor-feedback" class="d-none">
-                    </div>
+            <div class="modal-body" id="modalBody">
+                Selitystä ladataan...
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulje</button>
-                <button type="button" id="submit-distractor" class="btn btn-warning" onclick="submitDistractor()">
-                    Vastaa
-                </button>
-                <button type="button" id="continue-quiz" class="btn btn-primary d-none" data-bs-dismiss="modal">
-                    Jatka harjoitusta
-                </button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Jatka</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Globaalit muuttujat
-let questions = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let startTime = Date.now();
-let questionStartTime = Date.now();
-let selectedDistractorOption = null;
-let currentDistractor = null;
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+    let selectedOption = null;
+    let startTime = null;
+    let explanationModal = null;
 
-// DOM elementit
-const elements = {
-    loadingScreen: document.getElementById('loading-screen'),
-    errorScreen: document.getElementById('error-screen'),
-    questionScreen: document.getElementById('question-screen'),
-    resultsScreen: document.getElementById('results-screen'),
-    progressText: document.getElementById('progress-text'),
-    questionContainer: document.getElementById('question-container'),
-    optionsContainer: document.getElementById('options-container'),
-    explanationContainer: document.getElementById('explanation-container'),
-    nextButton: document.getElementById('next-button'),
-    errorMessage: document.getElementById('error-message')
-};
-
-// Käynnistetään kun sivu latautuu
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Practice sivu ladattu, aloitetaan kysymysten haku');
-    fetchQuestions();
-});
-
-function showScreen(screenName, message = '') {
-    // Piilota kaikki pääruudut
-    ['loading', 'error', 'question', 'results'].forEach(name => {
-        const screenEl = document.getElementById(name + '-screen');
-        if(screenEl) screenEl.classList.add('d-none');
-    });
-    
-    // Näytä valittu ruutu
-    const screenToShow = document.getElementById(screenName + '-screen');
-    if (screenToShow) {
-        screenToShow.classList.remove('d-none');
-        if (message && elements.errorMessage) {
-            elements.errorMessage.textContent = message;
-        }
-    }
-}
-
-
-async function fetchQuestions() {
-    try {
-        console.log('Haetaan kysymyksiä API:sta...');
-        
-        const urlParams = new URLSearchParams(window.location.search);
-
-        // ### KORJATTU KOHTA ALKAA ###
-        // Käytetään getAll() kaikkien parametrien keräämiseksi taulukkoon
-        const categoriesArray = urlParams.getAll('categories');
-        const difficultiesArray = urlParams.getAll('difficulties');
-        
-        // Yhdistetään taulukot pilkulla erotetuksi merkkijonoksi
-        const categories = categoriesArray.join(',');
-        const difficulties = difficultiesArray.join(',');
-        // ### KORJATTU KOHTA LOPPUU ###
-
-        const limit = urlParams.get('count') || '10'; // Käytetään count-parametria jos se on olemassa
-        
-        console.log('Parametrit:', { categories, difficulties, limit });
-        
-        const response = await fetch(`/api/questions?limit=${limit}&category=${encodeURIComponent(categories)}&difficulties=${encodeURIComponent(difficulties)}`);
-        
-        console.log('API vastaus status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('Kysymysten haku onnistui:', data);
-        
-        if (!data.questions || data.questions.length === 0) {
-            throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä');
-        }
-        
-        questions = data.questions;
-        startTime = Date.now();
-        
-        console.log('Aloitetaan kysymysten näyttäminen');
-        showScreen('question');
-        displayCurrentQuestion();
-        
-    } catch (error) {
-        console.error('Virhe kysymysten haussa:', error);
-        showScreen('error', `Virhe kysymysten lataamisessa: ${error.message}`);
-    }
-}
-
-function displayCurrentQuestion() {
-    if (currentQuestionIndex >= questions.length) {
-        displayResults();
-        return;
-    }
-
-    const question = questions[currentQuestionIndex];
-    
-    if (!question) {
-        console.error('Question is undefined at index:', currentQuestionIndex);
-        showScreen('error', 'Virhe kysymyksen näyttämisessä.');
-        return;
-    }
-
-    console.log('Näytetään kysymys:', currentQuestionIndex + 1, question);
-
-    elements.progressText.innerText = `Kysymys ${currentQuestionIndex + 1} / ${questions.length}`;
-    elements.questionContainer.innerText = question.question;
-    elements.optionsContainer.innerHTML = '';
-    elements.optionsContainer.classList.remove('options-disabled');
-
-    question.options.forEach((option, index) => {
-        const button = document.createElement('button');
-        button.innerHTML = `${String.fromCharCode(65 + index)}. ${option}`;
-        button.className = 'btn btn-outline-primary option-btn p-3';
-        button.dataset.index = index;
-        button.onclick = handleAnswerSelection;
-        elements.optionsContainer.appendChild(button);
+    // Initialize Bootstrap modal
+    document.addEventListener('DOMContentLoaded', function() {
+        explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
+        fetchQuestions();
     });
 
-    elements.explanationContainer.classList.add('d-none');
-    elements.nextButton.classList.add('d-none');
-    questionStartTime = Date.now();
+    function showScreen(screenName, errorMsg = null) {
+        // Hide all screens
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('errorScreen').style.display = 'none';
+        document.getElementById('questionScreen').style.display = 'none';
+        document.getElementById('resultsScreen').style.display = 'none';
 
-    if (currentQuestionIndex > 0) {
-        checkForDistractor();
+        // Show requested screen
+        if (screenName === 'loading') {
+            document.getElementById('loadingScreen').style.display = 'block';
+        } else if (screenName === 'error') {
+            document.getElementById('errorScreen').style.display = 'block';
+            if (errorMsg) {
+                document.getElementById('errorMessage').textContent = errorMsg;
+            }
+        } else if (screenName === 'question') {
+            document.getElementById('questionScreen').style.display = 'block';
+        } else if (screenName === 'results') {
+            document.getElementById('resultsScreen').style.display = 'block';
+        }
     }
-}
 
-async function checkForDistractor() {
-    try {
-        console.log('Tarkistetaan häiriötekijä kysymykselle', currentQuestionIndex + 1);
-        
-        const response = await fetch('/api/check_distractor');
-        const data = await response.json();
-        
-        if (data.success && data.distractor) {
-            console.log('Häiriötekijä saatu:', data.distractor);
+    async function fetchQuestions() {
+        try {
+            console.log('Haetaan kysymyksiä API:sta...');
             
-            const delay = 3000 + Math.random() * 5000;
-            setTimeout(() => {
-                showDistractor(data.distractor);
-            }, delay);
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Käytetään getAll() kaikkien parametrien keräämiseksi taulukkoon
+            // HUOM: getAll() palauttaa taulukon kaikista saman nimisistä parametreista
+            // Esim. ?categories=a&categories=b => ['a', 'b']
+            const categoriesArray = urlParams.getAll('categories');
+            const difficultiesArray = urlParams.getAll('difficulties');
+            
+            // Yhdistetään taulukot pilkulla erotetuksi merkkijonoksi
+            const categories = categoriesArray.join(',');
+            const difficulties = difficultiesArray.join(',');
+            const limit = urlParams.get('count') || '10';
+            
+            console.log('Parametrit:', { categories, difficulties, limit });
+            
+            // Tarkista että parametrit ovat järkevät
+            const limitNum = parseInt(limit);
+            if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+                throw new Error('Kysymysten määrän tulee olla 1-100 välillä');
+            }
+            
+            const response = await fetch(`/api/questions?limit=${limit}&category=${encodeURIComponent(categories)}&difficulties=${encodeURIComponent(difficulties)}`);
+            
+            console.log('API vastaus status:', response.status);
+            
+            // Tarkempi virheenkäsittely HTTP-statuksille
+            if (!response.ok) {
+                let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+                
+                try {
+                    const errorData = await response.json();
+                    if (errorData.error) {
+                        errorMessage = errorData.error;
+                    }
+                } catch (e) {
+                    // Jos JSON-parsinta epäonnistuu, käytä HTTP-virhettä
+                }
+                
+                throw new Error(errorMessage);
+            }
+            
+            const data = await response.json();
+            console.log('Kysymysten haku onnistui. Kysymyksiä:', data.questions ? data.questions.length : 0);
+            
+            // Tarkista että saatiin kysymyksiä
+            if (!data.questions || !Array.isArray(data.questions)) {
+                throw new Error('Palvelin palautti virheellisen datan');
+            }
+            
+            if (data.questions.length === 0) {
+                throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä. Kokeile eri kategorioita tai vaikeustasoja.');
+            }
+            
+            questions = data.questions;
+            startTime = Date.now();
+            
+            console.log('Aloitetaan kysymysten näyttäminen');
+            showScreen('question');
+            displayCurrentQuestion();
+            
+        } catch (error) {
+            console.error('Virhe kysymysten haussa:', error);
+            
+            // Näytä käyttäjäystävällinen virheilmoitus
+            let userMessage = 'Kysymysten lataaminen epäonnistui.';
+            
+            if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+                userMessage = 'Verkkovirhe. Tarkista internet-yhteytesi ja yritä uudelleen.';
+            } else if (error.message) {
+                userMessage = error.message;
+            }
+            
+            showScreen('error', userMessage);
+        }
+    }
+
+    function displayCurrentQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            showResults();
+            return;
+        }
+
+        const question = questions[currentQuestionIndex];
+        selectedOption = null;
+
+        // Update progress
+        const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('progressText').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+
+        // Display question
+        document.getElementById('questionText').textContent = question.question;
+
+        // Display options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+
+        question.options.forEach((option, index) => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'form-check p-3 mb-2 border rounded option-item';
+            optionDiv.style.cursor = 'pointer';
+            optionDiv.onclick = () => selectOption(index);
+            
+            optionDiv.innerHTML = `
+                <input class="form-check-input" type="radio" name="answer" id="option${index}" value="${index}">
+                <label class="form-check-label w-100" for="option${index}" style="cursor: pointer;">
+                    ${String.fromCharCode(65 + index)}. ${option}
+                </label>
+            `;
+            
+            optionsContainer.appendChild(optionDiv);
+        });
+
+        // Reset buttons
+        document.getElementById('submitBtn').style.display = 'inline-block';
+        document.getElementById('nextBtn').style.display = 'none';
+    }
+
+    function selectOption(index) {
+        selectedOption = index;
+        
+        // Update UI
+        document.querySelectorAll('.option-item').forEach((item, i) => {
+            if (i === index) {
+                item.classList.add('border-primary', 'bg-light');
+                item.querySelector('input').checked = true;
+            } else {
+                item.classList.remove('border-primary', 'bg-light');
+                item.querySelector('input').checked = false;
+            }
+        });
+    }
+
+    async function submitAnswer() {
+        if (selectedOption === null) {
+            alert('Valitse vastaus ensin!');
+            return;
+        }
+
+        const question = questions[currentQuestionIndex];
+        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+        try {
+            const response = await fetch('/api/submit_answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    question_id: question.id,
+                    selected_option_text: question.options[selectedOption],
+                    time_taken: timeTaken
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Vastauksen lähetys epäonnistui');
+            }
+
+            const data = await response.json();
+
+            // Update correct answers count
+            if (data.correct) {
+                correctAnswers++;
+            }
+
+            // Show visual feedback
+            showAnswerFeedback(data.correct, data.correct_answer_index);
+
+            // Show explanation in modal
+            showExplanation(data.explanation, data.correct);
+
+            // Show next button
+            document.getElementById('submitBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+
+        } catch (error) {
+            console.error('Virhe vastauksen lähetyksessä:', error);
+            alert('Vastauksen lähetys epäonnistui. Yritä uudelleen.');
+        }
+    }
+
+    function showAnswerFeedback(isCorrect, correctIndex) {
+        document.querySelectorAll('.option-item').forEach((item, index) => {
+            if (index === correctIndex) {
+                item.classList.add('border-success', 'bg-success', 'bg-opacity-10');
+                item.classList.remove('border-primary');
+            } else if (index === selectedOption && !isCorrect) {
+                item.classList.add('border-danger', 'bg-danger', 'bg-opacity-10');
+                item.classList.remove('border-primary');
+            }
+        });
+    }
+
+    function showExplanation(explanation, isCorrect) {
+        const modalHeader = document.getElementById('modalHeader');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+
+        if (isCorrect) {
+            modalHeader.className = 'modal-header bg-success text-white';
+            modalTitle.innerHTML = '<i class="fas fa-check-circle me-2"></i>Oikein!';
         } else {
-            console.log('Ei häiriötekijää tälle kysymykselle');
+            modalHeader.className = 'modal-header bg-danger text-white';
+            modalTitle.innerHTML = '<i class="fas fa-times-circle me-2"></i>Väärin';
         }
-    } catch (error) {
-        console.log('Häiriötekijän tarkistus epäonnistui:', error);
-    }
-}
 
-function handleAnswerSelection(event) {
-    const selectedIndex = parseInt(event.target.dataset.index);
-    const question = questions[currentQuestionIndex];
-    const timeTaken = Date.now() - questionStartTime;
-    
-    console.log('Vastaus valittu:', selectedIndex, 'Oikea:', question.correct);
-    
-    elements.optionsContainer.classList.add('options-disabled');
-    
-    const buttons = elements.optionsContainer.querySelectorAll('.option-btn');
-    buttons.forEach((btn, index) => {
-        if (index === question.correct) {
-            btn.classList.add('correct-answer');
-        } else if (index === selectedIndex && selectedIndex !== question.correct) {
-            btn.classList.add('incorrect-answer');
+        modalBody.textContent = explanation;
+        explanationModal.show();
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        startTime = Date.now();
+        displayCurrentQuestion();
+    }
+
+    function showResults() {
+        const percentage = Math.round((correctAnswers / questions.length) * 100);
+        
+        document.getElementById('scoreText').textContent = `${correctAnswers}/${questions.length}`;
+        document.getElementById('percentageText').textContent = `${percentage}%`;
+
+        // Update icon and title based on performance
+        const icon = document.getElementById('resultsIcon');
+        const title = document.getElementById('resultsTitle');
+
+        if (percentage >= 90) {
+            icon.className = 'fas fa-trophy fa-5x text-warning mb-4';
+            title.textContent = 'Erinomaista! 🎉';
+        } else if (percentage >= 70) {
+            icon.className = 'fas fa-star fa-5x text-primary mb-4';
+            title.textContent = 'Hyvä työ! 👏';
+        } else if (percentage >= 50) {
+            icon.className = 'fas fa-check-circle fa-5x text-success mb-4';
+            title.textContent = 'Kohtuullista! 👍';
+        } else {
+            icon.className = 'fas fa-book fa-5x text-info mb-4';
+            title.textContent = 'Harjoittelua lisää! 📚';
         }
-    });
-    
-    if (selectedIndex === question.correct) {
-        score++;
+
+        showScreen('results');
     }
-    
-    elements.explanationContainer.classList.remove('d-none');
-    document.getElementById('explanation-text').innerText = question.explanation;
-    
-    elements.nextButton.classList.remove('d-none');
-    
-    submitAnswer(question.id, question.options[selectedIndex], timeTaken);
-}
-
-async function submitAnswer(questionId, selectedOptionText, timeTaken) {
-    try {
-        const response = await fetch('/api/submit_answer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                question_id: questionId,
-                selected_option_text: selectedOptionText,
-                time_taken: timeTaken
-            })
-        });
-        
-        const result = await response.json();
-        console.log('Vastaus lähetetty:', result);
-        
-        if (result.new_achievements && result.new_achievements.length > 0) {
-            console.log('Uusia saavutuksia:', result.new_achievements);
-        }
-    } catch (error) {
-        console.error('Virhe vastauksen lähettämisessä:', error);
-    }
-}
-
-function nextQuestion() {
-    currentQuestionIndex++;
-    displayCurrentQuestion();
-}
-
-function displayResults() {
-    const totalTime = Math.round((Date.now() - startTime) / 1000);
-    const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-    
-    console.log('Näytetään tulokset:', { score, total: questions.length, percentage, totalTime });
-    
-    document.getElementById('final-score').textContent = `${score}/${questions.length}`;
-    document.getElementById('final-percentage').textContent = `${percentage}%`;
-    document.getElementById('final-time').textContent = `${totalTime}s`;
-    
-    showScreen('results');
-}
-
-function startNewQuiz() {
-    questions = [];
-    currentQuestionIndex = 0;
-    score = 0;
-    
-    showScreen('loading');
-    fetchQuestions();
-}
-
-function showDistractor(distractor) {
-    currentDistractor = distractor;
-    selectedDistractorOption = null;
-    
-    console.log('Näytetään häiriötekijä:', distractor);
-    
-    document.getElementById('distractor-scenario').textContent = distractor.scenario;
-    
-    const optionsContainer = document.getElementById('distractor-options');
-    optionsContainer.innerHTML = '';
-    
-    distractor.options.forEach((option, index) => {
-        const div = document.createElement('div');
-        div.className = 'distractor-option';
-        div.textContent = option;
-        div.onclick = () => selectDistractorOption(index);
-        optionsContainer.appendChild(div);
-    });
-    
-    document.getElementById('distractor-feedback').classList.add('d-none');
-    document.getElementById('submit-distractor').classList.remove('d-none');
-    document.getElementById('continue-quiz').classList.add('d-none');
-    
-    const modal = new bootstrap.Modal(document.getElementById('distractorModal'));
-    modal.show();
-}
-
-function selectDistractorOption(index) {
-    selectedDistractorOption = index;
-    
-    document.querySelectorAll('.distractor-option').forEach(option => {
-        option.classList.remove('selected');
-    });
-    
-    document.querySelectorAll('.distractor-option')[index].classList.add('selected');
-}
-
-async function submitDistractor() {
-    if (selectedDistractorOption === null) {
-        alert('Valitse ensin vastaus!');
-        return;
-    }
-    
-    try {
-        const response = await fetch('/api/submit_distractor', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                scenario: currentDistractor.scenario,
-                user_choice: selectedDistractorOption,
-                response_time: 5000
-            })
-        });
-        
-        const result = await response.json();
-        console.log('Häiriötekijävastaus lähetetty:', result);
-        
-        const feedback = document.getElementById('distractor-feedback');
-        const isCorrect = result.is_correct;
-        
-        feedback.className = `distractor-feedback ${isCorrect ? 'correct' : 'incorrect'}`;
-        feedback.innerHTML = `
-            <strong>${isCorrect ? '✅ Oikein!' : '❌ Väärin!'}</strong><br>
-            ${isCorrect ? 'Hyvä ratkaisu! Lääkkeenjako vaatii keskittymistä.' : 'Lääkkeenjaon aikana tulisi keskittyä tehtävään ja välttää keskeytyksiä.'}
-        `;
-        feedback.classList.remove('d-none');
-        
-        document.getElementById('submit-distractor').classList.add('d-none');
-        document.getElementById('continue-quiz').classList.remove('d-none');
-        
-    } catch (error) {
-        console.error('Virhe häiriötekijävastauksen lähettämisessä:', error);
-        alert('Virhe vastauksen lähettämisessä!');
-    }
-}
 </script>
+
+<style>
+    .option-item {
+        transition: all 0.3s ease;
+    }
+
+    .option-item:hover {
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+
+    .progress {
+        border-radius: 10px;
+    }
+
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+</style>
 {% endblock %}

@@ -1,102 +1,246 @@
 {% extends "base.html" %}
-{% block title %}Saavutukset - LOVe Enhanced{% endblock %}
-{% block head_extra %}
-<style>
-/* LISÄTTY UUSI, VOIMAKAS PIILOTUSSÄÄNTÖ */
-.hidden {
-    display: none !important;
-}
-.achievement-card {
-    border: 1px solid var(--bs-border-color);
-    border-radius: .75rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-    height: 100%;
-}
-.achievement-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
-}
-.achievement-card .icon {
-    font-size: 4rem;
-    line-height: 1;
-}
-.achievement-card.unlocked {
-    background: linear-gradient(135deg, #fffbeb 0%, #fde047 100%);
-    border-color: #facc15;
-}
-.achievement-card.locked {
-    background-color: var(--bs-tertiary-bg);
-    filter: grayscale(80%);
-    opacity: 0.7;
-}
-</style>
-{% endblock %}
-{% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0"> 🏆  Saavutukset</h1>
-    <p id="progress-text" class="h5 text-muted mb-0"></p>
-</div>
-<div id="loading-container" class="d-flex justify-content-center align-items-center" style="height: 400px;">
-    <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-        <span class="visually-hidden">Ladataan...</span>
-    </div>
-</div>
-<div id="achievements-grid" class="row g-4 hidden">
-    </div>
-{% endblock %}
-{% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const grid = document.getElementById('achievements-grid');
-    const progressText = document.getElementById('progress-text');
-    const loadingContainer = document.getElementById('loading-container');
 
-    function createAchievementCard(ach) {
-        const col = document.createElement('div');
-        col.className = 'col-md-6 col-lg-4';
-        const cardClass = ach.unlocked ? 'unlocked' : 'locked';
-        const unlockedDate = ach.unlocked_at ? new Date(ach.unlocked_at).toLocaleDateString('fi-FI') : '';
-        col.innerHTML = `
-        <div class="card achievement-card text-center shadow-sm ${cardClass}">
-            <div class="card-body p-4 d-flex flex-column">
-                <div class="icon mb-3">${ach.icon}</div>
-                <h5 class="card-title">${ach.name}</h5>
-                <p class="card-text text-muted flex-grow-1">${ach.description}</p>
-                ${ach.unlocked
-                    ? `<span class="badge bg-success-subtle text-success-emphasis rounded-pill">Avattu ${unlockedDate}</span>`
-                    : `<span class="badge bg-secondary-subtle text-secondary-emphasis rounded-pill">Lukittu</span>`
-                }
+{% block title %}Saavutukset - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-trophy me-2"></i>Saavutukset</h1>
+        <a href="/dashboard" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Takaisin
+        </a>
+    </div>
+
+    <!-- Latausspinneri -->
+    <div id="loading-spinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Ladataan...</span>
+        </div>
+        <p class="mt-3 text-muted">Ladataan saavutuksia...</p>
+    </div>
+
+    <!-- Saavutukset-sisältö -->
+    <div id="achievements-content" style="display: none;">
+        <!-- Edistymiskortti -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h5 class="mb-2">Edistyminen</h5>
+                        <div class="d-flex align-items-center">
+                            <div class="progress flex-grow-1 me-3" style="height: 30px;">
+                                <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%">
+                                    <strong id="progress-text">0%</strong>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <h4 id="unlocked-count" class="mb-0">0/16</h4>
+                                <small class="text-muted">avattu</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i id="main-trophy-icon" class="fas fa-trophy fa-4x text-muted"></i>
+                        <p id="rank-text" class="mt-2 mb-0 fw-bold">Aloittelija</p>
+                    </div>
+                </div>
             </div>
-        </div>`;
-        return col;
+        </div>
+
+        <!-- Saavutusruudukko -->
+        <div class="row" id="achievements-grid">
+            <!-- Saavutukset lisätään tähän JavaScriptillä -->
+        </div>
+    </div>
+</div>
+
+<style>
+    .achievement-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        height: 100%;
     }
 
-    async function fetchAndDisplayAchievements() {
-        try {
-            const response = await fetch('/api/achievements');
-            if (!response.ok) throw new Error('Network error');
-            const achievements = await response.json();
+    .achievement-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
 
-            grid.innerHTML = '';
-            let unlockedCount = 0;
-            achievements.forEach(ach => {
-                if (ach.unlocked) unlockedCount++;
-                grid.appendChild(createAchievementCard(ach));
-            });
+    .achievement-card.unlocked {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: 2px solid #ffd700;
+    }
 
-            progressText.innerText = `${unlockedCount} / ${achievements.length} avattu`;
-            
-            // MUUTETTU: Käytetään nyt classList-metodia style-attribuutin sijaan
-            loadingContainer.classList.add('hidden');
-            grid.classList.remove('hidden');
+    .achievement-card.unlocked .achievement-icon {
+        font-size: 3rem;
+        animation: bounce 0.5s ease;
+    }
 
-        } catch(error) {
-            console.error("Virhe saavutuksia ladatessa:", error);
-            loadingContainer.innerHTML = '<p class="text-danger">Lataus epäonnistui.</p>';
+    .achievement-card.locked {
+        background: #f8f9fa;
+        color: #6c757d;
+        opacity: 0.7;
+        border: 2px solid #dee2e6;
+    }
+
+    .achievement-card.locked .achievement-icon {
+        font-size: 3rem;
+        opacity: 0.3;
+    }
+
+    .achievement-card.locked .card-body {
+        filter: grayscale(1);
+    }
+
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .unlock-date {
+        font-size: 0.75rem;
+        opacity: 0.8;
+    }
+
+    .achievement-description {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+</style>
+
+<script>
+let allAchievements = [];
+
+async function loadAchievements() {
+    try {
+        const response = await fetch('/api/achievements');
+        
+        if (!response.ok) {
+            throw new Error('Virhe saavutusten lataamisessa');
         }
+        
+        allAchievements = await response.json();
+        
+        // Näytä saavutukset
+        displayAchievements();
+        
+    } catch (error) {
+        console.error('Virhe saavutusten lataamisessa:', error);
+        document.getElementById('loading-spinner').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Virhe saavutusten lataamisessa. Päivitä sivu.
+            </div>
+        `;
+    }
+}
+
+function displayAchievements() {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('achievements-content').style.display = 'block';
+    
+    // Laske avatut saavutukset
+    const unlockedCount = allAchievements.filter(a => a.unlocked).length;
+    const totalCount = allAchievements.length;
+    const percentage = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0;
+    
+    // Päivitä edistymispalkki
+    document.getElementById('progress-bar').style.width = percentage + '%';
+    document.getElementById('progress-text').textContent = percentage + '%';
+    document.getElementById('unlocked-count').textContent = `${unlockedCount}/${totalCount}`;
+    
+    // Päivitä arvonimi ja ikoni
+    updateRank(unlockedCount, totalCount);
+    
+    // Renderöi saavutukset
+    const grid = document.getElementById('achievements-grid');
+    grid.innerHTML = '';
+    
+    // Järjestä: avatut ensin, sitten lukitut
+    const sorted = [...allAchievements].sort((a, b) => {
+        if (a.unlocked && !b.unlocked) return -1;
+        if (!a.unlocked && b.unlocked) return 1;
+        return 0;
+    });
+    
+    sorted.forEach(achievement => {
+        const card = createAchievementCard(achievement);
+        grid.appendChild(card);
+    });
+}
+
+function updateRank(unlocked, total) {
+    const icon = document.getElementById('main-trophy-icon');
+    const rankText = document.getElementById('rank-text');
+    
+    if (unlocked === 0) {
+        icon.className = 'fas fa-seedling fa-4x text-muted';
+        rankText.textContent = 'Aloittelija';
+        rankText.className = 'mt-2 mb-0 fw-bold text-muted';
+    } else if (unlocked < 5) {
+        icon.className = 'fas fa-award fa-4x text-info';
+        rankText.textContent = 'Harjoittelija';
+        rankText.className = 'mt-2 mb-0 fw-bold text-info';
+    } else if (unlocked < 10) {
+        icon.className = 'fas fa-medal fa-4x text-primary';
+        rankText.textContent = 'Osaaja';
+        rankText.className = 'mt-2 mb-0 fw-bold text-primary';
+    } else if (unlocked < 15) {
+        icon.className = 'fas fa-trophy fa-4x text-warning';
+        rankText.textContent = 'Asiantuntija';
+        rankText.className = 'mt-2 mb-0 fw-bold text-warning';
+    } else {
+        icon.className = 'fas fa-crown fa-4x text-warning';
+        rankText.textContent = 'Mestari';
+        rankText.className = 'mt-2 mb-0 fw-bold text-warning';
+        icon.style.filter = 'drop-shadow(0 0 10px gold)';
+    }
+}
+
+function createAchievementCard(achievement) {
+    const col = document.createElement('div');
+    col.className = 'col-md-4 col-lg-3 mb-4';
+    
+    const isUnlocked = achievement.unlocked;
+    const cardClass = isUnlocked ? 'unlocked' : 'locked';
+    
+    let unlockDateHtml = '';
+    if (isUnlocked && achievement.unlocked_at) {
+        const date = new Date(achievement.unlocked_at);
+        const dateStr = date.toLocaleDateString('fi-FI', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
+        });
+        unlockDateHtml = `<div class="unlock-date mt-2"><i class="fas fa-calendar-check me-1"></i>${dateStr}</div>`;
     }
     
-    fetchAndDisplayAchievements();
-});
+    const lockIcon = isUnlocked ? '' : '<i class="fas fa-lock position-absolute" style="top: 10px; right: 10px; font-size: 1.2rem;"></i>';
+    
+    col.innerHTML = `
+        <div class="card achievement-card ${cardClass} shadow-sm border-0">
+            <div class="card-body text-center position-relative">
+                ${lockIcon}
+                <div class="achievement-icon mb-3">${achievement.icon}</div>
+                <h6 class="fw-bold mb-2">${achievement.name}</h6>
+                <p class="achievement-description mb-0">${achievement.description}</p>
+                ${unlockDateHtml}
+            </div>
+        </div>
+    `;
+    
+    // Tooltip lukituille saavutuksille
+    if (!isUnlocked) {
+        const card = col.querySelector('.achievement-card');
+        card.setAttribute('title', 'Avaa tämä saavutus jatkamalla harjoittelua!');
+        card.style.cursor = 'help';
+    }
+    
+    return col;
+}
+
+// Lataa saavutukset sivun latautuessa
+document.addEventListener('DOMContentLoaded', loadAchievements);
 </script>
 {% endblock %}

@@ -1,157 +1,359 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kertaus</title>
-    <style>
-        body { font-family: sans-serif; }
-        #question-container {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-        /* Ponnahdusikkunan (modal) tyylit */
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1000; 
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.6);
-            animation: fadeIn 0.3s;
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 25px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            animation: slideIn 0.3s;
-        }
-        .modal-actions button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 24px;
-            margin: 8px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.2s;
-        }
-        .modal-actions button:hover {
-            background-color: #0056b3;
-        }
-        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
-        @keyframes slideIn { from {transform: translateY(-50px);} to {transform: translateY(0);} }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
 
-    <div id="question-container">
-        <h2 id="question-text">Ladataan kysymystä...</h2>
-        <div id="options-container">
-            </div>
-        <div id="explanation-container" style="display: none; margin-top: 20px; padding: 10px; border-radius: 5px;">
-            <p id="explanation-text"></p>
-        </div>
-        <button id="next-question-btn" style="display: none;" onclick="fetchNextQuestion()">Seuraava kysymys</button>
+{% block title %}Älykäs kertaus - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-brain me-2"></i>Älykäs kertaus</h1>
+        <a href="/dashboard" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Takaisin
+        </a>
     </div>
 
-    <div id="distractor-modal" class="modal">
-      <div class="modal-content">
-        <h4>🚨 Yllättävä tilanne! 🚨</h4>
-        <p id="distractor-scenario" style="font-size: 1.1em;"></p>
-        <div class="modal-actions">
-          <button id="distractor-option1" onclick="closeModal()"></button>
-          <button id="distractor-option2" onclick="closeModal()"></button>
+    <!-- Latausspinneri -->
+    <div id="loading-spinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Ladataan...</span>
         </div>
-      </div>
+        <p class="mt-3 text-muted">Etsitään kertauskysymyksiä...</p>
     </div>
 
-    <script>
-        let currentQuestion = null;
-
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchNextQuestion();
-        });
-
-        async function fetchNextQuestion() {
-            // Nollataan näyttö
-            document.getElementById('question-text').textContent = 'Ladataan seuraavaa kysymystä...';
-            document.getElementById('options-container').innerHTML = '';
-            document.getElementById('explanation-container').style.display = 'none';
-            document.getElementById('next-question-btn').style.display = 'none';
-
-            const response = await fetch('/api/review-questions');
-            const data = await response.json();
-
-            if (data.question) {
-                currentQuestion = data.question;
-                displayQuestion(currentQuestion);
+    <!-- Tyhjä tila -->
+    <div id="empty-state" style="display: none;">
+        <div class="card shadow-lg border-0 text-center p-5">
+            <div class="card-body">
+                <i class="fas fa-brain fa-5x text-muted mb-4"></i>
+                <h2 class="mb-3">Ei kertauskysymyksiä</h2>
+                <p class="lead text-muted mb-4">
+                    Älykäs kertaus käyttää toistojärjestelmää (Spaced Repetition) oppimisen tehostamiseen.
+                    Kysymykset tulevat kertaukseen kun olet vastannut niihin aiemmin.
+                </p>
                 
-                // Jos data sisältää häiriötekijän, ajasta sen näyttäminen
-                if (data.distractor) {
-                    setupAndShowDistractor(data.distractor);
-                }
-            } else {
-                document.getElementById('question-text').textContent = 'Hienoa työtä! Kaikki kysymykset on kerrattu tältä erää.';
-            }
+                <div class="alert alert-info mx-auto mb-4" style="max-width: 600px;">
+                    <h5 class="alert-heading mb-3">
+                        <i class="fas fa-lightbulb"></i> Miten älykäs kertaus toimii?
+                    </h5>
+                    <ul class="text-start list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="fas fa-check text-success"></i> 
+                            Vastaa kysymyksiin normaalissa harjoittelussa
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-clock text-warning"></i> 
+                            Järjestelmä muistaa milloin vastasit mihinkin
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-repeat text-info"></i> 
+                            Kysymykset tulevat kertaukseen optimaalisina aikoina
+                        </li>
+                        <li>
+                            <i class="fas fa-chart-line text-primary"></i> 
+                            Mitä paremmin osaat, sitä harvemmin kysymys palaa
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="d-flex gap-3 justify-content-center mb-3">
+                    <a href="/practice" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle me-2"></i>Aloita harjoittelu
+                    </a>
+                    <a href="/dashboard" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-home me-2"></i>Etusivulle
+                    </a>
+                </div>
+
+                <p class="text-muted small mb-0">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Palaa takaisin kun olet harjoitellut muutaman päivän!
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kertausruutu -->
+    <div id="review-content" style="display: none;">
+        <!-- Edistymisinfo -->
+        <div class="alert alert-info mb-4">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x me-3"></i>
+                <div>
+                    <strong>Älykäs kertaus</strong> - Järjestelmä valitsee kysymykset jotka on aika kerrata.
+                    <br>
+                    <small class="text-muted">Vastaa rauhassa ja keskity oppimiseen.</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kysymyskortti -->
+        <div id="question-card" class="card shadow-lg border-0">
+            <div class="card-body p-4">
+                <div class="mb-3">
+                    <span id="category-badge" class="badge bg-primary"></span>
+                    <span id="difficulty-badge" class="badge bg-secondary ms-2"></span>
+                </div>
+
+                <h4 id="question-text" class="mb-4"></h4>
+
+                <div id="options-container" class="d-grid gap-2">
+                    <!-- Vaihtoehdot lisätään tähän -->
+                </div>
+
+                <div id="feedback-container" class="mt-4" style="display: none;">
+                    <div id="feedback-alert" class="alert">
+                        <h5 id="feedback-title"></h5>
+                        <p id="feedback-explanation" class="mb-0"></p>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex justify-content-between">
+                    <button id="finish-review-btn" class="btn btn-outline-secondary">
+                        <i class="fas fa-stop-circle me-2"></i>Lopeta kertaus
+                    </button>
+                    <button id="next-question-btn" class="btn btn-primary" style="display: none;">
+                        Seuraava kysymys
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Häiriötekijämodaali -->
+        <div id="distractor-modal" class="modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-warning">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Keskeytys
+                        </h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="distractor-scenario" class="lead"></p>
+                        <div id="distractor-options" class="d-grid gap-2">
+                            <!-- Häiriötekijän vaihtoehdot -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .option-btn {
+        text-align: left;
+        padding: 1rem 1.5rem;
+        border: 2px solid #dee2e6;
+        background: white;
+        transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) {
+        border-color: #5A67D8;
+        background: #f8f9ff;
+        transform: translateX(5px);
+    }
+
+    .option-btn.selected {
+        border-color: #5A67D8;
+        background: #e8ebff;
+    }
+
+    .option-btn.correct {
+        border-color: #28a745;
+        background: #d4edda;
+    }
+
+    .option-btn.incorrect {
+        border-color: #dc3545;
+        background: #f8d7da;
+    }
+
+    .option-btn:disabled {
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+let currentQuestion = null;
+let selectedAnswer = null;
+let distractorStartTime;
+const csrfToken = "{{ csrf_token() }}";
+
+async function loadReviewQuestion() {
+    try {
+        const response = await fetch('/api/review-questions');
+        const data = await response.json();
+        
+        if (!data.question) {
+            showEmptyState();
+            return;
         }
-
-        function displayQuestion(question) {
-            document.getElementById('question-text').textContent = question.question;
-            const optionsContainer = document.getElementById('options-container');
-            
-            question.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.textContent = option;
-                button.onclick = () => handleAnswer(option, index);
-                optionsContainer.appendChild(button);
-            });
+        
+        currentQuestion = data.question;
+        
+        document.getElementById('loading-spinner').style.display = 'none';
+        document.getElementById('review-content').style.display = 'block';
+        
+        displayQuestion(currentQuestion);
+        
+        // Tarkista häiriötekijä
+        if (data.distractor) {
+            distractorStartTime = Date.now();
+            showDistractor(data.distractor);
         }
+        
+    } catch (error) {
+        console.error('Virhe kertauskysymyksen lataamisessa:', error);
+        showEmptyState();
+    }
+}
 
-        function handleAnswer(selectedOptionText, selectedIndex) {
-            const isCorrect = selectedIndex === currentQuestion.correct;
-            const explanationContainer = document.getElementById('explanation-container');
-            const explanationText = document.getElementById('explanation-text');
+function showEmptyState() {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('empty-state').style.display = 'block';
+    document.getElementById('review-content').style.display = 'none';
+}
 
-            explanationText.textContent = currentQuestion.explanation;
-            explanationContainer.style.backgroundColor = isCorrect ? '#d4edda' : '#f8d7da'; // Vihreä tai punainen
-            explanationContainer.style.display = 'block';
-            
-            // Poistetaan vastausnapit käytöstä ja näytetään "Seuraava" -nappi
-            document.getElementById('options-container').innerHTML = ''; 
-            document.getElementById('next-question-btn').style.display = 'block';
+function displayQuestion(question) {
+    document.getElementById('category-badge').textContent = question.category || 'Kategoria';
+    
+    const difficultyText = 
+        question.difficulty === 'helppo' ? 'Helppo' :
+        question.difficulty === 'keskivaikea' ? 'Keskivaikea' : 
+        question.difficulty === 'vaikea' ? 'Vaikea' : 'Keskivaikea';
+    document.getElementById('difficulty-badge').textContent = difficultyText;
+    
+    document.getElementById('question-text').textContent = question.question;
+    
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    question.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn option-btn';
+        button.textContent = option;
+        button.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(button);
+    });
+    
+    document.getElementById('feedback-container').style.display = 'none';
+    document.getElementById('next-question-btn').style.display = 'none';
+}
 
-            // Voit myös lähettää vastauksen palvelimelle /api/submit_answer, jos haluat päivittää statistiikkaa
+function selectAnswer(optionIndex) {
+    selectedAnswer = optionIndex;
+    
+    const buttons = document.querySelectorAll('.option-btn');
+    buttons.forEach(btn => btn.disabled = true);
+    
+    const isCorrect = optionIndex === currentQuestion.correct;
+    
+    buttons.forEach((btn, idx) => {
+        if (idx === currentQuestion.correct) {
+            btn.classList.add('correct');
+        } else if (idx === optionIndex && !isCorrect) {
+            btn.classList.add('incorrect');
         }
+    });
+    
+    showFeedback(isCorrect);
+    submitAnswer(isCorrect);
+}
 
-        function setupAndShowDistractor(distractor) {
-            document.getElementById('distractor-scenario').textContent = distractor.scenario;
-            document.getElementById('distractor-option1').textContent = distractor.options[0];
-            document.getElementById('distractor-option2').textContent = distractor.options[1];
+function showFeedback(isCorrect) {
+    const feedbackContainer = document.getElementById('feedback-container');
+    const feedbackAlert = document.getElementById('feedback-alert');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const feedbackExplanation = document.getElementById('feedback-explanation');
+    
+    feedbackContainer.style.display = 'block';
+    
+    if (isCorrect) {
+        feedbackAlert.className = 'alert alert-success';
+        feedbackTitle.innerHTML = '<i class="fas fa-check-circle me-2"></i>Oikein!';
+    } else {
+        feedbackAlert.className = 'alert alert-danger';
+        feedbackTitle.innerHTML = '<i class="fas fa-times-circle me-2"></i>Väärin';
+    }
+    
+    feedbackExplanation.textContent = currentQuestion.explanation || '';
+    
+    document.getElementById('next-question-btn').style.display = 'block';
+}
 
-            const showAfterSeconds = (Math.random() * 2 + 3) * 1000;
-            setTimeout(() => {
-                document.getElementById('distractor-modal').style.display = 'block';
-            }, showAfterSeconds);
-        }
+async function submitAnswer(isCorrect) {
+    try {
+        await fetch('/api/submit_answer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                question_id: currentQuestion.id,
+                selected_option_text: currentQuestion.options[selectedAnswer],
+                time_taken: 0
+            })
+        });
+    } catch (error) {
+        console.error('Virhe vastauksen tallennuksessa:', error);
+    }
+}
 
-        function closeModal() {
-            document.getElementById('distractor-modal').style.display = 'none';
-        }
-    </script>
+function showDistractor(distractor) {
+    document.getElementById('distractor-scenario').textContent = distractor.scenario;
+    
+    const optionsContainer = document.getElementById('distractor-options');
+    optionsContainer.innerHTML = '';
+    
+    distractor.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'btn btn-outline-dark';
+        button.textContent = option;
+        button.onclick = () => handleDistractorChoice(distractor, index);
+        optionsContainer.appendChild(button);
+    });
+    
+    const modal = new bootstrap.Modal(document.getElementById('distractor-modal'));
+    modal.show();
+}
 
-</body>
-</html>
+async function handleDistractorChoice(distractor, choice) {
+    const responseTime = Date.now() - distractorStartTime;
+    
+    try {
+        await fetch('/api/submit_distractor', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                scenario: distractor.scenario,
+                user_choice: choice,
+                response_time: responseTime
+            })
+        });
+    } catch (error) {
+        console.error('Virhe häiriötekijän tallennuksessa:', error);
+    }
+    
+    bootstrap.Modal.getInstance(document.getElementById('distractor-modal')).hide();
+}
+
+document.getElementById('next-question-btn').addEventListener('click', () => {
+    selectedAnswer = null;
+    loadReviewQuestion();
+});
+
+document.getElementById('finish-review-btn').addEventListener('click', () => {
+    if (confirm('Haluatko lopettaa kertauksen?')) {
+        window.location.href = '/dashboard';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', loadReviewQuestion);
+</script>
+{% endblock %}
