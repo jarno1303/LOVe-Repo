@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Etusivu - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>LOVe Enhanced</h1>
+    <p>Tervetuloa, {{ current_user.username if current_user.is_authenticated else 'Vieras' }}!</p>
+    <div class="list-group">
+        <a href="{{ url_for('dashboard') }}" class="list-group-item list-group-item-action">Kojelauta</a>
+        <a href="{{ url_for('practice') }}" class="list-group-item list-group-item-action">Harjoitus</a>
+        <a href="{{ url_for('simulation') }}" class="list-group-item list-group-item-action">Koesimulaatio</a>
+        <a href="{{ url_for('stats') }}" class="list-group-item list-group-item-action">Tilastot</a>
+        <a href="{{ url_for('achievements') }}" class="list-group-item list-group-item-action">Saavutukset</a>
+        <a href="{{ url_for('profile') }}" class="list-group-item list-group-item-action">Profiili</a>
+        <a href="{{ url_for('settings') }}" class="list-group-item list-group-item-action">Asetukset</a>
+    </div>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('logout_route') }}" class="btn btn-primary mt-3">Kirjaudu ulos</a>
+        {% if current_user.role == 'admin' %}
+            <a href="{{ url_for('admin_route') }}" class="btn btn-secondary mt-3">Admin-paneeli</a>
+        {% endif %}
+    {% else %}
+        <a href="{{ url_for('login_route') }}" class="btn btn-primary mt-3">Kirjaudu sisään</a>
+        <a href="{{ url_for('register_route') }}" class="btn btn-secondary mt-3">Rekisteröidy</a>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+@login_manager.user_loader
+def load_user(user_id):
+    try:
+        with sqlite3.connect(db_manager.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            # KORJATTU KOHTA: Haetaan KAIKKI sarakkeet käyttäjälle
+            user_data = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+            
+            if user_data:
+                # Muunnetaan sanakirjaksi, jotta käsittely on helpompaa
+                user_dict = dict(user_data)
+                
+                # Suodatetaan pois avaimet, joita User-luokka ei odota.
+                # Tämä tekee koodista vankemman tulevaisuuden muutoksia varten.
+                fields = [f.name for f in User.__dataclass_fields__.values()]
+                filtered_data = {k: v for k, v in user_dict.items() if k in fields}
+
+                return User(**filtered_data)
+                
+    except sqlite3.Error as e:
+        print(f"Virhe käyttäjän latauksessa: {e}")
+        
+    return None
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.role != 'admin':
+            flash("Pääsy kielletty. Vaatii ylläpitäjän oikeudet.", "danger")
+            return redirect(url_for('dashboard_route'))
+        return f(*args, **kwargs)
+    return decorated_function

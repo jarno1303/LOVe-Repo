@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Käyttäjien hallinta{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">👥 Käyttäjien hallinta</h1>
+        <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">← Palaa Admin-paneeliin</a>
+    </div>
+    
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Rekisteröityneet käyttäjät ({{ users|length }})
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Käyttäjänimi</th>
+                            <th>Sähköposti</th>
+                            <th>Rooli</th>
+                            <th>Luotu</th>
+                            <th>Tila</th>
+                            <th>Toiminnot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.role == 'admin' %}
+                                    <span class="badge bg-primary">Admin</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Käyttäjä</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.created_at }}</td>
+                            <td>
+                                {% if user.status == 'active' %}
+                                    <span class="badge bg-success">Aktiivinen</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Estetty</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.id != 1 %}
+                                <div class="btn-group" role="group">
+                                    <!-- Poisto -->
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ user.id }}">
+                                        Poista
+                                    </button>
+                                    <!-- Estä/Salli -->
+                                    <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ user.id }}">
+                                        {{ 'Estä' if user.status == 'active' else 'Salli' }}
+                                    </button>
+                                    <!-- Roolin vaihto -->
+                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#toggleRoleModal{{ user.id }}">
+                                        {{ 'Tee ylläpitäjäksi' if user.role == 'user' else 'Poista ylläpito-oikeudet' }}
+                                    </button>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">Pääkäyttäjä</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        <!-- Modaalidialogi poistolle -->
+                        <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteUserModalLabel{{ user.id }}">Vahvista poisto</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Haluatko varmasti poistaa käyttäjän <strong>{{ user.username }}</strong> ja kaikki hänen tietonsa pysyvästi? <br>Tätä toimintoa ei voi peruuttaa.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                                        <form action="{{ url_for('admin_delete_user_route', user_id=user.id) }}" method="post">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="confirm" value="true">
+                                            <button type="submit" class="btn btn-danger">Kyllä, poista</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modaalidialogi estä/salli -->
+                        <div class="modal fade" id="toggleUserModal{{ user.id }}" tabindex="-1" aria-labelledby="toggleUserModalLabel{{ user.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="toggleUserModalLabel{{ user.id }}">Vahvista toiminto</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        {% if user.status == 'active' %}
+                                            Haluatko varmasti estää käyttäjän <strong>{{ user.username }}</strong>? Tämä toiminto ei ole peruuttamaton.
+                                        {% else %}
+                                            Haluatko varmasti sallia käyttäjän <strong>{{ user.username }}</strong>? Tämä toiminto ei ole peruuttamaton.
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                                        <form action="{{ url_for('admin_toggle_user_route', user_id=user.id) }}" method="post">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="confirm" value="true">
+                                            <button type="submit" class="btn btn-warning">{{ 'Kyllä, estä' if user.status == 'active' else 'Kyllä, salli' }}</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Modaalidialogi roolin vaihdolle -->
+                        <div class="modal fade" id="toggleRoleModal{{ user.id }}" tabindex="-1" aria-labelledby="toggleRoleModalLabel{{ user.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="toggleRoleModalLabel{{ user.id }}">Vahvista roolin vaihto</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Haluatko varmasti {{ 'tehdä' if user.role == 'user' else 'poistaa' }} käyttäjän <strong>{{ user.username }}</strong> {{ 'ylläpitäjäksi' if user.role == 'user' else 'ylläpito-oikeudet' }}? Tämä toiminto ei ole peruuttamaton.
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                                        <form action="{{ url_for('admin_toggle_role_route', user_id=user.id) }}" method="post">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <input type="hidden" name="confirm" value="true">
+                                            <button type="submit" class="btn btn-primary">{{ 'Kyllä, tee ylläpitäjäksi' if user.role == 'user' else 'Kyllä, poista ylläpito-oikeudet' }}</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Bootstrap JS for modals and alert dismissal -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modalElements = document.querySelectorAll('.modal');
+        modalElements.forEach(function(modal) {
+            var modalInstance = new bootstrap.Modal(modal);
+            modal.addEventListener('show.bs.modal', function() {
+                console.log('Modal shown for ID: ' + modal.id);
+            });
+            modal.addEventListener('hide.bs.modal', function() {
+                console.log('Modal hidden for ID: ' + modal.id);
+            });
+        });
+    });
+</script>
+{% endblock %}

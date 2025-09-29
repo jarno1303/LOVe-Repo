@@ -1,0 +1,448 @@
+{% extends "base.html" %}
+
+{% block title %}Asetukset - LOVe Enhanced{% endblock %}
+
+{% block head_extra %}
+<style>
+    .container {
+        max-width: 700px;
+        margin: auto;
+        background: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .setting-section {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-left: 4px solid #007bff;
+    }
+    
+    .setting-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e9ecef;
+    }
+    
+    .setting-row:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+    
+    .setting-info h5 {
+        margin-bottom: 5px;
+        color: #495057;
+    }
+    
+    .setting-info .text-muted {
+        font-size: 0.9em;
+        line-height: 1.4;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background-color: #ccc;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    .toggle-switch.active {
+        background-color: #28a745;
+    }
+    
+    .toggle-switch::before {
+        content: '';
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background-color: white;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .toggle-switch.active::before {
+        transform: translateX(30px);
+    }
+    
+    .probability-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 200px;
+    }
+    
+    .probability-value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 8px;
+    }
+    
+    .form-range {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .probability-labels {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        font-size: 0.8em;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    .password-section {
+        background: #fff3cd;
+        border-left-color: #ffc107;
+    }
+    
+    .btn-update-password {
+        background: linear-gradient(45deg, #ffc107, #e0a800);
+        border: none;
+        color: #212529;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+    
+    .btn-update-password:hover {
+        background: linear-gradient(45deg, #e0a800, #d39e00);
+        color: #212529;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+    }
+    
+    .distractor-disabled {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+    
+    .status-enabled {
+        background-color: #28a745;
+        animation: pulse 2s infinite;
+    }
+    
+    .status-disabled {
+        background-color: #dc3545;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    
+    .alert-info {
+        background-color: #d1ecf1;
+        border-color: #bee5eb;
+        color: #0c5460;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #17a2b8;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">⚙️ Asetukset</h1>
+        <a href="{{ url_for('dashboard_route') }}" class="btn btn-outline-secondary">← Palaa</a>
+    </div>
+    
+    <div class="alert alert-info">
+        <strong>💡 Vinkki:</strong> Häiriötekijät simuloivat todellisia tilanteita hoitotyössä. 
+        Ne auttavat harjoittelemaan keskittymistä ja priorisointia lääkkeenjaon aikana.
+    </div>
+    
+    <!-- Häiriötekijöiden asetukset -->
+    <div class="setting-section">
+        <h3 class="mb-3">🎯 Häiriötekijöiden hallinta</h3>
+        
+        <!-- Päälle/pois toggle -->
+        <div class="setting-row">
+            <div class="setting-info">
+                <h5>
+                    <span id="status-indicator" class="status-indicator status-disabled"></span>
+                    Häiriötekijät käyttöön
+                </h5>
+                <p class="text-muted mb-0">
+                    Ota käyttöön häiriötekijät, jotka simuloivat todellisia keskeytyksiä hoitotyössä
+                </p>
+            </div>
+            <div class="toggle-switch" id="distractors-toggle"></div>
+        </div>
+        
+        <!-- Todennäköisyysäädin -->
+        <div class="setting-row" id="probability-setting">
+            <div class="setting-info">
+                <h5>Häiriötekijöiden tiheys</h5>
+                <p class="text-muted mb-0">
+                    Säädä kuinka usein häiriötekijöitä näytetään harjoituksen aikana
+                </p>
+            </div>
+            <div class="probability-container">
+                <div class="probability-value" id="probability-display">25%</div>
+                <input type="range" 
+                       class="form-range" 
+                       id="probability-slider" 
+                       min="0" 
+                       max="100" 
+                       value="{{ current_user.distractor_probability or 25 }}"
+                       step="5">
+                <div class="probability-labels">
+                    <span>0%</span>
+                    <span>50%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Salasanan vaihto -->
+    <div class="setting-section password-section">
+        <h3 class="mb-3">🔐 Salasanan vaihto</h3>
+        <form method="POST" action="{{ url_for('settings_route') }}">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="current_password" class="form-label">Nykyinen salasana</label>
+                    <input type="password" class="form-control" id="current_password" name="current_password" required>
+                </div>
+                <div class="col-md-6"></div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="new_password" class="form-label">Uusi salasana</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" required minlength="6">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="confirm_password" class="form-label">Vahvista uusi salasana</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required minlength="6">
+                </div>
+            </div>
+            
+            <button type="submit" class="btn btn-update-password">
+                🔄 Päivitä salasana
+            </button>
+        </form>
+    </div>
+    
+    <!-- Käyttötilastot -->
+    <div class="setting-section">
+        <h3 class="mb-3">📊 Käyttötilastot</h3>
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h4 id="total-questions">-</h4>
+                    <small class="text-muted">Kysymyksiä vastattu</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h4 id="distractor-attempts">-</h4>
+                    <small class="text-muted">Häiriötekijöitä käsitelty</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-item">
+                    <h4 id="success-rate">-%</h4>
+                    <small class="text-muted">Onnistumisprosentti</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // DOM elementit
+    const distractorsToggle = document.getElementById('distractors-toggle');
+    const probabilitySlider = document.getElementById('probability-slider');
+    const probabilityDisplay = document.getElementById('probability-display');
+    const statusIndicator = document.getElementById('status-indicator');
+    const probabilitySetting = document.getElementById('probability-setting');
+    
+    // Lataa häiriötekijöiden tila
+    let distractorsEnabled = {{ current_user.distractors_enabled|tojson }};
+    let currentProbability = {{ current_user.distractor_probability or 25 }};
+    
+    console.log('Häiriötekijöiden tila ladattu:', distractorsEnabled);
+    console.log('Todennäköisyys ladattu:', currentProbability);
+    
+    // Alusta käyttöliittymä
+    updateToggleUI();
+    updateProbabilityUI();
+    
+    // Toggle-toiminnallisuus
+    distractorsToggle.addEventListener('click', async function() {
+        distractorsEnabled = !distractorsEnabled;
+        updateToggleUI();
+        
+        try {
+            const response = await fetch('/api/settings/toggle_distractors', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ enabled: distractorsEnabled })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('Asetus tallennettu onnistuneesti:', result.distractors_enabled);
+                showNotification('Asetukset tallennettu!', 'success');
+            } else {
+                console.error('Virhe asetuksen tallentamisessa:', result.error);
+                // Palauta vanha tila jos virhe
+                distractorsEnabled = !distractorsEnabled;
+                updateToggleUI();
+                showNotification('Virhe asetuksen tallentamisessa!', 'error');
+            }
+        } catch (error) {
+            console.error('Verkkovirhe:', error);
+            // Palauta vanha tila jos virhe
+            distractorsEnabled = !distractorsEnabled;
+            updateToggleUI();
+            showNotification('Verkkovirhe!', 'error');
+        }
+    });
+    
+    // Todennäköisyys-sliderin toiminnallisuus
+    probabilitySlider.addEventListener('input', function() {
+        currentProbability = parseInt(this.value);
+        updateProbabilityDisplay();
+    });
+    
+    probabilitySlider.addEventListener('change', async function() {
+        currentProbability = parseInt(this.value);
+        
+        try {
+            const response = await fetch('/api/settings/update_distractor_probability', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ probability: currentProbability })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                console.log('Todennäköisyys päivitetty:', result.probability + '%');
+                showNotification(`Todennäköisyys päivitetty: ${result.probability}%`, 'success');
+            } else {
+                console.error('Virhe todennäköisyyden päivityksessä:', result.error);
+                showNotification('Virhe todennäköisyyden päivityksessä!', 'error');
+            }
+        } catch (error) {
+            console.error('Verkkovirhe todennäköisyyden päivityksessä:', error);
+            showNotification('Verkkovirhe!', 'error');
+        }
+    });
+    
+    function updateToggleUI() {
+        if (distractorsEnabled) {
+            distractorsToggle.classList.add('active');
+            statusIndicator.classList.remove('status-disabled');
+            statusIndicator.classList.add('status-enabled');
+            probabilitySetting.classList.remove('distractor-disabled');
+        } else {
+            distractorsToggle.classList.remove('active');
+            statusIndicator.classList.remove('status-enabled');
+            statusIndicator.classList.add('status-disabled');
+            probabilitySetting.classList.add('distractor-disabled');
+        }
+    }
+    
+    function updateProbabilityUI() {
+        probabilitySlider.value = currentProbability;
+        updateProbabilityDisplay();
+    }
+    
+    function updateProbabilityDisplay() {
+        probabilityDisplay.textContent = currentProbability + '%';
+        
+        // Värin muutos todennäköisyyden mukaan
+        if (currentProbability === 0) {
+            probabilityDisplay.style.color = '#dc3545';
+        } else if (currentProbability <= 25) {
+            probabilityDisplay.style.color = '#28a745';
+        } else if (currentProbability <= 50) {
+            probabilityDisplay.style.color = '#ffc107';
+        } else {
+            probabilityDisplay.style.color = '#dc3545';
+        }
+    }
+    
+    function showNotification(message, type) {
+        // Luo notifikaatio-elementti
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 20px; right: 20px; z-index: 1050; min-width: 300px;';
+        notification.innerHTML = `
+            <strong>${type === 'success' ? '✅' : '❌'}</strong> ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Poista automaattisesti 3 sekunnin kuluttua
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+    
+    // Lataa tilastot
+    loadStats();
+    
+    async function loadStats() {
+        try {
+            // Lataa häiriötekijätilastot
+            const distractorResponse = await fetch('/api/distractor_stats');
+            const distractorStats = await distractorResponse.json();
+            
+            // Lataa yleiset tilastot
+            const statsResponse = await fetch('/api/stats');
+            const generalStats = await statsResponse.json();
+            
+            // Päivitä näyttö
+            document.getElementById('total-questions').textContent = generalStats.total_attempts || 0;
+            document.getElementById('distractor-attempts').textContent = distractorStats.total_attempts || 0;
+            document.getElementById('success-rate').textContent = Math.round(generalStats.success_rate || 0) + '%';
+            
+        } catch (error) {
+            console.log('Tilastojen lataus epäonnistui:', error);
+            document.getElementById('total-questions').textContent = '-';
+            document.getElementById('distractor-attempts').textContent = '-';
+            document.getElementById('success-rate').textContent = '-%';
+        }
+    }
+});
+</script>
+{% endblock %}

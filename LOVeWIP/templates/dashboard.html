@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Kojelauta - LOVe Enhanced{% endblock %}
+
+{% block head_extra %}
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border: 0;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.8rem 1.5rem rgba(0,0,0,0.1) !important;
+    }
+    .card-icon {
+        font-size: 3.5rem;
+        color: var(--bs-primary);
+    }
+    .card a.stretched-link-main, .card[data-bs-toggle="modal"] {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+    }
+    .card a.stretched-link-main::after, .card[data-bs-toggle="modal"]::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="p-4 mb-4 bg-body-tertiary rounded-3">
+    <div class="container-fluid py-3">
+        <h1 class="display-5 fw-bold">Tervetuloa oppimaan!</h1>
+        <p class="col-md-8 fs-4">Valitse alta haluamasi harjoittelumuoto, tarkastele edistymistäsi tai jahtaa saavutuksia.</p>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    <div class="col">
+        <div class="card h-100 text-center shadow-sm" data-bs-toggle="modal" data-bs-target="#practiceModal">
+            <div class="card-body p-4">
+                <div class="card-icon">📚</div>
+                <h5 class="card-title mt-3">Räätälöity harjoitus</h5>
+                <p class="card-text text-muted">Valitse kategoriat, vaikeustaso ja kysymysten määrä.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 text-center shadow-sm">
+            <a href="{{ url_for('review_route') }}" class="stretched-link-main">
+                <div class="card-body p-4">
+                    <div class="card-icon">🧠</div>
+                    <h5 class="card-title mt-3">Älykäs kertaus</h5>
+                    <p class="card-text text-muted">Kertaa aiemmin vaikeiksi osoittautuneita kysymyksiä.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 text-center shadow-sm">
+            <a href="{{ url_for('simulation_route') }}" class="stretched-link-main">
+                <div class="card-body p-4">
+                    <div class="card-icon">🎯</div>
+                    <h5 class="card-title mt-3">Koesimulaatio</h5>
+                    <p class="card-text text-muted">Testaa osaamisesi täysimittaisella 50 kysymyksen kokeella.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="col">
+        <div class="card h-100 text-center shadow-sm">
+            <a href="{{ url_for('stats_route') }}" class="stretched-link-main">
+                <div class="card-body p-4">
+                    <div class="card-icon">📊</div>
+                    <h5 class="card-title mt-3">Omat tilastot</h5>
+                    <p class="card-text text-muted">Analysoi edistymistäsi ja löydä kehityskohteesi.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="practiceModal" tabindex="-1" aria-labelledby="practiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="practiceModalLabel">Räätälöi harjoitus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="practice-form">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">1. Valitse kategoriat:</label>
+                        <div id="category-checkboxes" style="max-height: 200px; overflow-y: auto;" class="form-control">
+                            {% for category in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{ category }}" id="check-{{ loop.index }}">
+                                <label class="form-check-label" for="check-{{ loop.index }}">{{ category.title() }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                     <div class="mb-3">
+                        <label class="form-label fw-bold">2. Valitse vaikeustasot:</label>
+                        <div id="difficulty-checkboxes">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="diff-helppo" value="helppo" checked>
+                                <label class="form-check-label" for="diff-helppo">Helppo</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="diff-keskivaikea" value="keskivaikea" checked>
+                                <label class="form-check-label" for="diff-keskivaikea">Keskivaikea</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="diff-vaikea" value="vaikea" checked>
+                                <label class="form-check-label" for="diff-vaikea">Vaikea</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="question-count" class="form-label fw-bold">3. Kysymysten määrä:</label>
+                        <input type="number" class="form-control" id="question-count" value="10" min="1" max="50">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                <button type="button" class="btn btn-primary" id="start-practice-btn">Aloita harjoitus</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const startButton = document.getElementById('start-practice-btn');
+    if (startButton) {
+        startButton.addEventListener('click', () => {
+            const categoryCheckboxes = document.querySelectorAll('#category-checkboxes input:checked');
+            const difficultyCheckboxes = document.querySelectorAll('#difficulty-checkboxes input:checked');
+            const questionCount = document.getElementById('question-count').value;
+
+            if (categoryCheckboxes.length === 0) {
+                alert('Valitse vähintään yksi kategoria.');
+                return;
+            }
+            if (difficultyCheckboxes.length === 0) {
+                alert('Valitse vähintään yksi vaikeustaso.');
+                return;
+            }
+
+            const queryParams = new URLSearchParams();
+            categoryCheckboxes.forEach(checkbox => queryParams.append('categories', checkbox.value));
+            difficultyCheckboxes.forEach(checkbox => queryParams.append('difficulties', checkbox.value));
+            queryParams.append('count', questionCount);
+
+            window.location.href = `/practice?${queryParams.toString()}`;
+        });
+    }
+});
+</script>
+{% endblock %}

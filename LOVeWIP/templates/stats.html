@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+{% block title %}Tilastot - LOVe Enhanced{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    .stat-card {
+        transition: var(--transition);
+    }
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
+    .stat-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="bi bi-graph-up text-primary-custom"></i> Oppimistilastot</h1>
+        <button id="refresh-stats" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-clockwise"></i> Päivitä
+        </button>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loading-container" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Ladataan tilastoja...</span>
+        </div>
+    </div>
+
+    <!-- Stats content -->
+    <div id="stats-content" class="d-none">
+        <!-- Yleistilastot -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card stat-card shadow-custom h-100">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-primary-light mx-auto mb-3">
+                            <i class="bi bi-question-circle text-primary-custom fs-4"></i>
+                        </div>
+                        <h3 id="total-questions" class="h4 fw-bold mb-1">-</h3>
+                        <p class="text-muted mb-0">Kysymyksiä vastattu</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card shadow-custom h-100">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-success-light mx-auto mb-3">
+                            <i class="bi bi-check-circle text-success fs-4"></i>
+                        </div>
+                        <h3 id="accuracy-rate" class="h4 fw-bold mb-1">-%</h3>
+                        <p class="text-muted mb-0">Tarkkuus</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card shadow-custom h-100">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-warning-light mx-auto mb-3">
+                            <i class="bi bi-clock text-warning fs-4"></i>
+                        </div>
+                        <h3 id="avg-time" class="h4 fw-bold mb-1">-s</h3>
+                        <p class="text-muted mb-0">Keskimääräinen aika</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card shadow-custom h-100">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-info text-white mx-auto mb-3">
+                            <i class="bi bi-trophy fs-4"></i>
+                        </div>
+                        <h3 id="streak-count" class="h4 fw-bold mb-1">-</h3>
+                        <p class="text-muted mb-0">Nykyinen putki</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Häiriötekijätilastot -->
+        <div class="row g-4 mb-5">
+            <div class="col-12">
+                <div class="card shadow-custom">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">
+                            <i class="bi bi-exclamation-triangle text-warning"></i> 
+                            Häiriötekijätilastot
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h3 fw-bold text-primary-custom" id="distractor-attempts">-</div>
+                                    <p class="text-muted mb-0">Häiriötilanteita</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h3 fw-bold text-success" id="distractor-success">-%</div>
+                                    <p class="text-muted mb-0">Onnistumisprosentti</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h3 fw-bold text-warning" id="distractor-response-time">-s</div>
+                                    <p class="text-muted mb-0">Keskimääräinen reaktioaika</p>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center">
+                                    <div class="h3 fw-bold text-info" id="distractor-improvement">-</div>
+                                    <p class="text-muted mb-0">Kehityssuunta</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kaaviot -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-6">
+                <div class="card shadow-custom">
+                    <div class="card-header">
+                        <h3 class="h6 mb-0">Edistyminen kategorioittain</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-custom">
+                    <div class="card-header">
+                        <h3 class="h6 mb-0">Häiriötekijät kategorioittain</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="distractorChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Viimeisimmät suoritukset -->
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card shadow-custom">
+                    <div class="card-header">
+                        <h3 class="h6 mb-0">Viimeisimmät harjoitukset</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="recent-activities" class="list-group list-group-flush">
+                            <!-- Täytetään JavaScriptillä -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow-custom">
+                    <div class="card-header">
+                        <h3 class="h6 mb-0">Viimeisimmät häiriötilanteet</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="recent-distractors" class="list-group list-group-flush">
+                            <!-- Täytetään JavaScriptillä -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let categoryChart, distractorChart;
+
+    const elements = {
+        loadingContainer: document.getElementById('loading-container'),
+        statsContent: document.getElementById('stats-content'),
+        refreshButton: document.getElementById('refresh-stats'),
+        // Yleistilastot
+        totalQuestions: document.getElementById('total-questions'),
+        accuracyRate: document.getElementById('accuracy-rate'),
+        avgTime: document.getElementById('avg-time'),
+        streakCount: document.getElementById('streak-count'),
+        // Häiriötekijätilastot
+        distractorAttempts: document.getElementById('distractor-attempts'),
+        distractorSuccess: document.getElementById('distractor-success'),
+        distractorResponseTime: document.getElementById('distractor-response-time'),
+        distractorImprovement: document.getElementById('distractor-improvement'),
+        // Listat
+        recentActivities: document.getElementById('recent-activities'),
+        recentDistractors: document.getElementById('recent-distractors')
+    };
+
+    async function loadStats() {
+        try {
+            elements.loadingContainer.classList.remove('d-none');
+            elements.statsContent.classList.add('d-none');
+
+            // Lataa yleistilastot ja häiriötekijätilastot
+            const [generalResponse, distractorResponse] = await Promise.all([
+                fetch('/api/stats'),
+                fetch('/api/distractor_stats')
+            ]);
+
+            const generalStats = await generalResponse.json();
+            const distractorStats = await distractorResponse.json();
+
+            updateGeneralStats(generalStats);
+            updateDistractorStats(distractorStats);
+            updateCharts(generalStats, distractorStats);
+            updateRecentActivities(generalStats, distractorStats);
+
+            elements.loadingContainer.classList.add('d-none');
+            elements.statsContent.classList.remove('d-none');
+        } catch (error) {
+            console.error('Virhe tilastojen lataamisessa:', error);
+            elements.loadingContainer.innerHTML = 
+                '<div class="alert alert-danger">Tilastojen lataus epäonnistui. Yritä päivittää sivu.</div>';
+        }
+    }
+
+    function updateGeneralStats(stats) {
+        elements.totalQuestions.textContent = stats.total_questions || 0;
+        elements.accuracyRate.textContent = `${stats.overall_accuracy || 0}%`;
+        elements.avgTime.textContent = `${Math.round(stats.average_time || 0)}s`;
+        elements.streakCount.textContent = stats.current_streak || 0;
+    }
+
+    function updateDistractorStats(stats) {
+        elements.distractorAttempts.textContent = stats.total_attempts || 0;
+        elements.distractorSuccess.textContent = `${stats.success_rate || 0}%`;
+        elements.distractorResponseTime.textContent = `${Math.round(stats.avg_response_time / 1000) || 0}s`;
+        
+        // Yksinkertainen kehityssuunta
+        const successRate = stats.success_rate || 0;
+        let improvement = '📊';
+        if (successRate >= 80) improvement = '⬆️';
+        else if (successRate >= 60) improvement = '➡️';
+        else improvement = '⬇️';
+        
+        elements.distractorImprovement.textContent = improvement;
+    }
+
+    function updateCharts(generalStats, distractorStats) {
+        // Kategoriakaavio
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        if (categoryChart) categoryChart.destroy();
+        
+        const categoryData = generalStats.category_breakdown || [];
+        categoryChart = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categoryData.map(cat => cat.category),
+                datasets: [{
+                    data: categoryData.map(cat => cat.accuracy),
+                    backgroundColor: [
+                        '#2563eb', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.parsed}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Häiriötekijäkaavio
+        const distractorCtx = document.getElementById('distractorChart').getContext('2d');
+        if (distractorChart) distractorChart.destroy();
+        
+        const distractorCategoryData = distractorStats.category_stats || [];
+        distractorChart = new Chart(distractorCtx, {
+            type: 'bar',
+            data: {
+                labels: distractorCategoryData.map(cat => cat.category),
+                datasets: [{
+                    label: 'Onnistumisprosentti',
+                    data: distractorCategoryData.map(cat => cat.success_rate),
+                    backgroundColor: '#f59e0b',
+                    borderColor: '#d97706',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Onnistuminen: ${context.parsed.y}%`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function updateRecentActivities(generalStats, distractorStats) {
+        // Viimeisimmät harjoitukset
+        const recentQuestions = generalStats.recent_sessions || [];
+        elements.recentActivities.innerHTML = '';
+        
+        if (recentQuestions.length === 0) {
+            elements.recentActivities.innerHTML = '<p class="text-muted text-center py-3">Ei viimeaikaisia harjoituksia</p>';
+        } else {
+            recentQuestions.slice(0, 5).forEach(session => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+                item.innerHTML = `
+                    <div>
+                        <strong>${session.category || 'Yleinen'}</strong><br>
+                        <small class="text-muted">${new Date(session.created_at).toLocaleDateString('fi-FI')}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge ${session.is_correct ? 'bg-success' : 'bg-danger'}">
+                            ${session.is_correct ? '✓' : '✗'}
+                        </span>
+                    </div>
+                `;
+                elements.recentActivities.appendChild(item);
+            });
+        }
+
+        // Viimeisimmät häiriötilanteet
+        const recentDistractors = distractorStats.recent_attempts || [];
+        elements.recentDistractors.innerHTML = '';
+        
+        if (recentDistractors.length === 0) {
+            elements.recentDistractors.innerHTML = '<p class="text-muted text-center py-3">Ei viimeaikaisia häiriötilanteita</p>';
+        } else {
+            recentDistractors.slice(0, 5).forEach(distractor => {
+                const item = document.createElement('div');
+                item.className = 'list-group-item list-group-item-action d-flex justify-content-between align-items-center';
+                
+                // Lyhennä skenaario
+                const shortScenario = distractor.distractor_scenario.length > 50 
+                    ? distractor.distractor_scenario.substring(0, 50) + '...'
+                    : distractor.distractor_scenario;
+                
+                item.innerHTML = `
+                    <div>
+                        <strong>${shortScenario}</strong><br>
+                        <small class="text-muted">${new Date(distractor.created_at).toLocaleDateString('fi-FI')}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge ${distractor.is_correct ? 'bg-success' : 'bg-warning'}">
+                            ${distractor.is_correct ? '✓' : '⚠'}
+                        </span>
+                    </div>
+                `;
+                elements.recentDistractors.appendChild(item);
+            });
+        }
+    }
+
+    // Event listeners
+    elements.refreshButton.addEventListener('click', loadStats);
+
+    // Lataa tilastot sivun avautuessa
+    loadStats();
+});
+</script>
+{% endblock %}

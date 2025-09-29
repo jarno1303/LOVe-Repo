@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+{% block title %}Koesimulaatio - LOVe Enhanced{% endblock %}
+{% block head_extra %}
+<style>
+    /* Sivupalkin navigointinapit */
+    #question-nav .btn {
+        width: 40px;
+        height: 40px;
+        margin: 2px;
+        padding: 0;
+        font-weight: 500;
+    }
+    #question-nav .btn.answered {
+        background-color: var(--bs-success-bg-subtle);
+        border-color: var(--bs-success-border-subtle);
+        color: var(--bs-success-text-emphasis);
+    }
+    #question-nav .btn.active {
+        background-color: var(--bs-primary);
+        color: white;
+        border-color: var(--bs-primary);
+    }
+    .option-btn {
+        text-align: left;
+        white-space: normal;
+    }
+    /* Uudet tyylit yhteenvedolle */
+    .review-card {
+        border-left-width: 5px;
+    }
+    .review-card.border-success {
+        border-left-color: var(--bs-success) !important;
+    }
+    .review-card.border-danger {
+        border-left-color: var(--bs-danger) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="simulation-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">🎓 Koesimulaatio</h1>
+        <div id="timer-wrapper" class="text-end" style="display: none;">
+            <div id="timer" class="fw-bold fs-5 text-warning"></div>
+            <div id="progress-text" class="text-muted"></div>
+        </div>
+    </div>
+
+    <div id="start-screen" class="text-center p-5 bg-body-tertiary rounded-3">
+        <h2 class="h4">Oletko valmis testaamaan osaamisesi?</h2>
+        <p class="lead text-muted">Koe sisältää 50 kysymystä ja aikaraja on 60 minuuttia.</p>
+        <button id="start-button" class="btn btn-primary btn-lg mt-3">Aloita koe</button>
+    </div>
+
+    <div id="quiz-wrapper" style="display: none;">
+        <div id="loading-container" class="d-flex justify-content-center align-items-center py-5">
+            <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Ladataan...</span></div>
+        </div>
+        <div class="row g-4" id="quiz-area" style="display: none;">
+            <div class="col-md-4 col-lg-3">
+                <div class="card shadow-sm">
+                    <div class="card-header fw-bold">Kysymykset</div>
+                    <div class="card-body">
+                        <div id="question-nav" class="d-flex flex-wrap justify-content-center"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8 col-lg-9">
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <div id="question-container" class="alert alert-light fs-5 fw-bold"></div>
+                        <div id="options-container" class="d-grid gap-2 mt-4"></div>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <button id="prev-button" class="btn btn-secondary">← Edellinen</button>
+                        <button id="next-button" class="btn btn-primary">Seuraava →</button>
+                        <button id="finish-button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmFinishModal">🏁 Valmis</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="review-container" class="my-4" style="display: none;">
+    <!-- Yhteenveto rakennetaan tänne -->
+</div>
+
+<div class="modal fade" id="confirmFinishModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Vahvista lopetus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Haluatko varmasti lopettaa kokeen ja tarkistaa vastauksesi?</p>
+                <p class="text-muted" id="unanswered-warning"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                <button type="button" class="btn btn-success" id="confirm-finish-btn">Vahvista ja tarkista</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    let questions = [];
+    let userAnswers = [];
+    let currentQuestionIndex = 0;
+    let timerInterval;
+
+    const elements = {
+        startButton: document.getElementById('start-button'),
+        startScreen: document.getElementById('start-screen'),
+        quizWrapper: document.getElementById('quiz-wrapper'),
+        timerWrapper: document.getElementById('timer-wrapper'),
+        loading: document.getElementById('loading-container'),
+        quizArea: document.getElementById('quiz-area'),
+        questionNav: document.getElementById('question-nav'),
+        questionContainer: document.getElementById('question-container'),
+        optionsContainer: document.getElementById('options-container'),
+        prevButton: document.getElementById('prev-button'),
+        nextButton: document.getElementById('next-button'),
+        finishButton: document.getElementById('finish-button'),
+        timer: document.getElementById('timer'),
+        progressText: document.getElementById('progress-text'),
+        simulationContainer: document.getElementById('simulation-container'),
+        confirmFinishBtn: document.getElementById('confirm-finish-btn'),
+        unansweredWarning: document.getElementById('unanswered-warning'),
+        reviewContainer: document.getElementById('review-container')
+    };
+    
+    function startTimer(duration) {
+        let timeLeft = duration;
+        timerInterval = setInterval(() => {
+            const minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            elements.timer.textContent = `Aikaa jäljellä: ${minutes}:${seconds}`;
+            if (timeLeft <= 300) elements.timer.classList.add('text-danger');
+            if (--timeLeft < 0) {
+                clearInterval(timerInterval);
+                finishQuiz();
+            }
+        }, 1000);
+    }
+
+    function renderQuestion() {
+        const question = questions[currentQuestionIndex];
+        elements.progressText.innerText = `Kysymys ${currentQuestionIndex + 1} / ${questions.length}`;
+        elements.questionContainer.innerText = question.question;
+        elements.optionsContainer.innerHTML = '';
+        question.options.forEach((option, index) => {
+            const isSelected = userAnswers[currentQuestionIndex] === index;
+            const button = document.createElement('button');
+            button.className = `btn ${isSelected ? 'btn-primary' : 'btn-outline-secondary'} option-btn`;
+            button.innerHTML = `${String.fromCharCode(65 + index)}. ${option}`;
+            button.onclick = () => selectAnswer(index);
+            elements.optionsContainer.appendChild(button);
+        });
+        updateNav();
+        updateButtons();
+    }
+
+    function selectAnswer(index) {
+        userAnswers[currentQuestionIndex] = index;
+        renderQuestion();
+    }
+
+    function updateNav() {
+        elements.questionNav.innerHTML = '';
+        questions.forEach((q, index) => {
+            let classes = 'btn btn-sm';
+            if (userAnswers[index] !== undefined) classes += ' answered';
+            else classes += ' btn-outline-secondary';
+            if (index === currentQuestionIndex) classes += ' active';
+            const button = document.createElement('button');
+            button.className = classes;
+            button.innerText = index + 1;
+            button.onclick = () => navigateTo(index);
+            elements.questionNav.appendChild(button);
+        });
+    }
+
+    function navigateTo(index) {
+        currentQuestionIndex = index;
+        renderQuestion();
+    }
+
+    function updateButtons() {
+        elements.prevButton.disabled = currentQuestionIndex === 0;
+        elements.nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Viimeinen kysymys' : 'Seuraava →';
+    }
+
+    async function finishQuiz() {
+        clearInterval(timerInterval);
+        const modalElement = document.getElementById('confirmFinishModal');
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+        elements.simulationContainer.innerHTML = '<div class="text-center py-5"><div class="spinner-border"></div><p class="mt-2">Tarkistetaan vastauksia...</p></div>';
+        const response = await fetch('/api/submit_simulation', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                answers: userAnswers,
+                questions: questions.map(q => q.id)
+            })
+        });
+        const results = await response.json();
+        renderResults(results);
+    }
+
+    function renderResults(results) {
+        const passed = results.percentage >= 60;
+        let resultHTML = `
+        <div class="text-center p-4 p-md-5 rounded-3 ${passed ? 'bg-success-subtle' : 'bg-danger-subtle'}">
+            <h1 class="display-4">${passed ? '🎉 Hyväksytty!' : '❌ Hylätty'}</h1>
+            <p class="h2 fw-bold">${results.score} / ${results.total} oikein</p>
+            <p class="lead mb-4">Tuloksesi on ${results.percentage.toFixed(1)}%.</p>
+            <button id="review-button" class="btn btn-info btn-lg mb-2">Tarkista vastaukset</button>
+            <div>
+                <a href="/dashboard" class="btn btn-primary">Palaa kojelautaan</a>
+                <a href="/simulation" class="btn btn-secondary">Yritä uudelleen</a>
+            </div>
+        </div>`;
+        elements.simulationContainer.innerHTML = resultHTML;
+
+        document.getElementById('review-button').addEventListener('click', () => {
+            renderReview(results.detailed_results);
+        });
+    }
+
+    function renderReview(detailedResults) {
+        elements.simulationContainer.style.display = 'none';
+        elements.reviewContainer.style.display = 'block';
+        elements.reviewContainer.innerHTML = '<h2 class="mb-4">Vastausten yhteenveto</h2>';
+
+        detailedResults.forEach((result, index) => {
+            const cardBorderClass = result.is_correct ? 'border-success' : 'border-danger';
+            let optionsHTML = '';
+            result.options.forEach((option, i) => {
+                let optionClass = '';
+                let icon = '';
+                if (i === result.correct_answer) {
+                    optionClass = 'list-group-item-success';
+                    icon = '✅';
+                }
+                if (i === result.user_answer && !result.is_correct) {
+                    optionClass = 'list-group-item-danger';
+                    icon = '❌';
+                }
+                optionsHTML += `<li class="list-group-item ${optionClass}">${icon} ${String.fromCharCode(65 + i)}. ${option}</li>`;
+            });
+
+            const reviewCardHTML = `
+            <div class="card shadow-sm mb-4 review-card ${cardBorderClass}">
+                <div class="card-header">
+                    <strong>Kysymys ${index + 1}:</strong> ${result.question}
+                </div>
+                <div class="card-body">
+                    <ul class="list-group mb-3">
+                        ${optionsHTML}
+                    </ul>
+                    <p class="card-text"><strong>Selitys:</strong> ${result.explanation}</p>
+                </div>
+            </div>`;
+            elements.reviewContainer.innerHTML += reviewCardHTML;
+        });
+    }
+
+    async function initializeQuiz() {
+        try {
+            // ### KORJATTU KOHTA ALKAA ###
+            // Määritellään, että haetaan kaikista kategorioista ja vaikeustasoista
+            const categories = ""; // Tyhjä tarkoittaa kaikkia
+            const difficulties = "helppo,keskivaikea,vaikea";
+            const limit = 50;
+
+            const response = await fetch(`/api/questions?limit=${limit}&category=${encodeURIComponent(categories)}&difficulties=${encodeURIComponent(difficulties)}`);
+            // ### KORJATTU KOHTA LOPPUU ###
+
+            if (!response.ok) throw new Error('Verkkovirhe');
+            
+            const data = await response.json();
+            
+            if (!data.questions || data.questions.length < limit) {
+                 throw new Error(`Ei riittävästi kysymyksiä simulaatioon (löytyi ${data.questions ? data.questions.length : 0}, tarvitaan ${limit}).`);
+            }
+
+            questions = data.questions;
+            userAnswers = new Array(questions.length).fill(undefined);
+            
+            elements.loading.style.display = 'none';
+            elements.quizArea.style.display = 'flex';
+            elements.timerWrapper.style.display = 'block';
+            
+            renderQuestion();
+            startTimer(3600); // 60 minuuttia
+        } catch (error) {
+            elements.quizWrapper.innerHTML = `<div class="alert alert-danger">Simulaation lataus epäonnistui: ${error.message}. Yritä päivittää sivu.</div>`;
+            console.error(error);
+        }
+    }
+    
+    elements.startButton.addEventListener('click', () => {
+        elements.startScreen.style.display = 'none';
+        elements.quizWrapper.style.display = 'block';
+        initializeQuiz();
+    });
+
+    elements.prevButton.addEventListener('click', () => {
+        if (currentQuestionIndex > 0) navigateTo(currentQuestionIndex - 1);
+    });
+
+    elements.nextButton.addEventListener('click', () => {
+        if (currentQuestionIndex < questions.length - 1) navigateTo(currentQuestionIndex + 1);
+        else elements.finishButton.click();
+    });
+    
+    elements.finishButton.addEventListener('click', () => {
+        const unansweredCount = userAnswers.filter(a => a === undefined).length;
+        elements.unansweredWarning.textContent = unansweredCount > 0 ? `Varoitus: Sinulla on ${unansweredCount} vastaamatonta kysymystä.` : '';
+    });
+
+    elements.confirmFinishBtn.addEventListener('click', finishQuiz);
+});
+</script>
+{% endblock %}

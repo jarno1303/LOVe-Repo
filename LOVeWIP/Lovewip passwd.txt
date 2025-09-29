@@ -1,0 +1,16 @@
+PS C:\Users\UserX\desktop\kaikki\koodia\lovekys> cd lovewip
+PS C:\Users\UserX\desktop\kaikki\koodia\lovekys\lovewip> $env:SECRET_KEY="Magalhaes$$2020$€£€€$$£€£@£"
+PS C:\Users\UserX\desktop\kaikki\koodia\lovekys\lovewip> flask run
+Usage: flask run [OPTIONS]
+Try 'flask run --help' for help.
+
+Error: While importing 'LOVeWIP.app', an ImportError was raised:
+
+Traceback (most recent call last):
+  File "C:\Users\UserX\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\cli.py", line 245, in locate_app
+    __import__(module_name)
+  File "C:\Users\UserX\Desktop\Kaikki\Koodia\Lovekys\LOVeWIP\app.py", line 10, in <module>
+    from database.database_manager import DatabaseManager
+ModuleNotFoundError: No module named 'database'
+
+PS C:\Users\UserX\desktop\kaikki\koodia\lovekys\lovewip>

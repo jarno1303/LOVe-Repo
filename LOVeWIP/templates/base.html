@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LOVe Enhanced{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+    /* Dark Mode CSS Variables */
+    :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-tertiary: #e9ecef;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --border-color: #dee2e6;
+        --card-bg: #ffffff;
+        --card-shadow: rgba(0, 0, 0, 0.1);
+        --input-bg: #ffffff;
+        --input-border: #ced4da;
+        --gradient-start: #667eea;
+        --gradient-end: #764ba2;
+    }
+
+    [data-theme="dark"] {
+        --bg-primary: #1a1a1a;
+        --bg-secondary: #2d2d2d;
+        --bg-tertiary: #3a3a3a;
+        --text-primary: #e4e4e4;
+        --text-secondary: #a0a0a0;
+        --border-color: #404040;
+        --card-bg: #2d2d2d;
+        --card-shadow: rgba(0, 0, 0, 0.3);
+        --input-bg: #3a3a3a;
+        --input-border: #505050;
+        --gradient-start: #4a5568;
+        --gradient-end: #2d3748;
+    }
+
+    body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        min-height: 100vh;
+    }
+
+    .card {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        box-shadow: 0 4px 6px var(--card-shadow);
+    }
+
+    .bg-light {
+        background-color: var(--bg-secondary) !important;
+    }
+
+    .text-muted {
+        color: var(--text-secondary) !important;
+    }
+
+    .form-control, .form-select {
+        background-color: var(--input-bg);
+        border-color: var(--input-border);
+        color: var(--text-primary);
+    }
+
+    .form-control:focus, .form-select:focus {
+        background-color: var(--input-bg);
+        color: var(--text-primary);
+        border-color: #007bff;
+    }
+
+    .modal-content {
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+    }
+
+    .modal-header, .modal-footer {
+        border-color: var(--border-color);
+    }
+
+    .list-group-item {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    .table {
+        color: var(--text-primary);
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: var(--bg-secondary);
+    }
+
+    [data-theme="dark"] .navbar-light {
+        background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    }
+
+    [data-theme="dark"] .navbar-light .navbar-brand,
+    [data-theme="dark"] .navbar-light .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+    [data-theme="dark"] .navbar-light .nav-link:hover {
+        color: rgba(255, 255, 255, 1) !important;
+    }
+
+    [data-theme="dark"] .dropdown-menu {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-color);
+    }
+
+    [data-theme="dark"] .dropdown-item {
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .dropdown-item:hover {
+        background-color: var(--bg-tertiary);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .btn-light {
+        background-color: var(--bg-tertiary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .btn-light:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .btn-outline-primary:not(:hover) {
+        color: #6ea8fe;
+        border-color: #6ea8fe;
+    }
+
+    [data-theme="dark"] .alert-info {
+        background-color: #1f3a4f;
+        border-color: #2c5270;
+        color: #a3cfec;
+    }
+
+    [data-theme="dark"] .alert-warning {
+        background-color: #4f3d1f;
+        border-color: #705a2c;
+        color: #ffc107;
+    }
+
+    [data-theme="dark"] .alert-success {
+        background-color: #1f4f2f;
+        border-color: #2c7040;
+        color: #a3ecb3;
+    }
+
+    [data-theme="dark"] .alert-danger {
+        background-color: #4f1f1f;
+        border-color: #702c2c;
+        color: #eca3a3;
+    }
+
+    [data-theme="dark"] .progress {
+        background-color: var(--bg-tertiary);
+    }
+
+    .theme-toggle-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .theme-toggle {
+        position: relative;
+        width: 60px;
+        height: 30px;
+        background-color: #ccc;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    [data-theme="dark"] .theme-toggle {
+        background-color: #4a5568;
+    }
+
+    .theme-toggle::before {
+        content: '☀️';
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background-color: white;
+        top: 2px;
+        left: 2px;
+        transition: transform 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+
+    [data-theme="dark"] .theme-toggle::before {
+        content: '🌙';
+        transform: translateX(30px);
+    }
+
+    [data-theme="dark"] .spinner-border {
+        border-color: var(--text-secondary);
+        border-right-color: transparent;
+    }
+
+    .navbar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .nav-link {
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .nav-link:hover {
+        transform: translateY(-2px);
+    }
+
+    .content-wrapper {
+        min-height: calc(100vh - 56px);
+        padding-bottom: 2rem;
+    }
+    </style>
+
+    <script>
+    (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        
+        if (themeToggle) {
+            themeToggle.checked = currentTheme === 'dark';
+            
+            themeToggle.addEventListener('change', function() {
+                const newTheme = this.checked ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                fetch('/api/settings/update_theme', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ theme: newTheme })
+                }).catch(err => console.log('Theme update failed:', err));
+            });
+        }
+        
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) {
+                const newTheme = e.matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                if (themeToggle) {
+                    themeToggle.checked = e.matches;
+                }
+            }
+        });
+    });
+    </script>
+    
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="{{ url_for('dashboard_route') }}">
+                <i class="bi bi-heart-pulse-fill"></i> LOVe Enhanced
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('dashboard_route') }}">
+                            <i class="bi bi-house-door"></i> Kojelauta
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('practice_route') }}">
+                            <i class="bi bi-book"></i> Harjoitus
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('simulation_route') }}">
+                            <i class="bi bi-controller"></i> Simulaatio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('stats_route') }}">
+                            <i class="bi bi-graph-up"></i> Tilastot
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="{{ url_for('achievements_route') }}">
+                            <i class="bi bi-trophy"></i> Saavutukset
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle"></i> {{ current_user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('profile_route') }}">
+                                <i class="bi bi-person"></i> Profiili
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('settings_route') }}">
+                                <i class="bi bi-gear"></i> Asetukset
+                            </a></li>
+                            {% if current_user.role == 'admin' %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-warning" href="/admin">
+                                <i class="bi bi-shield-check"></i> Hallinta
+                            </a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout_route') }}">
+                                <i class="bi bi-box-arrow-right"></i> Kirjaudu ulos
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="content-wrapper">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

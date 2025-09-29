@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Lisää uusi kysymys{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px;">
+    <h1 class="mb-4">➕ Lisää uusi kysymys</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin_add_question_route') }}">
+                <div class="mb-3">
+                    <label for="question" class="form-label fw-bold">Kysymysteksti</label>
+                    <textarea class="form-control" id="question" name="question" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Vastausvaihtoehdot (Syötä oikea vastaus ensimmäiseen kenttään)</label>
+                    <div class="input-group mb-2"><span class="input-group-text bg-success-subtle">A (Oikea)</span><input type="text" class="form-control" name="option_correct" required></div>
+                    <div class="input-group mb-2"><span class="input-group-text">B</span><input type="text" class="form-control" name="option_wrong_1" required></div>
+                    <div class="input-group mb-2"><span class="input-group-text">C</span><input type="text" class="form-control" name="option_wrong_2" required></div>
+                    <div class="input-group"><span class="input-group-text">D</span><input type="text" class="form-control" name="option_wrong_3" required></div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="explanation" class="form-label fw-bold">Selitys</label>
+                    <textarea class="form-control" id="explanation" name="explanation" rows="2" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="category" class="form-label fw-bold">Kategoria</label>
+                        <select class="form-select" id="category_select" name="category">
+                            <option value="" disabled selected>Valitse olemassa oleva...</option>
+                            {% for category in categories %}
+                                <option value="{{ category }}">{{ category.title() }}</option>
+                            {% endfor %}
+                            <option value="__add_new__">... Lisää uusi kategoria ...</option>
+                        </select>
+                        <input type="text" class="form-control mt-2 d-none" id="new_category_input" name="new_category" placeholder="Uuden kategorian nimi">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="difficulty" class="form-label fw-bold">Vaikeustaso</label>
+                        <select class="form-select" id="difficulty" name="difficulty" required>
+                            <option value="helppo">Helppo</option>
+                            <option value="keskivaikea" selected>Keskivaikea</option>
+                            <option value="vaikea">Vaikea</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('admin_route') }}" class="btn btn-secondary me-2">Peruuta</a>
+                    <button type="submit" class="btn btn-success">Tallenna kysymys</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const categorySelect = document.getElementById('category_select');
+    const newCategoryInput = document.getElementById('new_category_input');
+
+    categorySelect.addEventListener('change', () => {
+        if (categorySelect.value === '__add_new__') {
+            newCategoryInput.classList.remove('d-none');
+            newCategoryInput.required = true;
+            categorySelect.required = false;
+        } else {
+            newCategoryInput.classList.add('d-none');
+            newCategoryInput.required = false;
+            categorySelect.required = true;
+        }
+    });
+});
+</script>
+{% endblock %}
