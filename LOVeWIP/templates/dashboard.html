@@ -4,337 +4,382 @@
 
 {% block extra_head %}
 <style>
-    .card {
+    /* Uudet tyylit Ohjatun Valinnan osiolle */
+    .card-clickable {
+        display: block;
+        height: 100%;
+        color: inherit;
+        text-decoration: none;
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        border: 0;
-        cursor: pointer;
     }
-    
-    .card:hover {
+    .card-clickable:hover {
         transform: translateY(-5px);
         box-shadow: 0 0.8rem 1.5rem rgba(0,0,0,0.15) !important;
     }
-    
-    .card-icon {
-        font-size: 3.5rem;
-        margin-bottom: 1rem;
-    }
-    
-    .card-clickable {
-        text-decoration: none;
-        color: inherit;
-        display: block;
-        height: 100%;
-    }
-    
-    .jumbotron {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    .coach-pick-card {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
         color: white;
-        border-radius: 15px;
-        padding: 3rem 2rem;
-        margin-bottom: 2rem;
+        border: none;
+    }
+    .coach-pick-card .btn-light {
+        font-weight: bold;
+        padding: 0.75rem 1.5rem;
+    }
+    .choice-card .icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-    <!-- Hero Section -->
-    <div class="jumbotron shadow-sm">
-        <h1 class="display-4 fw-bold mb-3">
-            <i class="fas fa-graduation-cap me-3"></i>Tervetuloa oppimaan, {{ current_user.username }}!
-        </h1>
-        <p class="lead mb-0">
-            Valitse alta haluamasi harjoittelumuoto, tarkastele edistymistäsi tai jahtaa saavutuksia.
-        </p>
+    <div class="text-center my-4">
+        <h1 class="display-5 fw-bold">Tervetuloa takaisin, {{ current_user.username }}!</h1>
+        <p class="lead text-muted">Mitä tehdään seuraavaksi?</p>
     </div>
 
-    <!-- Cards Grid -->
+    <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+            <div class="card card-clickable coach-pick-card shadow-lg h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    {% if coach_pick %}
+                        <h5 class="card-title">💡 Valmentajan valinta sinulle</h5>
+                        <p>Huomasimme, että kategoriassa <strong>{{ coach_pick.category|title }}</strong> on eniten kehitettävää (onnistuminen {{ '%.0f'|format(coach_pick.success_rate * 100) }}%).</p>
+                        <p class="mt-auto pt-3">
+                            <a href="/practice?categories={{ coach_pick.category }}&count=10" class="btn btn-light">
+                                <i class="fas fa-play me-2"></i>Aloita 10 kysymyksen pikatreeni
+                            </a>
+                        </p>
+                    {% else %}
+                        <h5 class="card-title">🚀 Olet valmis aloittamaan!</h5>
+                        <p>Et ole vielä tehnyt harjoituksia, joten ei ole suosituksia. Aloita valitsemalla alta sinua kiinnostava aihe.</p>
+                        <p class="mt-auto pt-3">
+                            <button onclick="openPracticeModal()" class="btn btn-light">
+                                <i class="fas fa-sliders-h me-2"></i>Valitse harjoitus
+                            </button>
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="row g-4 h-100">
+                <div class="col-12">
+                    <a href="{{ url_for('mistakes_route') }}" class="card-clickable">
+                        <div class="card choice-card shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon text-warning me-3">🎯</div>
+                                    <div>
+                                        <h6 class="card-title fw-bold mb-1">Kehityskohteet</h6>
+                                        {% if mistake_count > 0 %}
+                                            <p class="card-text text-muted mb-0">Sinulla on {{ mistake_count }} kysymystä, jotka kaipaavat kertausta.</p>
+                                        {% else %}
+                                            <p class="card-text text-muted mb-0">Hienoa, ei virheitä kerrattavana!</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-12">
+                    <div class="card choice-card shadow-sm h-100 card-clickable" onclick="openPracticeModal()">
+                         <div class="card-body p-4">
+                            <div class="d-flex align-items-center">
+                                <div class="icon text-info me-3">⚙️</div>
+                                <div>
+                                    <h6 class="card-title fw-bold mb-1">Räätälöity harjoitus</h6>
+                                    <p class="card-text text-muted mb-0">Valitse itse kategoriat, vaikeustaso ja kysymysten määrä.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="text-center mb-4">Muut toiminnot</h3>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
-        
-        <!-- Räätälöity harjoitus -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="openPracticeModal()" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">📚</div>
-                    <h5 class="card-title mt-3 mb-2">Räätälöity harjoitus</h5>
-                    <p class="card-text text-muted small">
-                        Valitse kategoriat, vaikeustaso ja kysymysten määrä.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Älykäs kertaus -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="window.location.href='{{ url_for('review_route') }}'" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">🧠</div>
-                    <h5 class="card-title mt-3 mb-2">Älykäs kertaus</h5>
-                    <p class="card-text text-muted small">
-                        Kertaa aiemmin vaikeiksi osoittautuneita kysymyksiä.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Koesimulaatio -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="window.location.href='{{ url_for('simulation_route') }}'" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">🎯</div>
-                    <h5 class="card-title mt-3 mb-2">Koesimulaatio</h5>
-                    <p class="card-text text-muted small">
-                        Testaa osaamisesi 50 kysymyksen kokeella.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Omat tilastot -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="window.location.href='{{ url_for('stats_route') }}'" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">📊</div>
-                    <h5 class="card-title mt-3 mb-2">Omat tilastot</h5>
-                    <p class="card-text text-muted small">
-                        Analysoi edistymistäsi ja löydä kehityskohteesi.
-                    </p>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-
-    <!-- Additional Cards Row -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
-        
-        <!-- Saavutukset -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="window.location.href='{{ url_for('achievements_route') }}'" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">🏆</div>
-                    <h5 class="card-title mt-3 mb-2">Saavutukset</h5>
-                    <p class="card-text text-muted small">
-                        Katso avattuja saavutuksiasi ja tavoittele uusia.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Asetukset -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="window.location.href='{{ url_for('settings_route') }}'" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">⚙️</div>
-                    <h5 class="card-title mt-3 mb-2">Asetukset</h5>
-                    <p class="card-text text-muted small">
-                        Hallinnoi tiliäsi ja muokkaa asetuksiasi.
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Profiili -->
-        <div class="col">
-            <div class="card h-100 text-center shadow-sm" onclick="window.location.href='{{ url_for('profile_route') }}'" role="button" tabindex="0">
-                <div class="card-body p-4">
-                    <div class="card-icon">👤</div>
-                    <h5 class="card-title mt-3 mb-2">Profiili</h5>
-                    <p class="card-text text-muted small">
-                        Tarkastele profiiliasi ja oppimishistoriaasi.
-                    </p>
-                </div>
-            </div>
-        </div>
-        
+        <div class="col"><a href="{{ url_for('simulation_route') }}" class="card-clickable"><div class="card h-100 text-center shadow-sm"><div class="card-body p-4"><div class="card-icon">🎯</div><h5 class="card-title mt-3">Koesimulaatio</h5></div></div></a></div>
+        <div class="col"><a href="{{ url_for('stats_route') }}" class="card-clickable"><div class="card h-100 text-center shadow-sm"><div class="card-body p-4"><div class="card-icon">📊</div><h5 class="card-title mt-3">Omat tilastot</h5></div></div></a></div>
+        <div class="col"><a href="{{ url_for('achievements_route') }}" class="card-clickable"><div class="card h-100 text-center shadow-sm"><div class="card-body p-4"><div class="card-icon">🏆</div><h5 class="card-title mt-3">Saavutukset</h5></div></div></a></div>
+        <div class="col"><a href="{{ url_for('calculator_route') }}" class="card-clickable"><div class="card h-100 text-center shadow-sm"><div class="card-body p-4"><div class="card-icon">🧮</div><h5 class="card-title mt-3">Laskurit</h5></div></div></a></div>
     </div>
 </div>
 
-<!-- Custom Practice Modal -->
 <div class="modal fade" id="practiceModal" tabindex="-1" aria-labelledby="practiceModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="practiceModalLabel">
-                    <i class="fas fa-sliders-h me-2"></i>Räätälöi harjoitus
-                </h5>
+                <h5 class="modal-title" id="practiceModalLabel"><i class="fas fa-sliders-h me-2"></i>Räätälöi harjoitus</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="practice-form">
-                    <!-- Kategoriat -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="fas fa-folder me-2"></i>1. Valitse kategoriat:
-                        </label>
-                        <div id="category-checkboxes" style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; background-color: #f8f9fa;">
-                            {% for category in categories %}
-                            <div class="form-check">
-                                <input class="form-check-input category-checkbox" type="checkbox" value="{{ category }}" id="cat_{{ loop.index }}" checked>
-                                <label class="form-check-label" for="cat_{{ loop.index }}">
-                                    {{ category.title() }}
-                                </label>
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <div class="form-text">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Valitse vähintään yksi kategoria
-                        </div>
+                        <label class="form-label fw-bold"><i class="fas fa-folder me-2"></i>1. Valitse kategoriat:</label>
+                        <div id="category-checkboxes" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; background-color: #f8f9fa;"></div>
+                        <p class="category-selection-message text-muted small mt-2 mb-0"><i class="fas fa-info-circle"></i> Valitse vähintään yksi kategoria</p>
                     </div>
-
-                    <!-- Vaikeustasot -->
                     <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            <i class="fas fa-signal me-2"></i>2. Valitse vaikeustasot:
-                        </label>
+                        <label class="form-label fw-bold"><i class="fas fa-signal me-2"></i>2. Valitse vaikeustasot:</label>
                         <div id="difficulty-checkboxes">
-                            <div class="form-check">
-                                <input class="form-check-input difficulty-checkbox" type="checkbox" value="helppo" id="diff-helppo" checked>
-                                <label class="form-check-label" for="diff-helppo">
-                                    <span class="badge bg-success">Helppo</span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input difficulty-checkbox" type="checkbox" value="keskivaikea" id="diff-keskivaikea" checked>
-                                <label class="form-check-label" for="diff-keskivaikea">
-                                    <span class="badge bg-warning text-dark">Keskivaikea</span>
-                                </label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input difficulty-checkbox" type="checkbox" value="vaikea" id="diff-vaikea" checked>
-                                <label class="form-check-label" for="diff-vaikea">
-                                    <span class="badge bg-danger">Vaikea</span>
-                                </label>
-                            </div>
+                            <div class="form-check"><input class="form-check-input difficulty-checkbox" type="checkbox" value="helppo" id="diff-helppo"><label class="form-check-label" for="diff-helppo"><span class="badge bg-success">Helppo</span></label></div>
+                            <div class="form-check"><input class="form-check-input difficulty-checkbox" type="checkbox" value="keskivaikea" id="diff-keskivaikea"><label class="form-check-label" for="diff-keskivaikea"><span class="badge bg-warning text-dark">Keskivaikea</span></label></div>
+                            <div class="form-check"><input class="form-check-input difficulty-checkbox" type="checkbox" value="vaikea" id="diff-vaikea"><label class="form-check-label" for="diff-vaikea"><span class="badge bg-danger">Vaikea</span></label></div>
                         </div>
-                        <div class="form-text">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Valitse vähintään yksi vaikeustaso
-                        </div>
+                        <p class="difficulty-selection-message text-muted small mt-2 mb-0"><i class="fas fa-info-circle"></i> Valitse vähintään yksi vaikeustaso</p>
                     </div>
-
-                    <!-- Kysymysten määrä -->
                     <div class="mb-3">
-                        <label for="question-count" class="form-label fw-bold">
-                            <i class="fas fa-list-ol me-2"></i>3. Kysymysten määrä:
-                        </label>
+                        <label for="question-count" class="form-label fw-bold"><i class="fas fa-list-ol me-2"></i>3. Kysymysten määrä:</label>
                         <input type="number" class="form-control form-control-lg" id="question-count" value="10" min="1" max="100">
-                        <div class="form-text">
-                            <i class="fas fa-info-circle me-1"></i>
-                            Valitse 1-100 kysymystä
-                        </div>
+                        <div class="form-text"><i class="fas fa-info-circle me-1"></i> Valitse 1-100 kysymystä</div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Peruuta
-                </button>
-                <button type="button" class="btn btn-primary btn-lg" onclick="startCustomPractice()">
-                    <i class="fas fa-play me-2"></i>Aloita harjoitus
-                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times me-2"></i>Peruuta</button>
+                <button type="button" class="btn btn-primary btn-lg" onclick="startCustomPractice()"><i class="fas fa-play me-2"></i>Aloita harjoitus</button>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
 
+{% block extra_scripts %}
 <script>
-let practiceModalInstance = null;
+    const userPrefs = {
+        categories: {{ last_categories|tojson|safe }},
+        difficulties: {{ last_difficulties|tojson|safe }}
+    };
 
-// Avaa modal
-function openPracticeModal() {
-    const modal = document.getElementById('practiceModal');
-    if (!practiceModalInstance) {
-        practiceModalInstance = new bootstrap.Modal(modal);
-    }
-    practiceModalInstance.show();
-}
+    let practiceModalInstance = null;
+    let questionCounts = {};
 
-// Aloita räätälöity harjoitus
-function startCustomPractice() {
-    console.log('Aloitetaan räätälöity harjoitus...');
-    
-    // Hae valitut kategoriat
-    const categoryCheckboxes = document.querySelectorAll('.category-checkbox:checked');
-    const categories = [];
-    categoryCheckboxes.forEach(checkbox => {
-        categories.push(checkbox.value);
-    });
-
-    // Hae valitut vaikeustasot
-    const difficultyCheckboxes = document.querySelectorAll('.difficulty-checkbox:checked');
-    const difficulties = [];
-    difficultyCheckboxes.forEach(checkbox => {
-        difficulties.push(checkbox.value);
-    });
-
-    // Hae kysymysten määrä
-    const count = document.getElementById('question-count').value;
-
-    console.log('Kategoriat:', categories);
-    console.log('Vaikeustasot:', difficulties);
-    console.log('Määrä:', count);
-
-    // Validoi
-    if (categories.length === 0) {
-        alert('❌ Valitse vähintään yksi kategoria!');
-        return;
+    async function loadQuestionCounts() {
+        try {
+            const response = await fetch('/api/question_counts');
+            const data = await response.json();
+            questionCounts = data;
+            updateModalWithCounts();
+        } catch (error) {
+            console.error('Virhe kysymysmäärien lataamisessa:', error);
+        }
     }
 
-    if (difficulties.length === 0) {
-        alert('❌ Valitse vähintään yksi vaikeustaso!');
-        return;
+    function updateModalWithCounts() {
+        const container = document.getElementById('category-checkboxes');
+        container.innerHTML = '';
+        
+        const categories = questionCounts.categories || {};
+        const sortedCategories = Object.keys(categories).sort();
+        
+        sortedCategories.forEach((category, index) => {
+            const count = categories[category] || 0;
+            const div = document.createElement('div');
+            div.className = 'form-check';
+            div.innerHTML = `
+                <input class="form-check-input category-checkbox" type="checkbox" value="${category}" id="cat_${index}">
+                <label class="form-check-label" for="cat_${index}">
+                    ${category.charAt(0).toUpperCase() + category.slice(1)}
+                    <span class="text-muted ms-2">(${count})</span>
+                </label>
+            `;
+            container.appendChild(div);
+        });
+        
+        if (userPrefs.categories && userPrefs.categories.length > 0) {
+            document.querySelectorAll('.category-checkbox').forEach(checkbox => {
+                if (userPrefs.categories.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        if (userPrefs.difficulties && userPrefs.difficulties.length > 0) {
+            document.querySelectorAll('.difficulty-checkbox').forEach(checkbox => {
+                if (userPrefs.difficulties.includes(checkbox.value)) {
+                    checkbox.checked = true;
+                }
+            });
+        }
+
+        const allCategoryCheckboxes = document.querySelectorAll('.category-checkbox');
+        allCategoryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateDifficultyCounts);
+        });
+        
+        const allDifficultyCheckboxes = document.querySelectorAll('.difficulty-checkbox');
+        allDifficultyCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateSelectionMessage);
+        });
+        
+        updateDifficultyCounts();
+        updateSelectionMessage();
     }
 
-    if (!count || count < 1 || count > 100) {
-        alert('❌ Kysymysten määrän tulee olla 1-100 välillä!');
-        return;
-    }
-
-    // Rakenna URL parametrit
-    const params = new URLSearchParams();
-    
-    // Lisää jokainen kategoria erikseen
-    categories.forEach(cat => {
-        params.append('categories', cat);
-    });
-    
-    // Lisää jokainen vaikeustaso erikseen
-    difficulties.forEach(diff => {
-        params.append('difficulties', diff);
-    });
-    
-    params.append('count', count);
-
-    // Sulje modal
-    if (practiceModalInstance) {
-        practiceModalInstance.hide();
-    }
-
-    // Ohjaa harjoitussivulle
-    const url = '/practice?' + params.toString();
-    console.log('Ohjataan:', url);
-    window.location.href = url;
-}
-
-// Enter-näppäin modalissa
-document.addEventListener('DOMContentLoaded', function() {
-    const modal = document.getElementById('practiceModal');
-    if (modal) {
-        modal.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                startCustomPractice();
+    function updateDifficultyCounts() {
+        const selectedCategories = Array.from(document.querySelectorAll('.category-checkbox:checked'))
+            .map(cb => cb.value);
+        
+        const catDiffMap = questionCounts.category_difficulty_map || {};
+        
+        const difficultyCounts = {
+            'helppo': 0,
+            'keskivaikea': 0,
+            'vaikea': 0
+        };
+        
+        if (selectedCategories.length > 0) {
+            selectedCategories.forEach(cat => {
+                if (catDiffMap[cat]) {
+                    Object.keys(difficultyCounts).forEach(diff => {
+                        difficultyCounts[diff] += (catDiffMap[cat][diff] || 0);
+                    });
+                }
+            });
+        } else {
+            const globalDifficulties = questionCounts.difficulties || {};
+            Object.keys(difficultyCounts).forEach(diff => {
+                difficultyCounts[diff] = globalDifficulties[diff] || 0;
+            });
+        }
+        
+        const difficultyMap = {
+            'helppo': 'diff-helppo',
+            'keskivaikea': 'diff-keskivaikea',
+            'vaikea': 'diff-vaikea'
+        };
+        
+        Object.keys(difficultyMap).forEach(difficulty => {
+            const checkbox = document.getElementById(difficultyMap[difficulty]);
+            if (checkbox) {
+                const label = checkbox.parentElement.querySelector('.form-check-label');
+                const badgeText = label.querySelector('.badge').textContent;
+                
+                const existingCount = label.querySelector('.text-muted');
+                if (existingCount) {
+                    existingCount.remove();
+                }
+                
+                const countSpan = document.createElement('span');
+                countSpan.className = 'text-muted ms-2';
+                countSpan.textContent = `(${difficultyCounts[difficulty]})`;
+                label.appendChild(countSpan);
+                
+                if (difficultyCounts[difficulty] === 0) {
+                    checkbox.disabled = true;
+                    checkbox.checked = false;
+                    label.style.opacity = '0.5';
+                } else {
+                    checkbox.disabled = false;
+                    label.style.opacity = '1';
+                }
             }
         });
+        
+        updateSelectionMessage();
     }
-    
-    // Fokusoi kysymysten määrä kun modal aukeaa
-    modal.addEventListener('shown.bs.modal', function() {
-        document.getElementById('question-count').focus();
+
+    function updateSelectionMessage() {
+        const selectedCategories = document.querySelectorAll('.category-checkbox:checked').length;
+        const selectedDifficulties = document.querySelectorAll('.difficulty-checkbox:checked:not(:disabled)').length;
+        
+        const categoryMessage = document.querySelector('.category-selection-message');
+        const difficultyMessage = document.querySelector('.difficulty-selection-message');
+        
+        if (categoryMessage) {
+            categoryMessage.innerHTML = selectedCategories === 0 
+                ? '<i class="fas fa-info-circle"></i> Valitse vähintään yksi kategoria' 
+                : `<i class="fas fa-check-circle text-success"></i> ${selectedCategories} kategoriaa valittu`;
+        }
+        
+        if (difficultyMessage) {
+            difficultyMessage.innerHTML = selectedDifficulties === 0 
+                ? '<i class="fas fa-info-circle"></i> Valitse vähintään yksi vaikeustaso' 
+                : `<i class="fas fa-check-circle text-success"></i> ${selectedDifficulties} vaikeustasoa valittu`;
+        }
+    }
+
+    function openPracticeModal() {
+        const modal = document.getElementById('practiceModal');
+        if (!practiceModalInstance) {
+            practiceModalInstance = new bootstrap.Modal(modal);
+        }
+        practiceModalInstance.show();
+    }
+
+    async function startCustomPractice() {
+        const categoryCheckboxes = document.querySelectorAll('.category-checkbox:checked');
+        const categories = Array.from(categoryCheckboxes).map(cb => cb.value);
+
+        const difficultyCheckboxes = document.querySelectorAll('.difficulty-checkbox:checked:not(:disabled)');
+        const difficulties = Array.from(difficultyCheckboxes).map(cb => cb.value);
+
+        const count = document.getElementById('question-count').value;
+
+        if (categories.length === 0) { 
+            alert('Valitse vähintään yksi kategoria!'); 
+            return; 
+        }
+        if (difficulties.length === 0) { 
+            alert('Valitse vähintään yksi vaikeustaso!'); 
+            return; 
+        }
+        if (!count || count < 1 || count > 100) { 
+            alert('Kysymysten määrän tulee olla 1-100 välillä!'); 
+            return; 
+        }
+
+        try {
+            await fetch('/api/user_preferences', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ categories, difficulties })
+            });
+        } catch (error) {
+            console.error('Asetusten tallennus epäonnistui, mutta jatketaan harjoitukseen:', error);
+        }
+
+        const params = new URLSearchParams();
+        categories.forEach(cat => params.append('categories', cat));
+        difficulties.forEach(diff => params.append('difficulties', diff));
+        params.append('count', count);
+
+        if (practiceModalInstance) {
+            practiceModalInstance.hide();
+        }
+
+        window.location.href = '/practice?' + params.toString();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadQuestionCounts();
+        
+        const modal = document.getElementById('practiceModal');
+        if (modal) {
+            modal.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    startCustomPractice();
+                }
+            });
+            
+            modal.addEventListener('shown.bs.modal', function() {
+                document.getElementById('question-count').focus();
+            });
+        }
     });
-});
 </script>
 {% endblock %}

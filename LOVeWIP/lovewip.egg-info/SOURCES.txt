@@ -1,0 +1,18 @@
+setup.py
+data_access/__init__.py
+data_access/database_manager.py
+logic/__init__.py
+logic/achievement_manager.py
+logic/spaced_repetition.py
+logic/stats_manager.py
+lovewip.egg-info/PKG-INFO
+lovewip.egg-info/SOURCES.txt
+lovewip.egg-info/dependency_links.txt
+lovewip.egg-info/top_level.txt
+models/__init__.py
+models/models – kopio.py
+models/models.py
+tests/test_app.py
+ui/__init__.py
+ui/components.py
+ui/views.py

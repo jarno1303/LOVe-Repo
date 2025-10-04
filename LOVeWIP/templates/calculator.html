@@ -1,0 +1,2019 @@
+{% extends "base.html" %}
+
+{% block title %}Laskuri - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-center mb-2">
+                <i class="fas fa-calculator text-primary"></i> Laskuri
+            </h1>
+            <p class="text-center text-muted">Laskutyökalut, kaavat ja muistisäännöt</p>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills nav-fill mb-4" id="calculatorMainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="calculator-main-tab" data-bs-toggle="pill" data-bs-target="#calculator-section" type="button">
+                <i class="fas fa-calculator me-2"></i>Pikalaskin
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="formulas-main-tab" data-bs-toggle="pill" data-bs-target="#formulas-section" type="button">
+                <i class="fas fa-book me-2"></i>Kaavakirjasto
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="mnemonics-main-tab" data-bs-toggle="pill" data-bs-target="#mnemonics-section" type="button">
+                <i class="fas fa-lightbulb me-2"></i>Muistisäännöt
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="practice-main-tab" data-bs-toggle="pill" data-bs-target="#practice-section" type="button">
+                <i class="fas fa-dumbbell me-2"></i>Harjoitukset
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="unit-converter-tab" data-bs-toggle="pill" data-bs-target="#unit-converter-section" type="button">
+                <i class="fas fa-exchange-alt me-2"></i>Yksikkömuunnin
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="calculatorMainContent">
+        <div class="tab-pane fade show active" id="calculator-section">
+            <div class="row">
+                <div class="col-lg-10 mx-auto">
+                    <div class="card mb-4">
+                        <div class="card-header border-bottom border-primary border-2">
+                            <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Valitse laskurityyppi</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="quickCalcTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="basic-calc-tab" data-bs-toggle="tab" data-bs-target="#basic-calc" type="button">
+                                        <i class="fas fa-calculator me-1"></i>Peruslaskin
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="dose-calc-tab" data-bs-toggle="tab" data-bs-target="#dose-calc" type="button">
+                                        <i class="fas fa-pills me-1"></i>Annoslaskenta
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="infusion-calc-tab" data-bs-toggle="tab" data-bs-target="#infusion-calc" type="button">
+                                        <i class="fas fa-tint me-1"></i>Infuusio
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="weight-calc-tab" data-bs-toggle="tab" data-bs-target="#weight-calc" type="button">
+                                        <i class="fas fa-weight me-1"></i>Painoperusteinen
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="bsa-calc-tab" data-bs-toggle="tab" data-bs-target="#bsa-calc" type="button">
+                                        <i class="fas fa-ruler-combined me-1"></i>Kehon pinta-ala
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="bmi-calc-tab" data-bs-toggle="tab" data-bs-target="#bmi-calc" type="button">
+                                        <i class="fas fa-weight-scale me-1"></i>Painoindeksi
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="fluid-calc-tab" data-bs-toggle="tab" data-bs-target="#fluid-calc" type="button">
+                                        <i class="fas fa-water me-1"></i>Nestetasapaino
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="conversion-calc-tab" data-bs-toggle="tab" data-bs-target="#conversion-calc" type="button">
+                                        <i class="fas fa-exchange-alt me-1"></i>Konversiot
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content mt-4" id="quickCalcContent">
+                                <div class="tab-pane fade show active" id="basic-calc">
+                                    <div class="calculator-display mb-3">
+                                        <input type="text" id="calc-display-page" class="form-control form-control-lg text-end" value="0" readonly style="font-size: 1.8rem; font-weight: bold; height: 70px;">
+                                    </div>
+                                    <div class="calculator-buttons">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-3"><button class="btn btn-outline-secondary w-100 calc-btn" onclick="calcClearPage()">C</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-secondary w-100 calc-btn" onclick="calcBackspacePage()">⌫</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-secondary w-100 calc-btn" onclick="calcAppendPage('/')">÷</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-secondary w-100 calc-btn" onclick="calcAppendPage('*')">×</button></div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('7')">7</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('8')">8</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('9')">9</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-secondary w-100 calc-btn" onclick="calcAppendPage('-')">−</button></div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('4')">4</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('5')">5</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('6')">6</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-secondary w-100 calc-btn" onclick="calcAppendPage('+')">+</button></div>
+                                        </div>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('1')">1</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('2')">2</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('3')">3</button></div>
+                                            <div class="col-3"><button class="btn btn-success w-100 calc-btn" onclick="calcEqualsPage()">=</button></div>
+                                        </div>
+                                        <div class="row g-2">
+                                            <div class="col-6"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('0')">0</button></div>
+                                            <div class="col-3"><button class="btn btn-outline-primary w-100 calc-btn" onclick="calcAppendPage('.')">.</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="dose-calc">
+                                    <div class="alert alert-info">
+                                        <strong>Kaava:</strong> Tarvittava määrä = (Määrätty annos ÷ Lääkkeen vahvuus) × Lääkkeen määrä
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Määrätty annos (mg)</label>
+                                        <input type="number" class="form-control form-control-lg" id="dose-prescribed-page" step="0.01" placeholder="Esim. 12.5">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Lääkkeen vahvuus (mg/yksikkö)</label>
+                                        <input type="number" class="form-control form-control-lg" id="dose-strength-page" step="0.01" placeholder="Esim. 50">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Lääkkeen määrä per yksikkö (ml tai kpl)</label>
+                                        <input type="number" class="form-control form-control-lg" id="dose-amount-page" value="1" step="0.01">
+                                    </div>
+                                    <button class="btn btn-primary btn-lg w-100" onclick="calculateDosePage()">
+                                        <i class="fas fa-calculator me-2"></i>Laske
+                                    </button>
+                                    <div id="dose-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                        <h5>Tulos:</h5>
+                                        <p class="mb-0 fs-4" id="dose-result-text-page"></p>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="infusion-calc">
+                                    <ul class="nav nav-tabs mb-3" id="infusionCalcTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="infusion-rate-tab" data-bs-toggle="tab" data-bs-target="#infusion-rate" type="button">
+                                                Tiputusnopeus
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="infusion-dose-tab" data-bs-toggle="tab" data-bs-target="#infusion-dose" type="button">
+                                                Painoperusteinen infuusio
+                                            </button>
+                                        </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active" id="infusion-rate">
+                                            <div class="alert alert-info">
+                                                <strong>Kaava:</strong> Tipat/min = (Tilavuus ml × Tippakerroin) ÷ Aika minuutteina
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tilavuus (ml)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-volume-page" step="0.01" placeholder="Esim. 1000">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Aika (tuntia)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-hours-page" step="0.01" placeholder="Esim. 8">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tippakerroin (gtt/ml)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-factor-page" value="20" step="1">
+                                            </div>
+                                            <button class="btn btn-primary btn-lg w-100" onclick="calculateInfusionPage()">
+                                                <i class="fas fa-calculator me-2"></i>Laske
+                                            </button>
+                                            <div id="infusion-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                                <h5>Tulokset:</h5>
+                                                <p class="mb-1"><strong>Nopeus:</strong> <span id="infusion-result-mlh-page"></span> ml/h</p>
+                                                <p class="mb-0"><strong>Tiputusnopeus:</strong> <span id="infusion-result-gtt-page"></span> gtt/min</p>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="infusion-dose">
+                                            <div class="alert alert-info">
+                                                <strong>Kaava:</strong> Infuusionopeus (ml/h) = (Tavoiteannos (mcg/kg/min) × Paino (kg) × 60) ÷ (Lääkkeen vahvuus (mg) ÷ Tilavuus (ml))
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tavoiteannos (mcg/kg/min)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-dose-target-page" step="0.01" placeholder="Esim. 5">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Potilaan paino (kg)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-dose-weight-page" step="0.1" placeholder="Esim. 70">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Lääkkeen vahvuus (mg)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-dose-strength-page" step="0.01" placeholder="Esim. 200">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tilavuus (ml)</label>
+                                                <input type="number" class="form-control form-control-lg" id="infusion-dose-volume-page" step="0.01" placeholder="Esim. 50">
+                                            </div>
+                                            <button class="btn btn-primary btn-lg w-100" onclick="calculateInfusionDosePage()">
+                                                <i class="fas fa-calculator me-2"></i>Laske
+                                            </button>
+                                            <div id="infusion-dose-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                                <h5>Tulos:</h5>
+                                                <p class="mb-0 fs-4" id="infusion-dose-result-text-page"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="weight-calc">
+                                    <div class="alert alert-info">
+                                        <strong>Kaava:</strong> Annos = Paino (kg) × Annos per kg
+                                        <p><strong>Milloin käytetään?</strong> Lapsipotilaiden ja painoperusteisten lääkeannosten laskemiseen.</p>
+                                        <p><strong>Huomioitavaa:</strong> Varmista yksiköiden yhtenäisyys (esim. mg vs. mcg) ja tarkista maksimiannos!</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Potilaan paino (kg)</label>
+                                        <input type="number" class="form-control form-control-lg" id="weight-page" step="0.1" placeholder="Esim. 75">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Annos per kilogramma (esim. mg/kg)</label>
+                                        <input type="number" class="form-control form-control-lg" id="dose-per-kg-page" step="0.01" placeholder="Esim. 5">
+                                    </div>
+                                    <button class="btn btn-primary btn-lg w-100" onclick="calculateWeightBasedPage()">
+                                        <i class="fas fa-calculator me-2"></i>Laske annos
+                                    </button>
+                                    <div id="weight-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                        <h5>Tulos:</h5>
+                                        <p class="mb-0 fs-4" id="weight-result-text-page"></p>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="bsa-calc">
+                                    <div class="alert alert-info">
+                                        <strong>Kaava:</strong> BSA (m²) = √((Pituus (cm) × Paino (kg)) ÷ 3600)
+                                        <p><strong>Milloin käytetään?</strong> Käytetään erityisesti kemoterapiassa ja muissa tarkoissa lääkeannosteluissa.</p>
+                                        <p><strong>Huomioitavaa:</strong> Varmista, että pituus on senttimetreinä ja paino kilogrammoina.</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pituus (cm)</label>
+                                        <input type="number" class="form-control form-control-lg" id="bsa-height-page" step="0.1" placeholder="Esim. 170">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Paino (kg)</label>
+                                        <input type="number" class="form-control form-control-lg" id="bsa-weight-page" step="0.1" placeholder="Esim. 70">
+                                    </div>
+                                    <button class="btn btn-primary btn-lg w-100" onclick="calculateBSAPage()">
+                                        <i class="fas fa-calculator me-2"></i>Laske
+                                    </button>
+                                    <div id="bsa-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                        <h5>Tulos:</h5>
+                                        <p class="mb-0 fs-4" id="bsa-result-text-page"></p>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="bmi-calc">
+                                    <div class="alert alert-info">
+                                        <strong>Kaava:</strong> BMI = Paino (kg) ÷ (Pituus (m) × Pituus (m))
+                                        <p><strong>Milloin käytetään?</strong> Potilaan painoindeksin arviointiin terveydentilan seurannassa.</p>
+                                        <p><strong>Huomioitavaa:</strong> Varmista, että pituus on metreinä (esim. 170 cm = 1.7 m).</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Paino (kg)</label>
+                                        <input type="number" class="form-control form-control-lg" id="bmi-weight-page" step="0.1" placeholder="Esim. 70">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Pituus (m)</label>
+                                        <input type="number" class="form-control form-control-lg" id="bmi-height-page" step="0.01" placeholder="Esim. 1.7">
+                                    </div>
+                                    <button class="btn btn-primary btn-lg w-100" onclick="calculateBMIPage()">
+                                        <i class="fas fa-calculator me-2"></i>Laske
+                                    </button>
+                                    <div id="bmi-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                        <h5>Tulos:</h5>
+                                        <p class="mb-0 fs-4" id="bmi-result-text-page"></p>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="fluid-calc">
+                                    <div class="alert alert-info">
+                                        <strong>Kaava:</strong> Nestetasapaino = Saanti (ml) − Eritys (ml)
+                                        <p><strong>Milloin käytetään?</strong> Potilaan nestetasapainon seurantaan vuorokauden aikana.</p>
+                                        <p><strong>Huomioitavaa:</strong> Ota huomioon kaikki nesteen lähteet (IV, suun kautta) ja eritys (virtsa, oksennus, uloste).</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nesteen saanti (ml)</label>
+                                        <input type="number" class="form-control form-control-lg" id="fluid-intake-page" step="0.1" placeholder="Esim. 2000">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nesteen eritys (ml)</label>
+                                        <input type="number" class="form-control form-control-lg" id="fluid-output-page" step="0.1" placeholder="Esim. 1800">
+                                    </div>
+                                    <button class="btn btn-primary btn-lg w-100" onclick="calculateFluidPage()">
+                                        <i class="fas fa-calculator me-2"></i>Laske
+                                    </button>
+                                    <div id="fluid-result-page" class="mt-3 alert alert-success" style="display: none;">
+                                        <h5>Tulos:</h5>
+                                        <p class="mb-0 fs-4" id="fluid-result-text-page"></p>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="conversion-calc">
+                                    <h6 class="mb-3">Pika-konversiot</h6>
+                                    <div class="card mb-3">
+                                        <div class="card-header"><strong>Massa</strong></div>
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Milligrammaa (mg)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-mg-page" step="0.01" oninput="convertMassPage('mg')">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Grammaa (g)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-g-page" step="0.001" oninput="convertMassPage('g')">
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Mikrogrammaa (mcg)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-mcg-page" step="0.01" oninput="convertMassPage('mcg')">
+                                                </div>
+                                            </div>
+                                            <div class="text-muted small"><i class="fas fa-info-circle"></i> 1 g = 1000 mg = 1,000,000 mcg</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-3">
+                                        <div class="card-header"><strong>Tilavuus</strong></div>
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <div class="col-md-6">
+                                                    <label class="form-label small">Millilitraa (ml)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-ml-page" step="0.01" oninput="convertVolumePage('ml')">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small">Litraa (L)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-l-page" step="0.001" oninput="convertVolumePage('l')">
+                                                </div>
+                                            </div>
+                                            <div class="text-muted small"><i class="fas fa-info-circle"></i> 1 L = 1000 ml</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-3">
+                                        <div class="card-header"><strong>Paino</strong></div>
+                                        <div class="card-body">
+                                            <div class="row mb-2">
+                                                <div class="col-md-6">
+                                                    <label class="form-label small">Kilogrammaa (kg)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-kg-page" step="0.1" oninput="convertWeightPage('kg')">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label small">Paunaa (lb)</label>
+                                                    <input type="number" class="form-control form-control-lg" id="conv-lb-page" step="0.1" oninput="convertWeightPage('lb')">
+                                                </div>
+                                            </div>
+                                            <div class="text-muted small"><i class="fas fa-info-circle"></i> 1 kg = 2.20462 lb</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card">
+                                        <div class="card-header"><strong>Prosenttiliuos</strong></div>
+                                        <div class="card-body">
+                                            <div class="mb-2">
+                                                <label class="form-label small">Prosentti (%)</label>
+                                                <input type="number" class="form-control form-control-lg" id="conv-percent-page" step="0.1" oninput="convertPercentPage()">
+                                            </div>
+                                            <div id="percent-result-page" class="alert alert-secondary mt-2" style="display: none;">
+                                                <p class="mb-0 small" id="percent-result-text-page"></p>
+                                            </div>
+                                            <div class="text-muted small"><i class="fas fa-info-circle"></i> % = grammaa per 100 ml</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div class="tab-pane fade" id="formulas-section">
+            <div class="row mb-4 no-print">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1"><i class="fas fa-print me-2"></i>Tulostus</h5>
+                                    <p class="mb-0 text-muted">Tulosta kaavat käyttöösi paperille tai PDF:ksi</p>
+                                </div>
+                                <div class="d-flex gap-2">
+                    <button class="btn btn-primary" onclick="printAllFormulas()">
+                        <i class="fas fa-print me-2"></i>Tulosta kaikki kaavat
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="printSelectedFormulas()">
+                        <i class="fas fa-check-square me-2"></i>Tulosta valitut
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="clearAllSelections()">
+                        <i class="fas fa-times me-2"></i>Poista valinnat
+                    </button>
+                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-primary border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="dose" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-pills me-2"></i>A) Annoslaskenta</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('dose')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-primary">Peruskaava:</h6>
+                                <p class="mb-0 fs-5" id="formula-dose">
+                                    <strong>Tarvittava määrä</strong> = <br>
+                                    (Määrätty annos ÷ Lääkkeen vahvuus) × Lääkkeen määrä
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Laskettaessa lääkkeen antomäärää tableteissa tai millilitroina.</p>
+                                <p><strong>Huomioitavaa:</strong> Varmista yksiköiden yhtenäisyys (esim. mg vs. mcg) ennen laskemista.</p>
+                            </div>
+                            
+                            <h6 class="mt-3">Esimerkki 1: Tabletit</h6>
+                            <p class="text-muted small mb-2">Potilaalle määrätty 12,5 mg metoprololia. Saatavilla 50 mg tabletteja.</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Määrätty: 12,5 mg</p>
+                                <p class="mb-1"><strong>2.</strong> Vahvuus: 50 mg/tabletti</p>
+                                <p class="mb-1"><strong>3.</strong> Laske: 12,5 ÷ 50 = 0,25</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> 0,25 tablettia (1/4)</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki 2: Nestemäinen</h6>
+                            <p class="text-muted small mb-2">Määrätty 250 mg, saatavilla 100 mg/5 ml</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Määrätty: 250 mg</p>
+                                <p class="mb-1"><strong>2.</strong> Vahvuus: 100 mg per 5 ml</p>
+                                <p class="mb-1"><strong>3.</strong> Laske: (250 ÷ 100) × 5 = 12,5</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> 12,5 ml</p>
+                            </div>
+
+                            <button class="btn btn-outline-primary mt-3 w-100" onclick="switchToCalculator('dose-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('dose')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-info border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="infusion" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-tint me-2"></i>B) Infuusionopeus</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('infusion')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-info">Kaava 1 (ml/h):</h6>
+                                <p class="mb-0 fs-5" id="formula-infusion-1">
+                                    <strong>ml/h</strong> = Tilavuus (ml) ÷ Aika (h)
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Infuusiopumpun nopeuden säätämiseen.</p>
+                                <p><strong>Huomioitavaa:</strong> Varmista, että aika on tunneissa.</p>
+                            </div>
+                            <div class="alert alert-light border mt-2">
+                                <h6 class="text-info">Kaava 2 (gtt/min):</h6>
+                                <p class="mb-0 fs-5" id="formula-infusion-2">
+                                    <strong>gtt/min</strong> = <br>
+                                    (Tilavuus × Tippakerroin) ÷ Aika (min)
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Kun infuusio annetaan ilman pumppua ja tippoja lasketaan manuaalisesti.</p>
+                                <p><strong>Huomioitavaa:</strong> Tippakerroin on yleensä 20 gtt/ml, mutta tarkista aina!</p>
+                            </div>
+                            <div class="alert alert-light border mt-2">
+                                <h6 class="text-info">Kaava 3 (mcg/kg/min):</h6>
+                                <p class="mb-0 fs-5" id="formula-infusion-3">
+                                    <strong>Infuusionopeus (ml/h)</strong> = <br>
+                                    (Tavoiteannos (mcg/kg/min) × Paino (kg) × 60) ÷ (Lääkkeen vahvuus (mg) ÷ Tilavuus (ml))
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Teho- ja ensihoidossa painoperusteisten infuusioiden laskemiseen.</p>
+                                <p><strong>Huomioitavaa:</strong> Varmista yksiköt: mcg/kg/min ja mg/ml.</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki:</h6>
+                            <p class="text-muted small mb-2">1000 ml infuusio 8 tunnissa, tippakerroin 20 gtt/ml</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>ml/h:</strong></p>
+                                <p class="mb-2">1000 ÷ 8 = <span class="text-success">125 ml/h</span></p>
+                                <p class="mb-1"><strong>gtt/min:</strong></p>
+                                <p class="mb-1">Aika minuutteina: 8 × 60 = 480 min</p>
+                                <p class="mb-0">(1000 × 20) ÷ 480 = <span class="text-success">41,7 gtt/min</span></p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki (mcg/kg/min):</h6>
+                            <p class="text-muted small mb-2">4 mcg/kg/min Dopamiinia, potilas 82 kg, vahvuus 200 mg/50 ml</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Tavoiteannos: 4 mcg/kg/min</p>
+                                <p class="mb-1"><strong>2.</strong> Paino: 82 kg</p>
+                                <p class="mb-1"><strong>3.</strong> Vahvuus: 200 mg / 50 ml = 4 mg/ml</p>
+                                <p class="mb-1"><strong>4.</strong> Laske: (4 × 82 × 60) ÷ (200 ÷ 50) = 4920 ÷ 4 = 1230 mcg/h = 1.23 ml/h</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> 1.23 ml/h</p>
+                            </div>
+
+                            <button class="btn btn-outline-info mt-3 w-100" onclick="switchToCalculator('infusion-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('infusion')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-success border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="weight" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-weight me-2"></i>C) Painoperusteinen annos</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('weight')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-success">Kaava:</h6>
+                                <p class="mb-0 fs-5" id="formula-weight">
+                                    <strong>Annos</strong> = Paino (kg) × Annos per kg
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Lapsipotilaiden ja painoperusteisten lääkeannosten laskemiseen.</p>
+                                <p><strong>Huomioitavaa:</strong> Varmista yksiköiden yhtenäisyys (esim. mg vs. mcg) ja tarkista maksimiannos!</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki:</h6>
+                            <p class="text-muted small mb-2">75 kg potilas, lääke 5 mg/kg</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Paino: 75 kg</p>
+                                <p class="mb-1"><strong>2.</strong> Annos: 5 mg/kg</p>
+                                <p class="mb-1"><strong>3.</strong> Laske: 75 × 5 = 375</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> 375 mg</p>
+                            </div>
+
+                            <div class="alert alert-warning mt-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Huom!</strong> Tarkista aina maksimiannosrajoitukset!
+                            </div>
+
+                            <button class="btn btn-outline-success mt-2 w-100" onclick="switchToCalculator('weight-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('weight')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-warning border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="bsa" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-ruler-combined me-2"></i>D) Kehon pinta-ala (BSA)</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('bsa')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-warning">Kaava:</h6>
+                                <p class="mb-0 fs-5" id="formula-bsa">
+                                    <strong>BSA (m²)</strong> = √((Pituus (cm) × Paino (kg)) ÷ 3600)
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Kemoterapiassa ja muissa tarkoissa lääkeannosteluissa.</p>
+                                <p><strong>Huomioitavaa:</strong> Varmista, että pituus on senttimetreinä ja paino kilogrammoina.</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki:</h6>
+                            <p class="text-muted small mb-2">170 cm, 70 kg potilas</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Pituus: 170 cm</p>
+                                <p class="mb-1"><strong>2.</strong> Paino: 70 kg</p>
+                                <p class="mb-1"><strong>3.</strong> Laske: √((170 × 70) ÷ 3600) = √(11900 ÷ 3600) ≈ 1.82</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> 1.82 m²</p>
+                            </div>
+
+                            <button class="btn btn-outline-warning mt-3 w-100" onclick="switchToCalculator('bsa-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('bsa')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-danger border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="bmi" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-weight-scale me-2"></i>E) Painoindeksi (BMI)</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('bmi')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-danger">Kaava:</h6>
+                                <p class="mb-0 fs-5" id="formula-bmi">
+                                    <strong>BMI</strong> = Paino (kg) ÷ (Pituus (m) × Pituus (m))
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Potilaan painoindeksin arviointiin terveydentilan seurannassa.</p>
+                                <p><strong>Huomioitavaa:</strong> Varmista, että pituus on metreinä.</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki:</h6>
+                            <p class="text-muted small mb-2">70 kg, 1.7 m potilas</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Paino: 70 kg</p>
+                                <p class="mb-1"><strong>2.</strong> Pituus: 1.7 m</p>
+                                <p class="mb-1"><strong>3.</strong> Laske: 70 ÷ (1.7 × 1.7) ≈ 24.22</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> 24.22</p>
+                            </div>
+
+                            <button class="btn btn-outline-danger mt-3 w-100" onclick="switchToCalculator('bmi-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('bmi')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-primary border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="fluid" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-water me-2"></i>F) Nestetasapaino</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('fluid')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-primary">Kaava:</h6>
+                                <p class="mb-0 fs-5" id="formula-fluid">
+                                    <strong>Nestetasapaino</strong> = Saanti (ml) − Eritys (ml)
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Potilaan nestetasapainon seurantaan vuorokauden aikana.</p>
+                                <p><strong>Huomioitavaa:</strong> Ota huomioon kaikki nesteen lähteet ja eritys.</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkki:</h6>
+                            <p class="text-muted small mb-2">Saanti 2000 ml, eritys 1800 ml</p>
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>1.</strong> Saanti: 2000 ml</p>
+                                <p class="mb-1"><strong>2.</strong> Eritys: 1800 ml</p>
+                                <p class="mb-1"><strong>3.</strong> Laske: 2000 − 1800 = 200</p>
+                                <p class="mb-0 text-success"><strong>Vastaus:</strong> +200 ml</p>
+                            </div>
+
+                            <button class="btn btn-outline-primary mt-3 w-100" onclick="switchToCalculator('fluid-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('fluid')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header border-bottom border-warning border-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center gap-2">
+                                    <input type="checkbox" class="formula-print-checkbox no-print" data-formula="percent" style="transform: scale(1.3);">
+                                    <h5 class="mb-0"><i class="fas fa-percent me-2"></i>G) Prosenttilaskenta</h5>
+                                </div>
+                                <button class="btn btn-sm btn-light no-print" onclick="copyFormula('percent')" title="Kopioi kaava">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-light border">
+                                <h6 class="text-warning">Muista:</h6>
+                                <p class="mb-0 fs-5" id="formula-percent">
+                                    <strong>% = grammaa per 100 ml</strong>
+                                </p>
+                                <p><strong>Milloin käytetään?</strong> Prosenttiliuosten pitoisuuksien laskemiseen.</p>
+                                <p><strong>Huomioitavaa:</strong> Kerro % luvulla 10 saadaksesi mg/ml.</p>
+                            </div>
+
+                            <h6 class="mt-3">Esimerkkejä:</h6>
+                            <div class="bg-light p-3 rounded mb-2">
+                                <p class="mb-1"><strong>5% glukoosi</strong></p>
+                                <p class="mb-0">= 5 g / 100 ml = <span class="text-success">50 mg/ml</span></p>
+                            </div>
+
+                            <div class="bg-light p-3 rounded mb-2">
+                                <p class="mb-1"><strong>0,9% NaCl</strong></p>
+                                <p class="mb-0">= 0,9 g / 100 ml = <span class="text-success">9 mg/ml</span></p>
+                            </div>
+
+                            <div class="bg-light p-3 rounded">
+                                <p class="mb-1"><strong>10% liuos</strong></p>
+                                <p class="mb-0">= 10 g / 100 ml = <span class="text-success">100 mg/ml</span></p>
+                            </div>
+
+                            <div class="alert alert-info mt-3">
+                                <strong>Pikanäppäin:</strong> Kerro % luvulla 10 → saat mg/ml
+                            </div>
+
+                            <button class="btn btn-outline-warning mt-2 w-100" onclick="switchToCalculator('conversion-calc-tab')">
+                                <i class="fas fa-calculator me-2"></i>Kokeile laskimessa
+                            </button>
+                            <button class="btn btn-outline-secondary mt-3 w-100" onclick="addToFavorites('percent')">
+                                <i class="fas fa-star me-2"></i>Lisää suosikkeihin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+         
+        <div class="tab-pane fade" id="mnemonics-section">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-1 mb-3">🐕</div>
+                            <h4 class="text-primary">DOG</h4>
+                            <p class="lead">Dose Over Got</p>
+                            <hr>
+                            <p class="text-muted">
+                                <strong>D</strong>ose (Määrätty annos)<br>
+                                <strong>O</strong>ver (jaettuna)<br>
+                                <strong>G</strong>ot (Saatavilla oleva)
+                            </p>
+                            <div class="alert alert-light">
+                                Määrätty ÷ Saatavilla = Tarvittava määrä
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-1 mb-3">💧</div>
+                            <h4 class="text-info">20 tippaa tekee millin</h4>
+                            <p class="lead">1 ml = 20 gtt</p>
+                            <hr>
+                            <p class="text-muted">
+                                Standardi tippakerroin<br>
+                                (ellei toisin mainita)
+                            </p>
+                            <div class="alert alert-light">
+                                Helppo muistaa: "kaksi-nolla"
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-1 mb-3">💯</div>
+                            <h4 class="text-warning">Prosentti on sata</h4>
+                            <p class="lead">% = per 100 ml</p>
+                            <hr>
+                            <p class="text-muted">
+                                Prosentti tarkoittaa aina<br>
+                                grammoja per 100 millilitraa
+                            </p>
+                            <div class="alert alert-light">
+                                <p>100 ml astia, jossa 1 g = 1%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-1 mb-3">⚖️</div>
+                            <h4 class="text-success">Tuhat kertaa</h4>
+                            <p class="lead">Yksikkömuunnokset</p>
+                            <hr>
+                            <p class="text-muted">
+                                g → mg: ×1000<br>
+                                mg → mcg: ×1000<br>
+                                mcg → mg: ÷1000<br>
+                                mg → g: ÷1000
+                            </p>
+                            <div class="alert alert-light">
+                                <p>Liiku portaikossa: ×1000 alaspäin, ÷1000 ylöspäin</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-1 mb-3">👑</div>
+                            <h4 class="text-primary">Kuningas Henrik</h4>
+                            <p class="lead">SI-yksiköiden etuliitteet</p>
+                            <hr>
+                            <p class="text-muted">
+                                Kilo, Hekto, Deka, perusyksikkö,<br>
+                                Desi, Sentti, Milli
+                            </p>
+                            <div class="alert alert-light">
+                                Kuningas Henrik Kuoli, Mutta Joi<br>
+                                Kuitenkin Desin Maitoa
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card text-center h-100">
+                        <div class="card-body">
+                            <div class="display-1 mb-3">🧪</div>
+                            <h4 class="text-info">Osa ja osa</h4>
+                            <p class="lead">Laimennussuhteet</p>
+                            <hr>
+                            <p class="text-muted">
+                                Laimennussuhde = <br>
+                                Osa ainetta : Osa liuotinta
+                            </p>
+                            <div class="alert alert-light">
+                                Esim. 1:10 = 1 osa ainetta, 10 osaa liuotinta
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="practice-section">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="card">
+                        <div class="card-header border-bottom border-primary border-2">
+                            <h5 class="mb-0"><i class="fas fa-dumbbell me-2"></i>Harjoitukset</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Valitse harjoitustyyppi</label>
+                                <select class="form-select form-select-lg" id="practice-type" onchange="updatePracticeForm()">
+                                    <option value="dose">Annoslaskenta</option>
+                                    <option value="infusion">Infuusionopeus</option>
+                                    <option value="infusion-dose">Painoperusteinen infuusio</option>
+                                    <option value="weight">Painoperusteinen annos</option>
+                                    <option value="bsa">BSA</option>
+                                    <option value="bmi">BMI</option>
+                                    <option value="fluid">Nestetasapaino</option>
+                                    <option value="percent">Prosenttilaskenta</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Vaikeustaso</label>
+                                <select class="form-select form-select-lg" id="difficulty-level">
+                                    <option value="easy">Helppo</option>
+                                    <option value="hard">Vaikea</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary btn-lg w-100 mb-4" onclick="generateRandomPractice()">
+                                <i class="fas fa-random me-2"></i>Luo satunnainen harjoitus
+                            </button>
+                            
+                            <div id="practice-form-container"></div>
+                            
+                            <div class="mt-3">
+                                <label class="form-label">Sinun vastauksesi</label>
+                                <input type="number" class="form-control form-control-lg" id="user-answer" step="0.01" placeholder="Kirjoita vastauksesi tähän">
+                            </div>
+                            <button class="btn btn-success btn-lg w-100 mt-3" onclick="checkPracticeAnswer()">
+                                <i class="fas fa-check me-2"></i>Tarkista vastaus
+                            </button>
+                            
+                            <div id="practice-result" class="mt-4" style="display: none;">
+                                <div id="practice-result-alert" class="alert">
+                                    <h5 id="practice-result-text"></h5>
+                                    <p id="practice-answer" class="mb-0"></p>
+                                </div>
+                                <div id="practice-steps" class="alert alert-info" style="display: none;">
+                                    <h6>Laskun vaiheet:</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="unit-converter-section">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h5 class="mb-4 text-center">Yksikkömuunnin</h5>
+                    
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Massa</strong></div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-md-4">
+                                    <label class="form-label">Milligrammaa (mg)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-mg" step="0.01" oninput="convertUnitMass('mg')">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Grammaa (g)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-g" step="0.001" oninput="convertUnitMass('g')">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Mikrogrammaa (mcg)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-mcg" step="0.01" oninput="convertUnitMass('mcg')">
+                                </div>
+                            </div>
+                            <div class="text-muted small"><i class="fas fa-info-circle"></i> 1 g = 1000 mg = 1,000,000 mcg</div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header"><strong>Tilavuus</strong></div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Millilitraa (ml)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-ml" step="0.01" oninput="convertUnitVolume('ml')">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Litraa (L)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-l" step="0.001" oninput="convertUnitVolume('l')">
+                                </div>
+                            </div>
+                            <div class="text-muted small"><i class="fas fa-info-circle"></i> 1 L = 1000 ml</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><strong>Paino</strong></div>
+                        <div class="card-body">
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">Kilogrammaa (kg)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-kg" step="0.1" oninput="convertUnitWeight('kg')">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Paunaa (lb)</label>
+                                    <input type="number" class="form-control form-control-lg" id="unit-lb" step="0.1" oninput="convertUnitWeight('lb')">
+                                </div>
+                            </div>
+                            <div class="text-muted small"><i class="fas fa-info-circle"></i> 1 kg = 2.20462 lb</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+
+// PERUSLASKIN
+function calcClearPage() {
+    document.getElementById('calc-display-page').value = '0';
+}
+
+function calcBackspacePage() {
+    const display = document.getElementById('calc-display-page');
+    if (display.value.length > 1) {
+        display.value = display.value.slice(0, -1);
+    } else {
+        display.value = '0';
+    }
+}
+
+function calcAppendPage(value) {
+    const display = document.getElementById('calc-display-page');
+    if (display.value === '0') {
+        display.value = value;
+    } else {
+        display.value += value;
+    }
+}
+
+function calcEqualsPage() {
+    const display = document.getElementById('calc-display-page');
+    try {
+        display.value = eval(display.value);
+    } catch (e) {
+        display.value = 'Error';
+    }
+}
+
+// ANNOSLASKENTA
+function calculateDosePage() {
+    const prescribed = parseFloat(document.getElementById('dose-prescribed-page').value);
+    const strength = parseFloat(document.getElementById('dose-strength-page').value);
+    const amount = parseFloat(document.getElementById('dose-amount-page').value);
+    
+    if (isNaN(prescribed) || isNaN(strength) || isNaN(amount)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    if (strength === 0) {
+        alert('Vahvuus ei voi olla nolla!');
+        return;
+    }
+    
+    const result = (prescribed / strength) * amount;
+    const rounded = Math.round(result * 100) / 100;
+    
+    document.getElementById('dose-result-text-page').textContent = 
+        `Annettava määrä: ${rounded} ${amount === 1 ? 'tablettia' : 'ml'}`;
+    document.getElementById('dose-result-page').style.display = 'block';
+}
+
+// INFUUSIOLASKENTA
+function calculateInfusionPage() {
+    const volume = parseFloat(document.getElementById('infusion-volume-page').value);
+    const hours = parseFloat(document.getElementById('infusion-hours-page').value);
+    const factor = parseFloat(document.getElementById('infusion-factor-page').value);
+    
+    if (isNaN(volume) || isNaN(hours) || isNaN(factor)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    if (hours === 0) {
+        alert('Aika ei voi olla nolla!');
+        return;
+    }
+    
+    const mlPerHour = volume / hours;
+    const minutes = hours * 60;
+    const dropsPerMin = (volume * factor) / minutes;
+    
+    document.getElementById('infusion-result-mlh-page').textContent = Math.round(mlPerHour * 100) / 100;
+    document.getElementById('infusion-result-gtt-page').textContent = Math.round(dropsPerMin * 100) / 100;
+    document.getElementById('infusion-result-page').style.display = 'block';
+}
+
+// PAINOPERUSTEINEN INFUUSIO
+function calculateInfusionDosePage() {
+    const targetDose = parseFloat(document.getElementById('infusion-dose-target-page').value);
+    const weight = parseFloat(document.getElementById('infusion-dose-weight-page').value);
+    const strength = parseFloat(document.getElementById('infusion-dose-strength-page').value);
+    const volume = parseFloat(document.getElementById('infusion-dose-volume-page').value);
+    
+    if (isNaN(targetDose) || isNaN(weight) || isNaN(strength) || isNaN(volume)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    if (volume === 0 || strength === 0) {
+        alert('Vahvuus tai tilavuus ei voi olla nolla!');
+        return;
+    }
+    
+    const infusionRate = (targetDose * weight * 60) / (strength / volume);
+    const rounded = Math.round(infusionRate * 100) / 100;
+    
+    document.getElementById('infusion-dose-result-text-page').textContent = 
+        `Infuusionopeus: ${rounded} ml/h`;
+    document.getElementById('infusion-dose-result-page').style.display = 'block';
+}
+
+// PAINOPERUSTEINEN ANNOS
+function calculateWeightBasedPage() {
+    const weight = parseFloat(document.getElementById('weight-page').value);
+    const dosePerKg = parseFloat(document.getElementById('dose-per-kg-page').value);
+    
+    if (isNaN(weight) || isNaN(dosePerKg)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    const dose = weight * dosePerKg;
+    const rounded = Math.round(dose * 100) / 100;
+    
+    document.getElementById('weight-result-text-page').textContent = 
+        `Annos: ${rounded} mg`;
+    document.getElementById('weight-result-page').style.display = 'block';
+}
+
+// BSA LASKENTA
+function calculateBSAPage() {
+    const height = parseFloat(document.getElementById('bsa-height-page').value);
+    const weight = parseFloat(document.getElementById('bsa-weight-page').value);
+    
+    if (isNaN(height) || isNaN(weight)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    const bsa = Math.sqrt((height * weight) / 3600);
+    const rounded = Math.round(bsa * 100) / 100;
+    
+    document.getElementById('bsa-result-text-page').textContent = 
+        `BSA: ${rounded} m²`;
+    document.getElementById('bsa-result-page').style.display = 'block';
+}
+
+// BMI LASKENTA
+function calculateBMIPage() {
+    const weight = parseFloat(document.getElementById('bmi-weight-page').value);
+    const height = parseFloat(document.getElementById('bmi-height-page').value);
+    
+    if (isNaN(weight) || isNaN(height)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    if (height === 0) {
+        alert('Pituus ei voi olla nolla!');
+        return;
+    }
+    
+    const bmi = weight / (height * height);
+    const rounded = Math.round(bmi * 100) / 100;
+    
+    let category = '';
+    if (bmi < 18.5) category = '(Alipaino)';
+    else if (bmi < 25) category = '(Normaali)';
+    else if (bmi < 30) category = '(Ylipaino)';
+    else category = '(Merkittävä ylipaino)';
+    
+    document.getElementById('bmi-result-text-page').textContent = 
+        `BMI: ${rounded} ${category}`;
+    document.getElementById('bmi-result-page').style.display = 'block';
+}
+
+// NESTETASAPAINO
+function calculateFluidPage() {
+    const intake = parseFloat(document.getElementById('fluid-intake-page').value);
+    const output = parseFloat(document.getElementById('fluid-output-page').value);
+    
+    if (isNaN(intake) || isNaN(output)) {
+        alert('Täytä kaikki kentät!');
+        return;
+    }
+    
+    const balance = intake - output;
+    const rounded = Math.round(balance * 100) / 100;
+    
+    document.getElementById('fluid-result-text-page').textContent = 
+        `Nestetasapaino: ${rounded >= 0 ? '+' : ''}${rounded} ml`;
+    document.getElementById('fluid-result-page').style.display = 'block';
+}
+
+// KONVERSIOT
+function convertMassPage(source) {
+    const mg = document.getElementById('conv-mg-page');
+    const g = document.getElementById('conv-g-page');
+    const mcg = document.getElementById('conv-mcg-page');
+    
+    let value = parseFloat(event.target.value);
+    if (isNaN(value)) {
+        mg.value = '';
+        g.value = '';
+        mcg.value = '';
+        return;
+    }
+    
+    if (source === 'mg') {
+        g.value = (value / 1000).toFixed(3);
+        mcg.value = (value * 1000).toFixed(2);
+    } else if (source === 'g') {
+        mg.value = (value * 1000).toFixed(2);
+        mcg.value = (value * 1000000).toFixed(2);
+    } else if (source === 'mcg') {
+        mg.value = (value / 1000).toFixed(2);
+        g.value = (value / 1000000).toFixed(6);
+    }
+}
+
+function convertVolumePage(source) {
+    const ml = document.getElementById('conv-ml-page');
+    const l = document.getElementById('conv-l-page');
+    
+    let value = parseFloat(event.target.value);
+    if (isNaN(value)) {
+        ml.value = '';
+        l.value = '';
+        return;
+    }
+    
+    if (source === 'ml') {
+        l.value = (value / 1000).toFixed(3);
+    } else if (source === 'l') {
+        ml.value = (value * 1000).toFixed(2);
+    }
+}
+
+function convertWeightPage(source) {
+    const kg = document.getElementById('conv-kg-page');
+    const lb = document.getElementById('conv-lb-page');
+    
+    let value = parseFloat(event.target.value);
+    if (isNaN(value)) {
+        kg.value = '';
+        lb.value = '';
+        return;
+    }
+    
+    if (source === 'kg') {
+        lb.value = (value * 2.20462).toFixed(2);
+    } else if (source === 'lb') {
+        kg.value = (value / 2.20462).toFixed(2);
+    }
+}
+
+function convertPercentPage() {
+    const percent = parseFloat(document.getElementById('conv-percent-page').value);
+    if (isNaN(percent)) {
+        document.getElementById('percent-result-page').style.display = 'none';
+        return;
+    }
+    
+    const mgPerMl = percent * 10;
+    const gPer100ml = percent;
+    
+    document.getElementById('percent-result-text-page').innerHTML = 
+        `${percent}% = ${mgPerMl} mg/ml = ${gPer100ml} g/100 ml`;
+    document.getElementById('percent-result-page').style.display = 'block';
+}
+
+// KAAVOJEN KOPIOINTI
+function copyFormula(type) {
+    const formulaElement = document.getElementById(`formula-${type}`);
+    if (formulaElement) {
+        const text = formulaElement.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Kaava kopioitu leikepöydälle!');
+        });
+    }
+}
+
+// VAIHTO LASKIMEEN
+function switchToCalculator(tabId) {
+    const mainTab = document.getElementById('calculator-main-tab');
+    const calcTab = document.getElementById(tabId);
+    if (mainTab && calcTab) {
+        mainTab.click();
+        setTimeout(() => calcTab.click(), 100);
+    }
+}
+
+// SUOSIKKEIHIN LISÄÄMINEN
+function addToFavorites(type) {
+    alert(`"${type}" lisätty suosikkeihin! (Tämä toiminto toteutetaan myöhemmin)`);
+}
+
+// TULOSTUSTOIMINNOT
+function printAllFormulas() {
+    document.querySelectorAll('.formula-print-checkbox').forEach(cb => cb.checked = true);
+    
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+        if (pane.id !== 'formulas-section') {
+            pane.style.display = 'none';
+        }
+    });
+    
+    window.print();
+    
+    setTimeout(() => {
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.style.display = '';
+        });
+    }, 100);
+}
+
+function printSelectedFormulas() {
+    const selectedCount = document.querySelectorAll('.formula-print-checkbox:checked').length;
+    
+    if (selectedCount === 0) {
+        alert('Valitse vähintään yksi kaava tulostettavaksi!');
+        return;
+    }
+    
+    document.querySelectorAll('.formula-print-checkbox').forEach(cb => {
+        const card = cb.closest('.card');
+        if (!cb.checked) {
+            card.classList.add('hide-for-print');
+        }
+    });
+    
+    document.querySelectorAll('.tab-pane').forEach(pane => {
+        if (pane.id !== 'formulas-section') {
+            pane.style.display = 'none';
+        }
+    });
+    
+    window.print();
+    
+    setTimeout(() => {
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.style.display = '';
+        });
+        document.querySelectorAll('.hide-for-print').forEach(el => {
+            el.classList.remove('hide-for-print');
+        });
+    }, 100);
+}
+
+function clearAllSelections() {
+    document.querySelectorAll('.formula-print-checkbox').forEach(cb => cb.checked = false);
+}
+
+// HARJOITUKSET
+function updatePracticeForm() {
+    const type = document.getElementById('practice-type').value;
+    const container = document.getElementById('practice-form-container');
+    container.innerHTML = '';
+
+    let html = '';
+    if (type === 'dose') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Määrätty annos (mg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-dose-prescribed" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Lääkkeen vahvuus (mg/yksikkö)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-dose-strength" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Lääkkeen määrä per yksikkö (ml tai kpl)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-dose-amount" step="0.01" value="1">
+            </div>
+        `;
+    } else if (type === 'infusion') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Tilavuus (ml)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-volume" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Aika (tuntia)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-hours" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tippakerroin (gtt/ml)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-factor" step="1" value="20">
+            </div>
+        `;
+    } else if (type === 'infusion-dose') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Tavoiteannos (mcg/kg/min)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-dose-target" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Potilaan paino (kg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-dose-weight" step="0.1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Lääkkeen vahvuus (mg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-dose-strength" step="0.01">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Tilavuus (ml)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-infusion-dose-volume" step="0.01">
+            </div>
+        `;
+    } else if (type === 'weight') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Potilaan paino (kg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-weight" step="0.1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Annos per kg (mg/kg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-dose-per-kg" step="0.01">
+            </div>
+        `;
+    } else if (type === 'bsa') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Pituus (cm)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-bsa-height" step="0.1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Paino (kg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-bsa-weight" step="0.1">
+            </div>
+        `;
+    } else if (type === 'bmi') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Paino (kg)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-bmi-weight" step="0.1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Pituus (m)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-bmi-height" step="0.01">
+            </div>
+        `;
+    } else if (type === 'fluid') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Nesteen saanti (ml)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-fluid-intake" step="0.1">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Nesteen eritys (ml)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-fluid-output" step="0.1">
+            </div>
+        `;
+    } else if (type === 'percent') {
+        html = `
+            <div class="mb-3">
+                <label class="form-label">Prosentti (%)</label>
+                <input type="number" class="form-control form-control-lg" id="practice-percent" step="0.1">
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+}
+
+function generateRandomPractice() {
+    const type = document.getElementById('practice-type').value;
+    const difficulty = document.getElementById('difficulty-level').value;
+    
+    let inputs = {};
+    
+    if (type === 'dose') {
+        inputs.prescribed = difficulty === 'easy' ? getRandomInt(5, 50) : getRandomInt(10, 100) / 2;
+        inputs.strength = difficulty === 'easy' ? getRandomInt(10, 100) : getRandomInt(25, 200) / 2;
+        inputs.amount = difficulty === 'easy' ? 1 : getRandomInt(1, 5);
+        document.getElementById('practice-dose-prescribed').value = inputs.prescribed;
+        document.getElementById('practice-dose-strength').value = inputs.strength;
+        document.getElementById('practice-dose-amount').value = inputs.amount;
+    } else if (type === 'infusion') {
+        inputs.volume = difficulty === 'easy' ? getRandomInt(500, 1000) : getRandomInt(100, 2000);
+        inputs.hours = difficulty === 'easy' ? getRandomInt(4, 12) : getRandomInt(2, 24);
+        inputs.factor = difficulty === 'easy' ? 20 : getRandomInt(10, 60);
+        document.getElementById('practice-infusion-volume').value = inputs.volume;
+        document.getElementById('practice-infusion-hours').value = inputs.hours;
+        document.getElementById('practice-infusion-factor').value = inputs.factor;
+    } else if (type === 'infusion-dose') {
+        inputs.target = difficulty === 'easy' ? getRandomInt(1, 5) : (getRandomInt(1, 10) / 2);
+        inputs.weight = difficulty === 'easy' ? getRandomInt(50, 100) : getRandomInt(20, 150);
+        inputs.strength = difficulty === 'easy' ? getRandomInt(100, 400) : getRandomInt(50, 800);
+        inputs.volume = difficulty === 'easy' ? getRandomInt(50, 100) : getRandomInt(25, 200);
+        document.getElementById('practice-infusion-dose-target').value = inputs.target;
+        document.getElementById('practice-infusion-dose-weight').value = inputs.weight;
+        document.getElementById('practice-infusion-dose-strength').value = inputs.strength;
+        document.getElementById('practice-infusion-dose-volume').value = inputs.volume;
+    } else if (type === 'weight') {
+        inputs.weight = difficulty === 'easy' ? getRandomInt(50, 100) : getRandomInt(20, 150);
+        inputs.dosePerKg = difficulty === 'easy' ? getRandomInt(1, 10) : getRandomInt(1, 20) / 2;
+        document.getElementById('practice-weight').value = inputs.weight;
+        document.getElementById('practice-dose-per-kg').value = inputs.dosePerKg;
+    } else if (type === 'bsa') {
+        inputs.height = difficulty === 'easy' ? getRandomInt(150, 190) : getRandomInt(120, 200);
+        inputs.weight = difficulty === 'easy' ? getRandomInt(50, 100) : getRandomInt(30, 150);
+        document.getElementById('practice-bsa-height').value = inputs.height;
+        document.getElementById('practice-bsa-weight').value = inputs.weight;
+    } else if (type === 'bmi') {
+        inputs.weight = difficulty === 'easy' ? getRandomInt(50, 100) : getRandomInt(30, 150);
+        inputs.height = difficulty === 'easy' ? getRandomInt(150, 190) / 100 : getRandomInt(120, 200) / 100;
+        document.getElementById('practice-bmi-weight').value = inputs.weight;
+        document.getElementById('practice-bmi-height').value = inputs.height;
+    } else if (type === 'fluid') {
+        inputs.intake = difficulty === 'easy' ? getRandomInt(1000, 3000) : getRandomInt(500, 4000);
+        inputs.output = difficulty === 'easy' ? getRandomInt(800, 2500) : getRandomInt(400, 3500);
+        document.getElementById('practice-fluid-intake').value = inputs.intake;
+        document.getElementById('practice-fluid-output').value = inputs.output;
+    } else if (type === 'percent') {
+        inputs.percent = difficulty === 'easy' ? getRandomInt(1, 10) : getRandomInt(1, 50) / 2;
+        document.getElementById('practice-percent').value = inputs.percent;
+    }
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function checkPracticeAnswer() {
+    const type = document.getElementById('practice-type').value;
+    const userAnswer = parseFloat(document.getElementById('user-answer').value);
+    const resultContainer = document.getElementById('practice-result');
+    const resultText = document.getElementById('practice-result-text');
+    const resultAlert = document.getElementById('practice-result-alert');
+    const stepsContainer = document.getElementById('practice-steps');
+    
+    if (isNaN(userAnswer)) {
+        alert('Syötä kelvollinen vastaus!');
+        return;
+    }
+    
+    let correctAnswer, steps = '';
+    
+    if (type === 'dose') {
+        const prescribed = parseFloat(document.getElementById('practice-dose-prescribed').value);
+        const strength = parseFloat(document.getElementById('practice-dose-strength').value);
+        const amount = parseFloat(document.getElementById('practice-dose-amount').value);
+        if (isNaN(prescribed) || isNaN(strength) || isNaN(amount)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = (prescribed / strength) * amount;
+        steps = `
+            <p>Kaava: (Määrätty ÷ Vahvuus) × Määrä/yksikkö</p>
+            <p>= (${prescribed} ÷ ${strength}) × ${amount}</p>
+            <p>= ${(prescribed / strength).toFixed(3)} × ${amount}</p>
+            <p>= ${correctAnswer.toFixed(3)}</p>
+        `;
+    } else if (type === 'infusion') {
+        const volume = parseFloat(document.getElementById('practice-infusion-volume').value);
+        const hours = parseFloat(document.getElementById('practice-infusion-hours').value);
+        const factor = parseFloat(document.getElementById('practice-infusion-factor').value);
+        if (isNaN(volume) || isNaN(hours) || isNaN(factor)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        const mlPerHour = volume / hours;
+        const minutes = hours * 60;
+        correctAnswer = (volume * factor) / minutes;
+        steps = `
+            <p>Kaava: (Tilavuus × Tippakerroin) ÷ (Aika × 60)</p>
+            <p>= (${volume} × ${factor}) ÷ (${hours} × 60)</p>
+            <p>= ${volume * factor} ÷ ${minutes}</p>
+            <p>= ${correctAnswer.toFixed(2)} gtt/min</p>
+        `;
+    } else if (type === 'infusion-dose') {
+        const target = parseFloat(document.getElementById('practice-infusion-dose-target').value);
+        const weight = parseFloat(document.getElementById('practice-infusion-dose-weight').value);
+        const strength = parseFloat(document.getElementById('practice-infusion-dose-strength').value);
+        const volume = parseFloat(document.getElementById('practice-infusion-dose-volume').value);
+        if (isNaN(target) || isNaN(weight) || isNaN(strength) || isNaN(volume)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = (target * weight * 60) / (strength / volume);
+        steps = `
+            <p>Kaava: (Tavoite × Paino × 60) ÷ (Vahvuus ÷ Tilavuus)</p>
+            <p>= (${target} × ${weight} × 60) ÷ (${strength} ÷ ${volume})</p>
+            <p>= ${(target * weight * 60).toFixed(2)} ÷ ${(strength / volume).toFixed(2)}</p>
+            <p>= ${correctAnswer.toFixed(2)} ml/h</p>
+        `;
+    } else if (type === 'weight') {
+        const weight = parseFloat(document.getElementById('practice-weight').value);
+        const dosePerKg = parseFloat(document.getElementById('practice-dose-per-kg').value);
+        if (isNaN(weight) || isNaN(dosePerKg)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = weight * dosePerKg;
+        steps = `
+            <p>Kaava: Paino × Annos/kg</p>
+            <p>= ${weight} × ${dosePerKg}</p>
+            <p>= ${correctAnswer.toFixed(2)} mg</p>
+        `;
+    } else if (type === 'bsa') {
+        const height = parseFloat(document.getElementById('practice-bsa-height').value);
+        const weight = parseFloat(document.getElementById('practice-bsa-weight').value);
+        if (isNaN(height) || isNaN(weight)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = Math.sqrt((height * weight) / 3600);
+        steps = `
+            <p>Kaava: √((Pituus × Paino) ÷ 3600)</p>
+            <p>= √((${height} × ${weight}) ÷ 3600)</p>
+            <p>= √(${(height * weight).toFixed(2)} ÷ 3600)</p>
+            <p>= ${correctAnswer.toFixed(2)} m²</p>
+        `;
+    } else if (type === 'bmi') {
+        const weight = parseFloat(document.getElementById('practice-bmi-weight').value);
+        const height = parseFloat(document.getElementById('practice-bmi-height').value);
+        if (isNaN(weight) || isNaN(height)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = weight / (height * height);
+        steps = `
+            <p>Kaava: Paino ÷ (Pituus × Pituus)</p>
+            <p>= ${weight} ÷ (${height} × ${height})</p>
+            <p>= ${weight} ÷ ${(height * height).toFixed(2)}</p>
+            <p>= ${correctAnswer.toFixed(2)}</p>
+        `;
+    } else if (type === 'fluid') {
+        const intake = parseFloat(document.getElementById('practice-fluid-intake').value);
+        const output = parseFloat(document.getElementById('practice-fluid-output').value);
+        if (isNaN(intake) || isNaN(output)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = intake - output;
+        steps = `
+            <p>Kaava: Saanti − Eritys</p>
+            <p>= ${intake} − ${output}</p>
+            <p>= ${correctAnswer.toFixed(2)} ml</p>
+        `;
+    } else if (type === 'percent') {
+        const percent = parseFloat(document.getElementById('practice-percent').value);
+        if (isNaN(percent)) {
+            alert('Täytä kaikki kentät!');
+            return;
+        }
+        correctAnswer = percent * 10;
+        steps = `
+            <p>Kaava: Prosentti × 10 = mg/ml</p>
+            <p>= ${percent} × 10</p>
+            <p>= ${correctAnswer.toFixed(2)} mg/ml</p>
+        `;
+    }
+    
+    correctAnswer = Math.round(correctAnswer * 100) / 100;
+    const isCorrect = Math.abs(userAnswer - correctAnswer) < 0.01;
+    
+    resultAlert.className = `alert ${isCorrect ? 'alert-success' : 'alert-danger'}`;
+    resultText.textContent = isCorrect ? 'Oikein! Hienoa!' : 'Väärin, yritä uudelleen!';
+    document.getElementById('practice-answer').textContent = `Oikea vastaus: ${correctAnswer.toFixed(2)} ${type === 'bsa' ? 'm²' : type === 'bmi' ? '' : type === 'percent' ? 'mg/ml' : type === 'fluid' ? 'ml' : type === 'infusion' ? 'gtt/min' : type === 'infusion-dose' ? 'ml/h' : 'mg'}`;
+    stepsContainer.innerHTML = steps;
+    stepsContainer.style.display = 'block';
+    resultContainer.style.display = 'block';
+}
+
+// YKSIKKÖMUUNNIN
+function convertUnitMass(source) {
+    const mg = document.getElementById('unit-mg');
+    const g = document.getElementById('unit-g');
+    const mcg = document.getElementById('unit-mcg');
+    
+    let value = parseFloat(event.target.value);
+    if (isNaN(value)) {
+        mg.value = '';
+        g.value = '';
+        mcg.value = '';
+        return;
+    }
+    
+    if (source === 'mg') {
+        g.value = (value / 1000).toFixed(3);
+        mcg.value = (value * 1000).toFixed(2);
+    } else if (source === 'g') {
+        mg.value = (value * 1000).toFixed(2);
+        mcg.value = (value * 1000000).toFixed(2);
+    } else if (source === 'mcg') {
+        mg.value = (value / 1000).toFixed(2);
+        g.value = (value / 1000000).toFixed(6);
+    }
+}
+
+function convertUnitVolume(source) {
+    const ml = document.getElementById('unit-ml');
+    const l = document.getElementById('unit-l');
+    
+    let value = parseFloat(event.target.value);
+    if (isNaN(value)) {
+        ml.value = '';
+        l.value = '';
+        return;
+    }
+    
+    if (source === 'ml') {
+        l.value = (value / 1000).toFixed(3);
+    } else if (source === 'l') {
+        ml.value = (value * 1000).toFixed(2);
+    }
+}
+
+function convertUnitWeight(source) {
+    const kg = document.getElementById('unit-kg');
+    const lb = document.getElementById('unit-lb');
+    
+    let value = parseFloat(event.target.value);
+    if (isNaN(value)) {
+        kg.value = '';
+        lb.value = '';
+        return;
+    }
+    
+    if (source === 'kg') {
+        lb.value = (value * 2.20462).toFixed(2);
+    } else if (source === 'lb') {
+        kg.value = (value / 2.20462).toFixed(2);
+    }
+}
+
+// Alusta harjoituslomake sivun latautuessa
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('practice-type')) {
+        updatePracticeForm();
+    }
+});
+</script>
+
+<style>
+/* ======================================
+   1. KORJAA TAB-NAVIGAATION NÄKYVYYS
+   ====================================== */
+
+/* VARMISTA ETTÄ KAIKKI TAB-NAPIT NÄKYVÄT VIEREKKÄIN */
+#calculatorMainTabs {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    visibility: visible !important;
+    margin-bottom: 1rem !important;
+    width: 100% !important;
+    background: rgba(0,0,0,0.05) !important;
+    padding: 0.5rem !important;
+    border-radius: 0.5rem !important;
+}
+
+#calculatorMainTabs .nav-item {
+    flex: 1 1 auto !important;
+    min-width: 150px !important;
+    max-width: 200px !important;
+}
+
+#calculatorMainTabs .nav-link {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+    padding: 0.75rem 0.5rem !important;
+    margin: 0.25rem !important;
+    border-radius: 0.375rem !important;
+    font-size: 0.9rem !important;
+}
+
+/* Aktiivisen tabin värit */
+#calculatorMainTabs .nav-link.active {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+/* Ei-aktiivisten tabien värit */
+#calculatorMainTabs .nav-link:not(.active) {
+    background-color: rgba(255,255,255,0.8) !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6 !important;
+}
+
+#calculatorMainTabs .nav-link:hover {
+    background-color: rgba(13,110,253,0.1) !important;
+}
+
+/* Poista ylimääräinen tila aktiivisista tabeista */
+#practice-section,
+#unit-converter-section {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Varmista että tab-sisältö alkaa heti ilman välitilaa */
+#calculatorMainContent {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Vähennä piilotettujen tabien tilankäyttöä mutta älä riko toiminnallisuutta */
+.tab-pane:not(.active):not(.show) {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+}
+
+/* ======================================
+   2. DEBUG-VÄRIT (Aktivoi jos tarvitset)
+   ====================================== */
+
+/* POISTA KOMMENTIT NÄHDÄKSESI MIKÄ TAB ON AKTIIVINEN */
+/*
+.tab-pane.active { 
+    border: 3px solid green !important; 
+    background: lightgreen !important;
+}
+.tab-pane:not(.active) { 
+    border: 1px solid red !important; 
+    background: lightcoral !important;
+}
+*/
+
+/* ======================================
+   3. LASKURI-SIVUN LAYOUT
+   ====================================== */
+
+/* Kaavaosion kortit samankorkuisiksi */
+#formulas-section .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#formulas-section .card-body {
+    flex: 1;
+}
+
+/* Sivun maksimileveys */
+.container {
+    max-width: 1400px;
+}
+
+/* Tiiviimpi rivitys kaavakorteissa */
+#formulas-section .card-body p {
+    margin-bottom: 0.5rem;
+}
+
+#formulas-section .card-body .bg-light {
+    font-size: 0.9rem;
+}
+
+/* ======================================
+   4. TULOSTUSOPTIMOINTIA
+   ====================================== */
+
+@media print {
+    /* Piilota tarpeettomat elementit tulostuksessa */
+    .no-print,
+    nav,
+    .navbar,
+    .btn,
+    .card-header button,
+    #calculatorMainTabs,
+    footer,
+    .alert-info {
+        display: none !important;
+    }
+    
+    /* Piilota valitusti pois jätetyt kortit */
+    .hide-for-print {
+        display: none !important;
+    }
+    
+    /* Korttien tulostusmuotoilu */
+    .card {
+        page-break-inside: avoid;
+        border: 2px solid #000 !important;
+        margin-bottom: 20px !important;
+        box-shadow: none !important;
+    }
+    
+    .card-header {
+        background-color: #f0f0f0 !important;
+        border-bottom: 2px solid #000 !important;
+        padding: 15px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .card-body {
+        padding: 15px !important;
+    }
+    
+    /* Yleiset tulostustyylit */
+    body {
+        font-size: 11pt;
+        line-height: 1.4;
+        color: #000;
+        background: white;
+    }
+    
+    /* Otsikkotyylit */
+    h5 {
+        font-size: 14pt;
+        font-weight: bold;
+    }
+    
+    h6 {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    
+    /* Informaatiolaatikot */
+    .alert-light {
+        border: 1px solid #000 !important;
+        background: #f9f9f9 !important;
+        padding: 10px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    .bg-light {
+        background: #f5f5f5 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    /* Merkit ja tunnisteet */
+    .badge {
+        border: 1px solid #000 !important;
+        padding: 3px 8px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    
+    /* Värit mustavalkoiksi */
+    .text-primary, .text-info, .text-success, .text-warning, .text-danger {
+        color: #000 !important;
+    }
+    
+    /* Sivun asetukset */
+    @page {
+        margin: 2cm;
+    }
+    
+    /* Layout tulostukselle */
+    .row {
+        page-break-inside: avoid;
+    }
+    
+    .col-md-6, .col-lg-4 {
+        width: 100% !important;
+        page-break-inside: avoid;
+    }
+    
+    /* Sivun otsikko */
+    body::before {
+        content: "LOVe Enhanced - Kaavakirjasto";
+        display: block;
+        text-align: center;
+        font-size: 18pt;
+        font-weight: bold;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #000;
+    }
+}
+
+/* ======================================
+   5. INTERAKTIIVISET ELEMENTIT
+   ====================================== */
+
+/* Kaavavalintalaatikot */
+.formula-print-checkbox {
+    cursor: pointer;
+    accent-color: #0d6efd;
+}
+
+/* Kategoriafiltterit */
+#category-filters {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 0.75rem;
+}
+
+#category-filters .btn-outline-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* ======================================
+   6. ANIMAATIOT
+   ====================================== */
+
+/* Häivytysanimaatio */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+</style>
+
+{% endblock %}

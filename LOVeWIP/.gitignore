@@ -17,3 +17,10 @@ secrets.ini
 
 # Jätä huomiotta käyttöjärjestelmän luomat tiedostot (esim. Mac)
 .DS_Store
+
+__pycache__/
+*.pyc
+.env
+love_enhanced_web.db
+venv/
+logs/
