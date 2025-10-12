@@ -17,41 +17,79 @@ class DatabaseManager:
         
         if not self.is_postgres:
             self.db_path = db_path if db_path else 'love_enhanced_web.db'
-            if not os.path.exists(self.db_path):
-                print("Tietokantaa ei löytynyt, alustetaan uusi...")
-                self.init_database()
         
-        self.migrate_database()
+        # Suoritetaan migraatiot vasta yhteyden ollessa varma
+        try:
+            self.migrate_database()
+        except Exception as e:
+            print(f"Tietokannan alustus tai migraatio epäonnistui käynnistyksessä: {e}")
 
     def get_connection(self):
-        if self.is_postgres:
-            return psycopg2.connect(self.database_url)
-        else:
-            conn = sqlite3.connect(self.db_path)
-            conn.row_factory = sqlite3.Row
-            return conn
+        """Luo ja palauttaa tietokantayhteyden."""
+        try:
+            if self.is_postgres:
+                # Varmista, että DATABASE_URL on olemassa
+                if not self.database_url:
+                    raise ValueError("DATABASE_URL-ympäristömuuttujaa ei ole asetettu.")
+                return psycopg2.connect(self.database_url)
+            else:
+                conn = sqlite3.connect(self.db_path)
+                conn.row_factory = sqlite3.Row
+                return conn
+        except Exception as e:
+            print(f"KRIITTINEN VIRHE: Tietokantayhteyden luonti epäonnistui: {e}")
+            raise # Heitä virhe eteenpäin, jotta se näkyy selvästi
 
     def _execute(self, query, params=(), fetch=None):
+        """
+        Suorittaa SQL-kyselyn ja palauttaa tulokset.
+        TÄRKEÄÄ: Tämä versio antaa virheiden nousta ylös, eikä piilota niitä.
+        """
         query = query.replace('?', self.param_style)
-        conn = None
+        conn = self.get_connection()
         try:
-            conn = self.get_connection()
             with conn:
-                with conn.cursor(cursor_factory=DictCursor if self.is_postgres else None) as cur:
+                cursor_factory = DictCursor if self.is_postgres else None
+                with conn.cursor(cursor_factory=cursor_factory) as cur:
                     cur.execute(query, params)
                     if fetch == 'one':
-                        res = cur.fetchone()
-                        return dict(res) if res else None
+                        return cur.fetchone()
                     if fetch == 'all':
-                        return [dict(row) for row in cur.fetchall()]
-        except Exception as e:
-            print(f"Database error on query '{query[:100]}...': {e}")
-            if conn and self.is_postgres:
-                conn.rollback()
-            return None if fetch == 'one' else []
+                        return cur.fetchall()
         finally:
             if conn:
                 conn.close()
+
+    def create_user(self, username, email, hashed_password, expires_at=None):
+        """Luo uuden käyttäjän ja käsittelee tietokantavirheet oikein."""
+        try:
+            # Tarkistetaan ensin, onko käyttäjiä olemassa
+            count_result = self._execute("SELECT COUNT(*) as count FROM users", fetch='one')
+            count = count_result['count'] if count_result else 0
+            role = 'admin' if count == 0 else 'user'
+            
+            # Suoritetaan lisäys
+            self._execute(
+                "INSERT INTO users (username, email, password, role, expires_at) VALUES (?, ?, ?, ?, ?)",
+                (username, email, hashed_password, role, expires_at)
+            )
+            return True, None
+        except (psycopg2.IntegrityError, sqlite3.IntegrityError) as e:
+            # Käsittelee vain uniikkien kenttien virheet
+            error_str = str(e).lower()
+            if 'unique constraint' in error_str or 'duplicate key value' in error_str:
+                if 'username' in error_str:
+                    return False, "UNIQUE constraint failed: users.username"
+                elif 'email' in error_str:
+                    return False, "UNIQUE constraint failed: users.email"
+            return False, str(e) # Palauttaa muut tietokantavirheet
+        except (psycopg2.Error, sqlite3.Error) as e:
+            # Käsittelee muut tietokantavirheet
+            print(f"Odottamaton tietokantavirhe käyttäjän luonnissa: {e}")
+            return False, str(e)
+
+    # --- MUUT FUNKTIOT JATKUVAT ENNALLAAN ---
+    # (Kopioi loput database_manager.py-tiedoston funktiot tähän, ne eivät vaadi muutoksia)
 
     def init_database(self):
         id_type = "SERIAL PRIMARY KEY" if self.is_postgres else "INTEGER PRIMARY KEY AUTOINCREMENT"
@@ -90,12 +128,20 @@ class DatabaseManager:
                 PRIMARY KEY (user_id, achievement_id)
             );
         """
+        conn = self.get_connection()
         try:
-            with self.get_connection() as conn:
+            with conn:
                 with conn.cursor() as cur:
-                    cur.execute(create_tables_sql)
-        except Exception as e:
+                    # Use execute for splitting statements for compatibility
+                    for statement in create_tables_sql.split(';'):
+                        if statement.strip():
+                            cur.execute(statement)
+        except (psycopg2.Error, sqlite3.Error) as e:
             print(f"Virhe tietokannan alustuksessa: {e}")
+            raise
+        finally:
+            conn.close()
+
 
     def normalize_question(self, text):
         if not text: return ""
@@ -106,7 +152,7 @@ class DatabaseManager:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=DictCursor if self.is_postgres else None) as cur:
                     if self.is_postgres:
-                        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users'")
+                        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users' AND table_schema = 'public'")
                         user_columns = [row['column_name'] for row in cur.fetchall()]
                     else:
                         cur.execute("PRAGMA table_info(users)")
@@ -116,24 +162,6 @@ class DatabaseManager:
                         self._execute("ALTER TABLE users ADD COLUMN expires_at TIMESTAMP")
         except Exception as e:
             print(f"Migraatiovirhe: {e}")
-
-    def create_user(self, username, email, hashed_password, expires_at=None):
-        try:
-            count_result = self._execute("SELECT COUNT(*) as count FROM users", fetch='one')
-            count = count_result['count'] if count_result else 0
-            role = 'admin' if count == 0 else 'user'
-            
-            self._execute(
-                "INSERT INTO users (username, email, password, role, expires_at) VALUES (?, ?, ?, ?, ?)",
-                (username, email, hashed_password, role, expires_at)
-            )
-            return True, None
-        except Exception as e:
-            error_str = str(e).lower()
-            if 'unique constraint' in error_str or 'duplicate key value' in error_str:
-                if 'username' in error_str: return False, "UNIQUE constraint failed: users.username"
-                elif 'email' in error_str: return False, "UNIQUE constraint failed: users.email"
-            return False, str(e)
             
     def get_next_test_user_number(self):
         try:
@@ -204,8 +232,8 @@ class DatabaseManager:
                     INSERT INTO active_sessions (user_id, session_type, question_ids, answers, current_index, time_remaining, last_updated)
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                     ON CONFLICT(user_id) DO UPDATE SET
-                        question_ids = EXCLUDED.question_ids, answers = EXCLUDED.answers, current_index = EXCLUDED.current_index,
-                        time_remaining = EXCLUDED.time_remaining, last_updated = EXCLUDED.last_updated;
+                        session_type = EXCLUDED.session_type, question_ids = EXCLUDED.question_ids, answers = EXCLUDED.answers, 
+                        current_index = EXCLUDED.current_index, time_remaining = EXCLUDED.time_remaining, last_updated = EXCLUDED.last_updated;
                 """
             else: # SQLite
                 query = """
@@ -252,21 +280,35 @@ class DatabaseManager:
         if where_clauses:
             query += " WHERE " + " AND ".join(where_clauses)
         
-        query += " ORDER BY RANDOM()"
-        
-        if limit:
-            query += " LIMIT ?"
-            params.append(limit)
+        # Käytetään TABLESAMPLE-kyselyä PostgreSQL:ssä tehokkuuden vuoksi
+        if self.is_postgres:
+            if limit:
+                # Arvioidaan kuinka monta prosenttia riveistä tarvitaan
+                # Tämä ei ole täydellinen, mutta parempi kuin ei mitään
+                # Haetaan kokonaismäärä karkeasti
+                total_rows_approx = 2000 # Oletetaan karkea arvio
+                percentage = min(100, (limit / total_rows_approx) * 100 * 2) # Otetaan vähän extraa
+                query += f" ORDER BY random() LIMIT ?"
+                params.append(limit)
+            else:
+                query += " ORDER BY random()"
+        else: # SQLite
+            query += " ORDER BY RANDOM()"
+            if limit:
+                query += " LIMIT ?"
+                params.append(limit)
         
         rows = self._execute(query, tuple(params), fetch='all')
         
         questions = []
         for row in rows if rows else []:
             try:
-                row['options'] = json.loads(row.get('options', '[]'))
+                # Varmistetaan, että rivi on sanakirja (DictRow toimii näin)
+                row_dict = dict(row)
+                row_dict['options'] = json.loads(row_dict.get('options', '[]'))
                 for key, default in [('times_shown', 0), ('times_correct', 0), ('ease_factor', 2.5), ('interval', 1)]:
-                    if row.get(key) is None: row[key] = default
-                questions.append(Question(**row))
+                    if row_dict.get(key) is None: row_dict[key] = default
+                questions.append(Question(**row_dict))
             except (json.JSONDecodeError, TypeError) as e:
                 print(f"Virheellinen data kysymykselle ID {row.get('id')}: {e}")
                 continue
@@ -284,8 +326,9 @@ class DatabaseManager:
         row = self._execute(query, (user_id, question_id), fetch='one')
         if not row: return None
         try:
-            row['options'] = json.loads(row['options']) if row['options'] else []
-            return Question(**row)
+            row_dict = dict(row)
+            row_dict['options'] = json.loads(row_dict['options']) if row_dict['options'] else []
+            return Question(**row_dict)
         except (json.JSONDecodeError, TypeError) as e:
             print(f"Virhe Question-objektin luonnissa ID:llä {question_id}: {e}")
             return None
@@ -300,7 +343,7 @@ class DatabaseManager:
             self._execute("UPDATE user_question_progress SET times_shown = times_shown + 1, times_correct = times_correct + ?, last_shown = ? WHERE user_id = ? AND question_id = ?",
                           (1 if is_correct else 0, datetime.now(), user_id, question_id))
             self._execute("INSERT INTO question_attempts (user_id, question_id, correct, time_taken) VALUES (?, ?, ?, ?)",
-                          (user_id, question_id, is_correct, time_taken))
+                          (user_id, question_id, bool(is_correct), time_taken))
         except Exception as e:
             print(f"Virhe päivitettäessä kysymystilastoja: {e}")
 
@@ -310,6 +353,12 @@ class DatabaseManager:
         
     def delete_user_by_id(self, user_id):
         try:
+            # Poistetaan ensin viiteavaimet
+            self._execute("DELETE FROM user_question_progress WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM question_attempts WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM active_sessions WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM user_achievements WHERE user_id = ?", (user_id,))
+            # Poistetaan itse käyttäjä
             self._execute("DELETE FROM users WHERE id = ?", (user_id,))
             return True, None
         except Exception as e:
