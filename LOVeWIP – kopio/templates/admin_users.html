@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block title %}Käyttäjien hallinta{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">👥 Käyttäjien hallinta</h1>
+        <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">← Palaa Admin-paneeliin</a>
+    </div>
+    
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Rekisteröityneet käyttäjät ({{ users|length }})
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Käyttäjänimi</th>
+                            <th>Sähköposti</th>
+                            <th>Rooli</th>
+                            <th>Luotu</th>
+                            <th>Tila</th>
+                            <th>Häiriötekijät Päällä</th>
+                            <th>Häiriötekijöiden Todennäköisyys (%)</th>
+                            <th>Toiminnot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr id="user-row-{{ user.id }}">
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% if user.role == 'admin' %}
+                                    <span class="badge bg-primary">Admin</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Käyttäjä</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.created_at }}</td>
+                            <td>
+                                {% if user.status == 'active' %}
+                                    <span class="badge bg-success">Aktiivinen</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Estetty</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ 'Kyllä' if user.distractors_enabled else 'Ei' }}</td>
+                            <td>{{ user.distractor_probability }}</td>
+                            <td>
+                                {% if user.id != 1 %}
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-danger" onclick="showConfirm('delete', {{ user.id }}, '{{ user.username }}')">
+                                        Poista
+                                    </button>
+                                    <button type="button" class="btn btn-outline-warning" onclick="showConfirm('toggle', {{ user.id }}, '{{ user.username }}', '{{ user.status }}')">
+                                        {{ 'Estä' if user.status == 'active' else 'Salli' }}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-primary" onclick="showConfirm('role', {{ user.id }}, '{{ user.username }}', '{{ user.role }}')">
+                                        {{ 'Tee ylläpitäjäksi' if user.role == 'user' else 'Poista ylläpito' }}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info" onclick="showConfirm('edit_settings', {{ user.id }}, '{{ user.username }}', {{ user.distractors_enabled|tojson }}, {{ user.distractor_probability }})">
+                                        Muokkaa asetuksia
+                                    </button>
+                                </div>
+                                {% else %}
+                                <span class="text-muted small">Pääkäyttäjä</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <!-- Vahvistusrivi (oletuksena piilotettu) -->
+                        <tr id="confirm-row-{{ user.id }}" class="confirm-row" style="display: none;">
+                            <td colspan="9" class="bg-warning bg-opacity-10">
+                                <div class="p-3">
+                                    <div class="mb-3">
+                                        <strong id="confirm-text-{{ user.id }}"></strong>
+                                    </div>
+                                    <form id="confirm-form-{{ user.id }}" method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="confirm" value="true">
+                                        <button type="submit" class="btn btn-danger btn-sm" id="confirm-btn-{{ user.id }}">
+                                            Vahvista
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function showConfirm(action, userId, username, extra = null, extra2 = null) {
+    // Piilota kaikki vahvistusrivit
+    document.querySelectorAll('.confirm-row').forEach(row => {
+        row.style.display = 'none';
+    });
+    
+    const confirmRow = document.getElementById(`confirm-row-${userId}`);
+    const confirmText = document.getElementById(`confirm-text-${userId}`);
+    const confirmForm = document.getElementById(`confirm-form-${userId}`);
+    const confirmBtn = document.getElementById(`confirm-btn-${userId}`);
+    
+    if (action === 'delete') {
+        confirmText.innerHTML = `⚠️ Haluatko varmasti <strong>POISTAA</strong> käyttäjän <strong>${username}</strong> ja kaikki hänen tietonsa?`;
+        confirmForm.action = `/admin/delete_user/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+        `;
+        confirmBtn.className = 'btn btn-danger btn-sm';
+        confirmBtn.textContent = 'Kyllä, poista';
+        confirmBtn.style.display = 'inline-block';
+        
+    } else if (action === 'toggle') {
+        const statusText = extra === 'active' ? 'ESTÄÄ' : 'SALLIA';
+        confirmText.innerHTML = `Haluatko varmasti <strong>${statusText}</strong> käyttäjän <strong>${username}</strong>?`;
+        confirmForm.action = `/admin/toggle_user/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+        `;
+        confirmBtn.className = 'btn btn-warning btn-sm';
+        confirmBtn.textContent = 'Vahvista';
+        confirmBtn.style.display = 'inline-block';
+        
+    } else if (action === 'role') {
+        const roleText = extra === 'user' ? 'tehdä YLLÄPITÄJÄKSI' : 'poistaa YLLÄPITO-OIKEUDET';
+        confirmText.innerHTML = `Haluatko varmasti <strong>${roleText.toUpperCase()}</strong> käyttäjältä <strong>${username}</strong>?`;
+        confirmForm.action = `/admin/toggle_role/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+        `;
+        confirmBtn.className = 'btn btn-primary btn-sm';
+        confirmBtn.textContent = 'Vahvista';
+        confirmBtn.style.display = 'inline-block';
+        
+    } else if (action === 'edit_settings') {
+        confirmText.innerHTML = `Muokkaa häiriötekijäasetuksia käyttäjälle <strong>${username}</strong>`;
+        confirmForm.action = `/admin/edit_user_settings/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-toggle-on me-1"></i> Häiriötekijät Päällä
+                    </label>
+                    <select class="form-select" name="distractors_enabled">
+                        <option value="1" ${extra === true || extra === 1 || extra === '1' ? 'selected' : ''}>✅ Kyllä</option>
+                        <option value="0" ${extra === false || extra === 0 || extra === '0' ? 'selected' : ''}>❌ Ei</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-percentage me-1"></i> Todennäköisyys (%)
+                    </label>
+                    <input type="number" 
+                           class="form-control" 
+                           name="distractor_probability" 
+                           value="${extra2 || 25}" 
+                           min="0" 
+                           max="100" 
+                           required>
+                    <div class="form-text">0-100% välillä</div>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="hideConfirm(${userId})">
+                    <i class="fas fa-times me-1"></i> Peruuta
+                </button>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-save me-1"></i> Tallenna muutokset
+                </button>
+            </div>
+        `;
+        confirmBtn.style.display = 'none'; // Piilotetaan ulkopuolinen nappi
+    }
+    
+    confirmRow.style.display = 'table-row';
+    confirmRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideConfirm(userId) {
+    const confirmRow = document.getElementById(`confirm-row-${userId}`);
+    confirmRow.style.display = 'none';
+}
+</script>
+{% endblock %}

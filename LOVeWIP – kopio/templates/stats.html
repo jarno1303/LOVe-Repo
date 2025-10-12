@@ -1,0 +1,561 @@
+{% extends "base.html" %}
+
+{% block title %}Tilastot - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-line me-2"></i>Tilastot</h1>
+        <div>
+            <button id="refresh-stats" class="btn btn-outline-primary me-2">
+                <i class="fas fa-sync-alt me-1"></i>Päivitä
+            </button>
+            <a href="/dashboard" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Takaisin
+            </a>
+        </div>
+    </div>
+
+    <!-- Latausspinneri -->
+    <div id="loading-spinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Ladataan...</span>
+        </div>
+        <p class="mt-3 text-muted">Ladataan tilastoja...</p>
+    </div>
+
+    <!-- Tyhjä tila -->
+    <div id="empty-state" style="display: none;">
+        <div class="card shadow-lg border-0 text-center p-5">
+            <div class="card-body">
+                <i class="fas fa-chart-line fa-5x text-muted mb-4"></i>
+                <h2 class="mb-3">Ei vielä tilastoja</h2>
+                <p class="lead text-muted mb-4">
+                    Aloita harjoittelu nähdäksesi tilastosi ja edistymisesi!
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="/practice" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle me-2"></i>Aloita harjoittelu
+                    </a>
+                    <a href="/simulation" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-clipboard-check me-2"></i>Kokeile simulaatiota
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tilastojen sisältö -->
+    <div id="stats-content" style="display: none;">
+        <!-- Yleiset tilastot -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-question-circle fa-2x text-primary mb-2"></i>
+                        <h3 id="total-questions" class="mb-1">0</h3>
+                        <p class="text-muted mb-0 small">Vastattuja kysymyksiä</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+                        <h3 id="success-rate" class="mb-1">0%</h3>
+                        <p class="text-muted mb-0 small">Onnistumisprosentti</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                        <h3 id="avg-time" class="mb-1">0s</h3>
+                        <p class="text-muted mb-0 small">Keskimääräinen aika</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-fire fa-2x text-danger mb-2"></i>
+                        <h3 id="current-streak" class="mb-1">0</h3>
+                        <p class="text-muted mb-0 small">Päivän putki</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Häiriötekijätilastot -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Häiriötekijätilastot
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="text-center">
+                            <h3 class="text-primary" id="distractor-attempts">0</h3>
+                            <p class="text-muted mb-0 small">Häiriötilanteita</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="text-center">
+                            <h3 class="text-success" id="distractor-success">0%</h3>
+                            <p class="text-muted mb-0 small">Onnistumisprosentti</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3 mb-md-0">
+                        <div class="text-center">
+                            <h3 class="text-warning" id="distractor-response-time">0s</h3>
+                            <p class="text-muted mb-0 small">Keskimääräinen aika</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <h3 class="text-info" id="distractor-improvement">-</h3>
+                            <p class="text-muted mb-0 small">Kehityssuunta</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kaaviot -->
+        <div class="row mb-4">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-layer-group me-2"></i>
+                            Kategoriat
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="categoryChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Häiriötekijät kategorioittain
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="distractorChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vaikeustasot -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-signal me-2"></i>
+                    Vaikeustasot
+                </h5>
+            </div>
+            <div class="card-body">
+                <div id="difficulty-stats-container">
+                    <!-- Täytetään JavaScriptillä -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Viimeisimmät aktiviteetit -->
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-history me-2"></i>
+                            Viimeisimmät harjoitussessiot
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="recent-sessions-container">
+                            <p class="text-muted text-center">Ladataan...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>
+                            Viimeisimmät häiriötilanteet
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="recent-distractors-container">
+                            <p class="text-muted text-center">Ladataan...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 30 päivän aktiivisuus -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-week me-2"></i>
+                    Viimeisen 30 päivän aktiivisuus
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="weekly-progress-chart" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+let categoryChart, distractorChart, weeklyChart;
+
+async function loadStats() {
+    try {
+        showLoading();
+        
+        // Lataa molemmat API:t
+        const [statsResponse, distractorResponse] = await Promise.all([
+            fetch('/api/stats'),
+            fetch('/api/distractor_stats')
+        ]);
+        
+        if (!statsResponse.ok || !distractorResponse.ok) {
+            throw new Error('Virhe tilastojen lataamisessa');
+        }
+        
+        const statsData = await statsResponse.json();
+        const distractorData = await distractorResponse.json();
+        
+        // Tarkista onko dataa
+        if (!statsData.general || statsData.general.total_attempts === 0) {
+            showEmptyState();
+            return;
+        }
+        
+        // Näytä tilastot
+        showStats(statsData, distractorData);
+        
+    } catch (error) {
+        console.error('Virhe tilastojen lataamisessa:', error);
+        showEmptyState();
+    }
+}
+
+function showLoading() {
+    document.getElementById('loading-spinner').style.display = 'block';
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('stats-content').style.display = 'none';
+}
+
+function showEmptyState() {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('empty-state').style.display = 'block';
+    document.getElementById('stats-content').style.display = 'none';
+}
+
+function showStats(statsData, distractorData) {
+    document.getElementById('loading-spinner').style.display = 'none';
+    document.getElementById('empty-state').style.display = 'none';
+    document.getElementById('stats-content').style.display = 'block';
+    
+    // Päivitä yleiset tilastot
+    updateGeneralStats(statsData);
+    
+    // Päivitä häiriötekijätilastot
+    updateDistractorStats(distractorData);
+    
+    // Päivitä kaaviot
+    updateCharts(statsData, distractorData);
+    
+    // Päivitä vaikeustasot
+    updateDifficultyStats(statsData);
+    
+    // Päivitä viimeisimmät
+    updateRecentActivities(statsData, distractorData);
+    
+    // Päivitä 30 päivän kaavio
+    updateWeeklyProgress(statsData);
+}
+
+function updateGeneralStats(data) {
+    document.getElementById('total-questions').textContent = data.general.total_attempts || 0;
+    document.getElementById('success-rate').textContent = 
+        Math.round((data.general.avg_success_rate || 0) * 100) + '%';
+    document.getElementById('avg-time').textContent = 
+        (data.general.avg_time_per_question || 0).toFixed(1) + 's';
+    document.getElementById('current-streak').textContent = '0'; // Päivitetään jos streak-data saatavilla
+}
+
+function updateDistractorStats(data) {
+    document.getElementById('distractor-attempts').textContent = data.total_attempts || 0;
+    document.getElementById('distractor-success').textContent = data.success_rate + '%' || '0%';
+    document.getElementById('distractor-response-time').textContent = 
+        Math.round((data.avg_response_time || 0) / 1000) + 's';
+    
+    // Kehityssuunta
+    const successRate = data.success_rate || 0;
+    let improvement = '📊';
+    if (successRate >= 80) improvement = '⬆️';
+    else if (successRate >= 60) improvement = '➡️';
+    else improvement = '⬇️';
+    document.getElementById('distractor-improvement').textContent = improvement;
+}
+
+function updateCharts(statsData, distractorData) {
+    // Kategoriakaavio
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    if (categoryChart) categoryChart.destroy();
+    
+    const categories = statsData.categories || [];
+    if (categories.length > 0) {
+        categoryChart = new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: categories.map(c => c.category),
+                datasets: [{
+                    data: categories.map(c => Math.round((c.success_rate || 0) * 100)),
+                    backgroundColor: [
+                        '#2563eb', '#10b981', '#f59e0b', '#ef4444', 
+                        '#8b5cf6', '#06b6d4', '#ec4899', '#14b8a6'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 15, usePointStyle: true }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.label}: ${context.parsed}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Häiriötekijäkaavio
+    const distractorCtx = document.getElementById('distractorChart').getContext('2d');
+    if (distractorChart) distractorChart.destroy();
+    
+    const distractorCategories = distractorData.category_stats || [];
+    if (distractorCategories.length > 0) {
+        distractorChart = new Chart(distractorCtx, {
+            type: 'bar',
+            data: {
+                labels: distractorCategories.map(c => c.category),
+                datasets: [{
+                    label: 'Onnistumisprosentti',
+                    data: distractorCategories.map(c => c.success_rate || 0),
+                    backgroundColor: '#f59e0b',
+                    borderColor: '#d97706',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: (value) => value + '%'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `Onnistuminen: ${context.parsed.y}%`
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+function updateDifficultyStats(data) {
+    const container = document.getElementById('difficulty-stats-container');
+    container.innerHTML = '';
+    
+    const difficulties = data.difficulties || [];
+    const difficultyLabels = {
+        'helppo': 'Helppo',
+        'keskivaikea': 'Keskivaikea',
+        'vaikea': 'Vaikea'
+    };
+    
+    difficulties.forEach(diff => {
+        const successRate = (diff.success_rate || 0) * 100;
+        const barColor = successRate >= 70 ? 'bg-success' : successRate >= 50 ? 'bg-warning' : 'bg-danger';
+        const label = difficultyLabels[diff.difficulty] || diff.difficulty;
+        
+        container.innerHTML += `
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <strong>${label}</strong>
+                    <span class="text-muted">${successRate.toFixed(1)}% (${diff.attempts || 0} yritystä)</span>
+                </div>
+                <div class="progress" style="height: 20px;">
+                    <div class="progress-bar ${barColor}" style="width: ${successRate}%">
+                        ${successRate.toFixed(1)}%
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function updateRecentActivities(statsData, distractorData) {
+    // Sessiot
+    const sessionsContainer = document.getElementById('recent-sessions-container');
+    const sessions = statsData.recent_sessions || [];
+    
+    if (sessions.length === 0) {
+        sessionsContainer.innerHTML = '<p class="text-muted text-center">Ei viimeaikaisia sessioita</p>';
+    } else {
+        sessionsContainer.innerHTML = '';
+        sessions.slice(0, 5).forEach(session => {
+            const date = new Date(session.start_time);
+            const percentage = session.questions_answered > 0 
+                ? Math.round((session.questions_correct / session.questions_answered) * 100) 
+                : 0;
+            const badgeColor = percentage >= 70 ? 'bg-success' : percentage >= 50 ? 'bg-warning' : 'bg-danger';
+            
+            sessionsContainer.innerHTML += `
+                <div class="card mb-2 border-0 bg-light">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${session.session_type || 'Harjoittelu'}</strong>
+                                <small class="text-muted ms-2">
+                                    ${date.toLocaleDateString('fi-FI')}
+                                </small>
+                            </div>
+                            <span class="badge ${badgeColor}">
+                                ${session.questions_correct}/${session.questions_answered} (${percentage}%)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Häiriötilanteet
+    const distractorsContainer = document.getElementById('recent-distractors-container');
+    const distractors = distractorData.recent_attempts || [];
+    
+    if (distractors.length === 0) {
+        distractorsContainer.innerHTML = '<p class="text-muted text-center">Ei viimeaikaisia häiriötilanteita</p>';
+    } else {
+        distractorsContainer.innerHTML = '';
+        distractors.slice(0, 5).forEach(distractor => {
+            const date = new Date(distractor.created_at);
+            const shortScenario = distractor.distractor_scenario.length > 50 
+                ? distractor.distractor_scenario.substring(0, 50) + '...'
+                : distractor.distractor_scenario;
+            
+            distractorsContainer.innerHTML += `
+                <div class="card mb-2 border-0 bg-light">
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${shortScenario}</strong>
+                                <small class="text-muted ms-2">
+                                    ${date.toLocaleDateString('fi-FI')}
+                                </small>
+                            </div>
+                            <span class="badge ${distractor.is_correct ? 'bg-success' : 'bg-warning'}">
+                                ${distractor.is_correct ? '✓' : '⚠'}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+}
+
+function updateWeeklyProgress(data) {
+    const ctx = document.getElementById('weekly-progress-chart').getContext('2d');
+    if (weeklyChart) weeklyChart.destroy();
+    
+    const weeklyData = data.weekly_progress || [];
+    
+    if (weeklyData.length > 0) {
+        const labels = weeklyData.map(d => {
+            const date = new Date(d.date);
+            return date.toLocaleDateString('fi-FI', { day: 'numeric', month: 'short' });
+        });
+        
+        weeklyChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Vastatut kysymykset',
+                        data: weeklyData.map(d => d.questions_answered || 0),
+                        borderColor: 'rgb(90, 103, 216)',
+                        backgroundColor: 'rgba(90, 103, 216, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Oikeat vastaukset',
+                        data: weeklyData.map(d => d.corrects || 0),
+                        borderColor: 'rgb(40, 167, 69)',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: { display: true, position: 'top' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
+                }
+            }
+        });
+    }
+}
+
+// Event listeners
+document.getElementById('refresh-stats').addEventListener('click', loadStats);
+
+// Lataa tilastot sivun latautuessa
+document.addEventListener('DOMContentLoaded', loadStats);
+</script>
+{% endblock %}

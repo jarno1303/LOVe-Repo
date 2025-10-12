@@ -1,0 +1,1471 @@
+[
+  {
+    "question": "Potilaan lääkemääräys on 15 mg metoprololia verenpaineeseen. Lääkekaapissa on 60 mg jakouurteellisia tabletteja. Kuinka suuren osan tabletista hoitaja antaa potilaalle?",
+    "explanation": "Laskutoimitus: Määrätty annos (15 mg) jaettuna tabletin vahvuudella (60 mg) on 0,25. Tämä vastaa yhtä neljäsosaa tabletista. Suuren riskin lääkkeiden ja tarkkaa annostelua vaativien lääkkeiden kohdalla on suositeltavaa, että toinen ammattilainen tarkistaa laskun.",
+    "options": [
+      "0,25 tablettia",
+      "0,5 tablettia",
+      "1 tabletti",
+      "4 tablettia"
+    ],
+    "correct": 0,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Potilaalle on aloitettu suonensisäinen nesteytys, jonka kokonaismäärä on 1200 ml. Infuusionopeudeksi on säädetty 85 ml/h. Kuinka kauan nesteytyshoito kokonaisuudessaan kestää?",
+    "explanation": "Laskutoimitus: Kokonaistilavuus (1200 ml) jaettuna infuusionopeudella (85 ml/h) on noin 14,12 tuntia. Kliinisessä työssä tämä muunnetaan tunneiksi ja minuuteiksi: 0,12 h * 60 min/h ≈ 7 minuuttia. Kesto on siis noin 14 tuntia ja 7 minuuttia.",
+    "options": [
+      "12 h 30 min",
+      "13 h 15 min",
+      "14 h 7 min",
+      "15 h 30 min"
+    ],
+    "correct": 2,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Lapsipotilas painaa 28 kg. Lääkäri on määrännyt antibioottia annoksella 45 mg/kg/vrk jaettuna neljään antokertaan. Mikä on yksittäisen kerta-annoksen suuruus milligrammoina?",
+    "explanation": "Laskutoimitus: Ensin lasketaan kokonaisvuorokausiannos: 28 kg × 45 mg/kg = 1260 mg. Tämä jaetaan neljään antokertaan: 1260 mg ÷ 4 = 315 mg. Kerta-annos on siis 315 mg.",
+    "options": [
+      "280 mg",
+      "315 mg",
+      "450 mg",
+      "1260 mg"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on yksikkömuunnoksen suhdeluku, kun milligrammoja (mg) muunnetaan mikrogrammoiksi (μg)?",
+    "explanation": "Yksi milligramma (mg) vastaa tuhatta mikrogrammaa (μg). Tämä on yksi lääkehoidon yleisimmistä ja tärkeimmistä yksikkömuunnoksista, jonka hallitseminen on potilasturvallisuuden kannalta ehdotonta.",
+    "options": [
+      "1 mg = 10 μg",
+      "1 mg = 100 μg",
+      "1 mg = 1000 μg",
+      "1 mg = 10 000 μg"
+    ],
+    "correct": 2,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Kuinka monta millilitraa (ml) sisältyy yhteen litraan (l)?",
+    "explanation": "Yksi litra (l) on tilavuudeltaan 1000 millilitraa (ml). Tämä perusmuunnos on keskeinen nestemääriä ja infuusioita laskettaessa.",
+    "options": [
+      "10 ml",
+      "100 ml",
+      "1000 ml",
+      "10 000 ml"
+    ],
+    "correct": 2,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Potilaan saama lääkeannos on 3,5 grammaa. Kuinka paljon tämä on milligrammoina?",
+    "explanation": "Yksikkömuunnos: 3,5 g kerrotaan tuhannella (1000), jolloin saadaan 3500 mg. Grammasta milligrammaksi muunnettaessa kerroin on aina 1000.",
+    "options": [
+      "35 mg",
+      "350 mg",
+      "3500 mg",
+      "35 000 mg"
+    ],
+    "correct": 2,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Lääkemääräys on 0,85 mg. Lääkeampulli sisältää lääkettä pitoisuutena 1000 μg/ml. Miten toimit?",
+    "explanation": "Ensin on muunnettava yksiköt yhteensopiviksi. 0,85 mg on 850 μg. Koska ampullin vahvuus on 1000 μg/ml, tarvittava määrä on 850 μg / 1000 μg/ml = 0,85 ml. Toinen tapa on muuntaa pitoisuus: 1000 μg/ml = 1 mg/ml, jolloin 0,85 mg vastaa 0,85 ml.",
+    "options": [
+      "Annat 0,085 ml",
+      "Annat 0,85 ml",
+      "Annat 8,5 ml",
+      "Annat 85 ml"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Potilaan tulee saada nestettä 18 desilitraa. Kuinka monta millilitraa tämä vastaa?",
+    "explanation": "Yksikkömuunnos: Yksi desilitra (dl) on 100 millilitraa (ml). Siksi 18 dl kerrotaan sadalla, jolloin saadaan 1800 ml.",
+    "options": [
+      "180 ml",
+      "1800 ml",
+      "18 000 ml",
+      "1,8 ml"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Erittäin vahvan lääkkeen annos on 0,035 grammaa. Kuinka monta mikrogrammaa tämä on?",
+    "explanation": "Tämä vaatii kaksivaiheisen muunnoksen tai suoran kertoimen hallintaa. 1 gramma on 1 000 000 mikrogrammaa. Siksi 0,035 g × 1 000 000 = 35 000 μg. Tämäntyyppiset muunnokset ovat yleisiä esimerkiksi tehohoidossa.",
+    "options": [
+      "35 μg",
+      "350 μg",
+      "3 500 μg",
+      "35 000 μg"
+    ],
+    "correct": 3,
+    "category": "lääkelaskenta",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mitä 'High Alert' -lääkkeet ovat ja miksi ne vaativat erityistä huomiota?",
+    "explanation": "Nämä ovat suuren riskin lääkkeitä, jotka virheellisesti annettuna voivat aiheuttaa potilaalle vakavaa haittaa. Esimerkkejä ovat insuliinit, antikoagulantit (verenohennuslääkkeet) ja opioidit. Niiden käsittelyssä noudatetaan usein kaksoistarkastusta.",
+    "options": [
+      "Erittäin kalliita lääkkeitä",
+      "Suuren riskin lääkkeitä",
+      "Vain sairaalakäyttöön tarkoitettuja lääkkeitä",
+      "Reseptivapaita lääkkeitä"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten toimit, jos huomaat tehneesi lääkitysvirheen?",
+    "explanation": "Ammattilaisen ensisijainen velvollisuus on potilasturvallisuus. Arvioi välittömästi potilaan vointi, varmista hänen turvallisuutensa ja raportoi tapahtuneesta viipymättä organisaation ohjeiden mukaisesti (esim. HaiPro-ilmoitus). Avoin ja syyllistämätön ilmoituskulttuuri on avain virheistä oppimiseen.",
+    "options": [
+      "Toivot, ettei kukaan huomaa",
+      "Arvioit potilaan voinnin ja raportoit virheestä",
+      "Kirjaat virheen vain omiin muistiinpanoihisi",
+      "Kerrot asiasta vasta työvuoron päätteeksi"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miksi potilasta ohjeistetaan ottamaan antibioottikuuri aina loppuun, vaikka oireet helpottaisivat?",
+    "explanation": "Kuurin keskeyttäminen voi jättää elimistöön vahvimmat, vastustuskykyisimmät bakteerit. Nämä bakteerit voivat lisääntyä ja kehittää resistenssiä, jolloin tauti uusiutuu vaikeahoitoisempana.",
+    "options": [
+      "Jotta lääkkeitä ei jäisi kotiin pyörimään",
+      "Varmistetaan lääkkeen täysi kaupallinen hyöty",
+      "Estetään antibioottiresistenssin kehittyminen",
+      "Koska apteekki vaatii niin"
+    ],
+    "correct": 2,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mitä tarkoittaa PKV-lääke ja miten sen tunnistaa reseptistä?",
+    "explanation": "PKV-lääke on Pääasiassa Keskushermostoon Vaikuttava lääke. Reseptissä ne on merkitty erikseen, ja niiden määräämistä ja toimittamista säädellään tarkemmin kuin muiden lääkkeiden.",
+    "options": [
+      "Sydänlääke",
+      "Pääasiassa Keskushermostoon Vaikuttava lääke",
+      "Vatsansuojalääke",
+      "Antibiootti"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten PKV-lääkkeet tulee säilyttää hoitoyksikössä potilasturvallisuuden varmistamiseksi?",
+    "explanation": "Ne tulee säilyttää erillään muista lääkkeistä, lukitussa kaapissa tai tilassa, johon on pääsy vain nimetyillä henkilöillä. Lääkkeiden kulutusta seurataan kirjanpidon avulla.",
+    "options": [
+      "Muiden lääkkeiden joukossa tavallisessa lääkekaapissa",
+      "Lukitussa tilassa erillään muista lääkkeistä",
+      "Jääkaapissa",
+      "Potilaan yöpöydällä"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on lääkehoidon kaksoistarkastuksen keskeinen periaate?",
+    "explanation": "Kaksi terveydenhuollon ammattilaista tarkistaa lääkkeen ja annoksen oikeellisuuden toisistaan riippumatta. Tämä on tärkeä potilasturvallisuutta parantava toimenpide erityisesti suuren riskin lääkkeiden kohdalla.",
+    "options": [
+      "Lääkäri ja hoitaja tarkistavat lääkityksen yhdessä",
+      "Kaksi hoitajaa tarkistaa lääkkeen itsenäisesti",
+      "Potilas ja hoitaja tarkistavat lääkkeen yhdessä",
+      "Farmaseutti tarkistaa lääkkeen apteekissa"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on subkutaanisen (s.c.) injektion suositeltu pistokulma?",
+    "explanation": "Ihonalainen injektio annetaan tyypillisesti 45–90 asteen kulmassa. Kulma valitaan potilaan ihonalaisen rasvakudoksen paksuuden ja käytettävän neulan pituuden mukaan, jotta lääke päätyy rasvakudokseen eikä lihakseen.",
+    "options": [
+      "Aina 30 astetta",
+      "45–90 astetta",
+      "Aina 90 astetta",
+      "Enintään 15 astetta"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miksi injektioneulaa suositellaan pidettävän kudoksessa noin 10 sekuntia lääkkeen annon jälkeen?",
+    "explanation": "Viive varmistaa, että koko lääkeannos ehtii imeytyä kudokseen eikä pääse virtaamaan takaisin pistokanavaa pitkin neulaa pois vedettäessä. Tämä on tärkeää erityisesti pienten annosten ja tiettyjen lääkkeiden, kuten insuliinin, kohdalla.",
+    "options": [
+      "Neula vedetään pois välittömästi",
+      "Noin 5 sekuntia",
+      "Noin 10 sekuntia",
+      "Vähintään 30 sekuntia"
+    ],
+    "correct": 2,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä seuraavista on suositeltu ja turvallinen paikka lihaksensisäiselle (i.m.) injektiolle aikuisella?",
+    "explanation": "Turvallisia ja yleisesti käytettyjä paikkoja ovat olkavarren hartialihas (m. deltoideus), iso pakaralihas (yläulkoneljännes) ja reiden ulompi reisilihas. Pakaran keskikohtaa tulee välttää iskiashermon vaurioitumisriskin vuoksi.",
+    "options": [
+      "Pakaran keskikohta",
+      "Olkavarren hauiksen alaosa",
+      "Pakaralihaksen yläulkoneljännes",
+      "Reiden takaosan lihas"
+    ],
+    "correct": 2,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä tarkoitetaan aspiroinnilla injektiota annettaessa ja milloin sitä harkitaan?",
+    "explanation": "Aspirointi tarkoittaa ruiskun männän vetämistä hieman taaksepäin ennen lääkkeen antoa. Tällä pyritään varmistamaan, ettei neula ole verisuonessa. Jos ruiskuun nousee verta, neula on vedettävä pois. Aspirointia ei yleensä enää suositella rokotuksissa tai ihonalaisissa injektioissa.",
+    "options": [
+      "Lääkkeen ruiskuttamista erityisen nopeasti",
+      "Männän vetämistä taaksepäin verisuoniosuman tarkistamiseksi",
+      "Neulan pyörittämistä kudoksessa",
+      "Pistokohdan hieromista voimakkaasti"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Missä tilanteessa lihaksensisäistä (i.m.) injektiota tulee erityisesti välttää?",
+    "explanation": "Lihaksensisäinen injektio on vasta-aiheinen, jos potilaalla on aktiivinen antikoagulanttihoito (verenohennuslääkitys) tai hyytymishäiriö, kuten hemofilia. Tämä johtuu suuren verenpurkauman (hematooman) riskistä.",
+    "options": [
+      "Ei ole esteitä",
+      "Antikoagulanttihoidon aikana ja hyytymishäiriöissä",
+      "Vain päiväsaikaan",
+      "Ainoastaan rokotusten yhteydessä"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on tyypillinen neulakoko (paksuus G ja pituus mm) ihonalaiseen (s.c.) injektioon aikuisella?",
+    "explanation": "Yleisesti käytetään 25–26 G:n paksuista ja noin 16 mm:n pituista neulaa. Valinta riippuu kuitenkin potilaan rasvakudoksen paksuudesta ja annettavasta lääkkeestä.",
+    "options": [
+      "18 G, 40 mm",
+      "25–26 G, 16 mm",
+      "21 G, 25 mm",
+      "30 G, 8 mm"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten insuliinin pistospaikkoja tulee kierrättää ja miksi?",
+    "explanation": "Pistospaikkaa tulee systemaattisesti kierrättää samalla kehon alueella (esim. vatsa), siirtäen pistosta 2–3 cm edellisestä. Tämä ehkäisee rasvakudoksen liikakasvua (lipohypertrofiaa), joka voi heikentää insuliinin imeytymistä ja hoitotasapainoa.",
+    "options": [
+      "Aina tulee pistää täsmälleen samaan paikkaan",
+      "Siirtämällä pistosta 2–3 cm kerrallaan samalla alueella",
+      "Vaihtamalla kehonosaa (esim. vatsa, reisi, käsivarsi) joka päivä",
+      "Satunnaisesti ilman järjestelmää"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on oikea inhalaatiotekniikka käytettäessä jauheinhalaattoria (esim. Turbuhaler, Diskus)?",
+    "explanation": "Jauheinhalaattori vaatii napakan ja syvän sisäänhengityksen, jotta lääkejauhe irtoaa ja kulkeutuu keuhkoihin. Tämän jälkeen hengitystä pidätetään noin 10 sekuntia.",
+    "options": [
+      "Hidas ja rauhallinen sisäänhengitys",
+      "Napakka sisäänhengitys ja noin 10 sekunnin hengityksen pidätys",
+      "Normaali, pinnallinen hengitys",
+      "Nopea ulospuhallus laitteeseen"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miksi suu ja nielu tulee huuhdella vedellä inhaloitavan kortikosteroidin käytön jälkeen?",
+    "explanation": "Huuhtelu poistaa suuhun ja nieluun jääneet lääkejäämät. Tämä ehkäisee paikallisia haittavaikutuksia, kuten suun ja nielun sienitulehdusta (sammas) sekä äänen käheyttä.",
+    "options": [
+      "Lääkkeen pahan maun poistamiseksi",
+      "Suun sienitulehduksen (sammas) ehkäisemiseksi",
+      "Hampaiden reikiintymisen estämiseksi",
+      "Toimenpide ei ole tarpeellinen"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on suositeltu tauko, kun otetaan kaksi annosta samasta annossumutteesta (MDI)?",
+    "explanation": "On suositeltavaa pitää noin 5–10 minuutin tauko annosten välillä. Tämä antaa ensimmäiselle annokselle aikaa vaikuttaa ja avata hengitysteitä, jolloin toinen annos pääsee kulkeutumaan syvemmälle keuhkoihin.",
+    "options": [
+      "Noin 1 minuutti",
+      "Noin 5–10 minuuttia",
+      "Vähintään 30 minuuttia",
+      "Taukoa ei tarvita"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on tehokkain tapa opettaa potilaalle inhalaattorin oikea käyttötekniikka?",
+    "explanation": "Tehokkain opetusmenetelmä yhdistää useita tapoja: hoitaja näyttää mallia (demonstraatio), potilas saa harjoitella itse ja näyttää osaamisensa, ja lisäksi hän saa kotiin selkeät kirjalliset ja/tai kuvalliset ohjeet.",
+    "options": [
+      "Antamalla vain suulliset ohjeet",
+      "Demonstroimalla ja antamalla potilaan harjoitella",
+      "Antamalla vain kirjallinen ohje",
+      "Olettamalla, että potilas osaa käyttää laitetta"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Missä tilanteessa potilaan on vaikea tai mahdoton käyttää inhalaattoria tehokkaasti?",
+    "explanation": "Akuutissa, vaikeassa hengenahdistuksessa potilaan voi olla mahdotonta koordinoida hengitystään laitteen kanssa. Myös yhteistyökyvyttömyys tai tajunnan tason lasku ovat esteitä.",
+    "options": [
+      "Ei ole esteitä tehokkaalle käytölle",
+      "Akuutissa hengenahdistuksessa",
+      "Päiväsaikaan",
+      "Ennen ruokailua"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten inhalaattorin puhtaudesta tulee huolehtia?",
+    "explanation": "Useimmat inhalaattorit ja tilajatkeet tulee puhdistaa säännöllisesti, yleensä viikoittain, valmistajan ohjeiden mukaisesti (esim. lämpimällä vedellä). Laite on kuivattava huolellisesti ennen käyttöä.",
+    "options": [
+      "Päivittäin alkoholilla",
+      "Viikoittain valmistajan ohjeen mukaan",
+      "Kuukausittain",
+      "Laitetta ei tarvitse puhdistaa"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on oikea antotekniikka ja -järjestys, kun potilaalle annetaan useita erilaisia silmälääkkeitä?",
+    "explanation": "Oikea järjestys on: ensin vetisimmät tipat, sitten geelimäisemmät ja viimeiseksi voiteet. Eri tippojen välillä tulee pitää vähintään 5 minuutin tauko ja voiteen ja tippojen välillä vähintään 15 minuuttia.",
+    "options": [
+      "Voiteet annetaan aina ensimmäisenä",
+      "Vetiset tipat ensin, voiteet viimeisenä, välissä tauot",
+      "Kaikki lääkkeet annetaan peräkkäin ilman taukoja",
+      "Antojärjestyksellä ei ole merkitystä"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mihin kohtaan silmää silmätippa tulee tiputtaa?",
+    "explanation": "Silmätippa tiputetaan alaluomea alaspäin vetämällä muodostuvaan 'taskuun' eli alaluomitaskuun. Tippaa ei tule tiputtaa suoraan sarveiskalvolle (silmämunan pinnalle), koska se voi aiheuttaa epämukavuutta ja räpytysrefleksin.",
+    "options": [
+      "Suoraan silmämunan päälle",
+      "Alaluomitaskuun",
+      "Yläluomelle",
+      "Silmän sisänurkkaan"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miksi silmän sisänurkkaa painetaan kevyesti silmätipan annon jälkeen?",
+    "explanation": "Kyynelkanavan painaminen noin 30 sekunnin ajan estää lääkettä valumasta kyyneltiehyttä pitkin nenänieluun ja verenkiertoon. Tämä tehostaa lääkkeen paikallista vaikutusta silmässä ja vähentää systeemisiä haittavaikutuksia.",
+    "options": [
+      "Noin 10 sekunnin ajan",
+      "Noin 30 sekunnin ajan",
+      "Vähintään 2 minuutin ajan",
+      "Toimenpide ei ole tarpeellinen"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten silmävoide levitetään oikeaoppisesti?",
+    "explanation": "Alaluomea vedetään alaspäin ja ohut, noin 1 cm pituinen nauha voidetta pursotetaan alaluomitaskuun. Tämän jälkeen potilas sulkee silmänsä ja liikuttelee silmämunaa, jotta voide levittyy tasaisesti.",
+    "options": [
+      "Suoraan silmämunan pinnalle",
+      "Nauhamaisesti alaluomitaskuun",
+      "Yläluomen ulkopinnalle",
+      "Silmän ulkonurkkaan"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Missä tilanteessa silmälääkkeen antamista tulee välttää ilman lääkärin konsultaatiota?",
+    "explanation": "Jos silmässä on diagnosoimaton punoitus, infektioepäily, vamma tai potilas on allerginen lääkkeelle, tulee aina konsultoida lääkäriä ennen lääkkeen antoa.",
+    "options": [
+      "Ei ole esteitä",
+      "Infektioepäilyn tai vamman yhteydessä",
+      "Päiväsaikaan",
+      "Ennen nukkumaanmenoa"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitkä ovat lääkehoidon 'viisi oikein' -periaatteen osatekijät?",
+    "explanation": "Turvallisen lääkehoidon perusta on muistisääntö: oikea potilas, oikea lääke, oikea annos, oikea antotapa ja oikea aika. Nykyään puhutaan usein myös laajennetuista listoista (esim. 10 oikein).",
+    "options": [
+      "Potilas, lääke, annos, aika ja paikka",
+      "Potilas, lääke, annos, antotapa ja aika",
+      "Lääke, annos, aika, tapa ja hinta",
+      "Potilas, annos, aika, lääkäri ja hoitaja"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miten potilaan henkilöllisyys tulee varmentaa ennen lääkkeen antamista?",
+    "explanation": "Potilaan henkilöllisyys on varmistettava luotettavasti ennen jokaista lääkkeenantoa. WHO suosittelee vähintään kahta tunnistetietoa, kuten potilaan itsensä sanoma nimi ja henkilötunnus/syntymäaika tai nimen ja rannekkeen tietojen vertailu.",
+    "options": [
+      "Vain ensimmäisellä hoitokerralla",
+      "Jos potilas vaikuttaa vieraalta",
+      "Aina ennen lääkkeenantoa kahdella tunnistetiedolla",
+      "Ainoastaan PKV-lääkkeitä annettaessa"
+    ],
+    "correct": 2,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miten korvalehdestä vedetään, kun aikuiselle annetaan korvatippoja?",
+    "explanation": "Yli 3-vuotiailla ja aikuisilla korvalehteä vedetään ylös ja taaksepäin. Tämä auttaa suoristamaan korvakäytävää, jolloin lääketipat pääsevät kulkeutumaan perille tärykalvolle asti.",
+    "options": [
+      "Eteen ja alas",
+      "Suoraan sivulle",
+      "Ylös ja taaksepäin",
+      "Alas ja taaksepäin"
+    ],
+    "correct": 2,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miten toimit, jos potilas oksentaa lääkkeen ottamisen jälkeen?",
+    "explanation": "Arvioi, kuinka kauan lääkkeen ottamisesta on kulunut ja onko lääke tunnistettavissa oksennuksessa. Älä anna uutta annosta ilman lääkärin ohjetta, sillä osa lääkkeestä on saattanut jo imeytyä. Kirjaa tapahtuma potilastietoihin.",
+    "options": [
+      "Annat heti uuden annoksen",
+      "Et anna uutta annosta ja kirjaat tapahtuman",
+      "Annat puolet uudesta annoksesta",
+      "Ohitat asian kokonaan"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on Z-track-tekniikan tarkoitus lihaksensisäisessä injektiossa?",
+    "explanation": "Z-track -tekniikassa ihoa ja ihonalaista kudosta siirretään sivulle ennen pistoa. Tämä sulkee pistokanavan neulan poisvetämisen jälkeen, estäen lääkkeen takaisinvirtauksen ja vähentäen kudoksen ärsytystä.",
+    "options": [
+      "Pistokivun vähentäminen",
+      "Lääkkeen takaisinvirtauksen estäminen",
+      "Injektion nopeuttaminen",
+      "Verenvuodon vähentäminen"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Milloin aspiraatiota EI yleensä suositella injektiota annettaessa?",
+    "explanation": "Nykykäytäntöjen mukaan aspirointia (männän vetäminen taaksepäin) ei enää suositella rokotuksissa, insuliini- tai hepariini-injektioissa, koska suoniosuman riski on näissä toimenpiteissä erittäin pieni ja toimenpide voi aiheuttaa turhaa kudostraumaa.",
+    "options": [
+      "Kaikissa lihaksensisäisissä injektioissa",
+      "Rokotuksissa, insuliini- ja hepariini-injektioissa",
+      "Aspiraatio on aina pakollinen",
+      "Ainoastaan lapsille annettaessa"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten lääkelaastari tulee kiinnittää iholle oikeaoppisesti?",
+    "explanation": "Laastari kiinnitetään puhtaalle, kuivalle, karvattomalle ja terveelle ihoalueelle. Kiinnityspaikkaa tulee vaihdella systemaattisesti ihoärsytyksen välttämiseksi. Laastaria ei saa kiinnittää taipeisiin tai ärtyneelle iholle.",
+    "options": [
+      "Aina samaan paikkaan parhaan imeytymisen vuoksi",
+      "Puhtaalle ja kuivalle iholle, paikkaa vaihdellen",
+      "Ihokarvojen päälle, jotta se pysyy paremmin",
+      "Kostealle iholle, jotta se tarttuu tiukemmin"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on lääkehoitosuunnitelman keskeinen tarkoitus toimintayksikössä?",
+    "explanation": "Lääkehoitosuunnitelma on potilasturvallisuutta ohjaava asiakirja, joka määrittelee lääkehoidon prosessit, vastuut ja tehtävät kyseisessä yksikössä. Se on osa organisaation omavalvontaa ja laadunhallintaa.",
+    "options": [
+      "Toimia lääkkeiden tilauslistana",
+      "Ohjata turvallista lääkehoitoa ja määritellä vastuut",
+      "Olla vain työnantajan lakisääteinen velvoite",
+      "Korvata potilaskohtaiset lääkemääräykset"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Kuka hyväksyy ja vahvistaa toimintayksikön lääkehoitosuunnitelman?",
+    "explanation": "Toimintayksikön lääkehoidosta vastaava lääkäri on vastuussa lääkehoitosuunnitelman hyväksymisestä ja vahvistamisesta. Suunnitelma laaditaan usein moniammatillisena yhteistyönä.",
+    "options": [
+      "Yksikön osastonhoitaja",
+      "Lääkehoidosta vastaava lääkäri",
+      "Aluehallintovirasto (AVI)",
+      "Kuka tahansa yksikön lääkäri"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Kuinka usein lääkehoitosuunnitelma on päivitettävä?",
+    "explanation": "Lääkehoitosuunnitelma tulee tarkistaa ja päivittää vähintään vuosittain sekä aina, kun yksikön toiminnassa, lainsäädännössä tai hoitokäytännöissä tapahtuu oleellisia muutoksia.",
+    "options": [
+      "Joka kuukausi",
+      "Vähintään vuosittain tai toiminnan muuttuessa",
+      "Ainoastaan viranomaisen vaatimuksesta",
+      "Päivittäminen ei ole pakollista"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mitä lääkehoidon vaaratapahtumalla tarkoitetaan?",
+    "explanation": "Vaaratapahtuma on mikä tahansa lääkehoitoon liittyvä tapahtuma, joka aiheutti tai olisi voinut aiheuttaa haittaa potilaalle. Myös 'läheltä piti' -tilanteet luetaan vaaratapahtumiksi.",
+    "options": [
+      "Vain kuolemaan johtanut lääkitysvirhe",
+      "Haittaa aiheuttanut tai potentiaalisesti haitallinen tapahtuma",
+      "Ainoastaan kalliiden lääkkeiden virheet",
+      "Vain tahallisesti aiheutetut virheet"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on yleisin syy lääkehoidon vaaratapahtumien taustalla?",
+    "explanation": "Tutkimusten mukaan inhimillisten tekijöiden, kuten kiireen, väsymyksen ja keskeytysten lisäksi yleisimpiä syitä ovat tiedonkulun katkokset ja puutteet potilaan siirtyessä hoitopaikasta toiseen.",
+    "options": [
+      "Kalliit lääkkeet",
+      "Tiedonkulun ongelmat siirtymätilanteissa",
+      "Potilaan yhteistyökyvyttömyys",
+      "Yövuorossa työskentely"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten 'läheltä piti' -tilanteet tulee käsitellä organisaatiossa?",
+    "explanation": "Ne tulee raportoida samalla tavalla kuin toteutuneet vaaratapahtumat, esimerkiksi HaiPro-järjestelmän kautta. Niiden analysointi on tärkeää, jotta järjestelmän heikkoudet voidaan korjata ennen kuin todellista haittaa ehtii syntyä.",
+    "options": [
+      "Niistä ei tarvitse raportoida, koska haittaa ei syntynyt",
+      "Ne tulee raportoida ja analysoida oppimisen mahdollistamiseksi",
+      "Niistä keskustellaan vain kahvitauolla",
+      "Vain erityisen vakavat tilanteet raportoidaan"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on vaaratapahtumien raportoinnin ensisijainen tavoite?",
+    "explanation": "Päätavoite on potilasturvallisuuden parantaminen oppimalla virheistä ja kehittämällä toimintatapoja ja prosesseja. Tavoitteena ei ole yksittäisten työntekijöiden syyllistäminen.",
+    "options": [
+      "Syyllisen työntekijän löytäminen",
+      "Oppiminen ja toiminnan kehittäminen",
+      "Vain tilastojen kerääminen vakuutusyhtiötä varten",
+      "Rangaistusten määrääminen"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Milloin masennuslääkkeen teho tyypillisesti alkaa näkyä?",
+    "explanation": "Masennuslääkkeiden vaikutus ei ole välitön. Vaste alkaa tyypillisesti näkyä 2–4 viikon kuluttua hoidon aloittamisesta, ja täysi teho saavutetaan usein vasta 6–8 viikossa.",
+    "options": [
+      "Muutamassa päivässä",
+      "2–4 viikossa",
+      "Noin 3 kuukaudessa",
+      "Välittömästi ensimmäisen annoksen jälkeen"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miksi pitkään käytettyä masennuslääkitystä ei saa lopettaa äkillisesti?",
+    "explanation": "Äkillinen lopettaminen voi aiheuttaa epämiellyttäviä ja joskus jopa voimakkaita vieroitusoireita, kuten huimausta, pahoinvointia ja ahdistuneisuutta. Lääkitys tulee aina lopettaa asteittain lääkärin ohjeen mukaan.",
+    "options": [
+      "Lääkityksen voi lopettaa milloin vain",
+      "Vieroitusoireiden riskin vuoksi",
+      "Koska se on kallista",
+      "Ainoastaan kesäloman aikana"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitkä ovat tyypillisiä SSRI-lääkkeiden (selektiiviset serotoniinin takaisinoton estäjät) haittavaikutuksia hoidon alussa?",
+    "explanation": "Hoidon alussa yleisiä, mutta usein ohimeneviä haittavaikutuksia ovat pahoinvointi, päänsärky, hikoilu ja unihäiriöt. Ne helpottavat tyypillisesti 1–2 viikon kuluessa.",
+    "options": [
+      "Näillä lääkkeillä ei ole haittavaikutuksia",
+      "Pahoinvointi, päänsärky ja unihäiriöt",
+      "Ainoastaan vakavat allergiset reaktiot",
+      "Ainoastaan voimakas väsymys"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä erityisesti tulee seurata potilaalla, jolla on antipsykoottilääkitys?",
+    "explanation": "Antipsykoottilääkitys vaatii säännöllistä seurantaa. Tärkeitä seurattavia ovat motoriset eli ekstrapyramidaaliset haittavaikutukset (esim. vapina, jäykkyys) sekä metaboliset muutokset, kuten painonnousu, verensokerin ja veren rasva-arvojen muutokset.",
+    "options": [
+      "Ei mitään erityistä",
+      "Motoriset oireet ja metaboliset arvot",
+      "Ainoastaan potilaan mielialaa",
+      "Ainoastaan verenpainetta"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mikä on keskeisintä kaksisuuntaisen mielialahäiriön hoidossa käytettävän litiumin seurannassa?",
+    "explanation": "Litium on kapean terapeuttisen leveyden lääke. Sen turvallinen käyttö edellyttää säännöllistä seerumin litiumpitoisuuden seurantaa myrkytystilan välttämiseksi. Myös munuaisten ja kilpirauhasen toimintaa on seurattava.",
+    "options": [
+      "Potilaan painon seuranta",
+      "Seerumin litiumpitoisuuden seuranta",
+      "Potilaan mielialan päivittäinen arviointi",
+      "Ei vaadi erityistä seurantaa"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mikä on WHO:n kipuportaiden perusajatus kivun lääkehoidossa?",
+    "explanation": "Kivun hoito etenee portaittain kivun voimakkuuden mukaan. Hoito aloitetaan yleensä tulehduskipulääkkeillä ja/tai parasetamolilla (porras 1), ja tarvittaessa siirrytään heikkoihin (porras 2) ja edelleen vahvoihin opioideihin (porras 3).",
+    "options": [
+      "Hoito aloitetaan aina vahvoilla opioideilla",
+      "Hoito etenee portaittain lievistä lääkkeistä vahvempiin",
+      "Kipua hoidetaan vain ei-opioideilla",
+      "Lääkitys valitaan satunnaisesti"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on opioidien, kuten morfiinin, yleisin ja ennakoitavin haittavaikutus?",
+    "explanation": "Opioidit lamaavat suolen toimintaa, minkä vuoksi ummetus on erittäin yleinen haittavaikutus. Sen ehkäisyyn tulee kiinnittää huomiota ja aloittaa laksatiivinen lääkitys usein samanaikaisesti opioidihoidon kanssa.",
+    "options": [
+      "Hengityslama",
+      "Ummetus",
+      "Allerginen reaktio",
+      "Voimakas riippuvuus"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten syöpäpotilaan läpimurtokipu hoidetaan?",
+    "explanation": "Läpimurtokipu on äkillinen, lyhytkestoinen kipu peruskipulääkityksen ohella. Se hoidetaan nopeavaikutteisella, lyhytkestoisella opioidilla, jonka annos on tyypillisesti 10–15 % potilaan kokonaisvuorokausiannoksesta.",
+    "options": [
+      "Sitä ei hoideta erikseen",
+      "Nopeavaikutteisella opioidilla",
+      "Nostamalla pysyvän peruslääkityksen annosta",
+      "Tulehduskipulääkkeillä"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mikä on palliatiivisen hoidon päätavoite?",
+    "explanation": "Kun sairaus ei ole enää parannettavissa, hoidon painopiste siirtyy palliatiiviseen hoitoon. Sen tavoitteena on lievittää oireita, vähentää kärsimystä ja parantaa potilaan ja hänen läheistensä elämänlaatua.",
+    "options": [
+      "Sairauden parantaminen",
+      "Oireiden lievitys ja elämänlaadun parantaminen",
+      "Ainoastaan kuoleman hetken lähestyessä aloitettava hoito",
+      "Kaikkien lääkitysten lopettaminen"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mitä tulee huomioida fentanyylilaastarin farmakokinetiikassa?",
+    "explanation": "Fentanyylilaastarin vaikutus alkaa hitaasti, vasta 12–24 tunnin kuluttua kiinnittämisestä. Vastaavasti sen vaikutus myös poistuu hitaasti, ja lääkeainetta imeytyy vielä 12–24 tuntia laastarin poistamisen jälkeen.",
+    "options": [
+      "Vaikutus on välitön ja lyhytkestoinen",
+      "Vaikutuksen alku ja poistuminen ovat hitaita",
+      "Ei erityisiä farmakokineettisiä huomioita",
+      "Laastari on tarkoitettu vain päiväkäyttöön"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Miten potilaan kokemaa kipua arvioidaan numeerisella NRS-asteikolla?",
+    "explanation": "NRS (Numeric Rating Scale) on yleinen kivunmittari, jossa potilas arvioi kipuaan asteikolla 0–10. Nolla tarkoittaa täyttä kivuttomuutta ja kymmenen pahinta kuviteltavissa olevaa kipua.",
+    "options": [
+      "Asteikolla 1–5",
+      "Asteikolla 0–10",
+      "Asteikolla 1–7",
+      "Asteikolla A–C"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Infuusiopumppu annostelee dopamiinia tehohoitopotilaalle nopeudella 4 mikrog/kg/min. Potilas painaa 75 kg. Kuinka monta milligrammaa lääkettä potilas saa tunnissa?",
+    "explanation": "Laskutoimitus: 1. Annos per minuutti: 4 μg/kg/min × 75 kg = 300 μg/min. 2. Annos per tunti: 300 μg/min × 60 min = 18 000 μg/h. 3. Muunnos milligrammoiksi: 18 000 μg = 18 mg. Potilas saa 18 mg tunnissa.",
+    "options": [
+      "15 mg/h",
+      "18 mg/h",
+      "21 mg/h",
+      "24 mg/h"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Potilaalle infusoidaan 600 ml 18-prosenttista glukoosiliuosta. Kuinka monta grammaa glukoosia liuos sisältää?",
+    "explanation": "Laskutoimitus: Liuoksen pitoisuus 18 % tarkoittaa 18 grammaa glukoosia per 100 ml liuosta. Täten 600 ml:ssa on (18 g / 100 ml) * 600 ml = 108 g glukoosia.",
+    "options": [
+      "90 g",
+      "108 g",
+      "120 g",
+      "144 g"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Diabeetikko (88 kg) saa insuliinia 0,7 yksikköä/kg. Käytössä on 100 yks/ml vahvuista insuliinia. Kuinka monta millilitraa annos on?",
+    "explanation": "Laskutoimitus: 1. Kokonaisyksikkömäärä: 88 kg × 0,7 yks/kg = 61,6 yksikköä. 2. Tilavuus millilitroina: 61,6 yks ÷ 100 yks/ml = 0,616 ml. Kliinisesti pyöristettynä 0,62 ml.",
+    "options": [
+      "0,58 ml",
+      "0,62 ml",
+      "0,68 ml",
+      "0,72 ml"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Infuusionopeus on 135 ml tunnissa. Kuinka monta tippaa tämä on minuutissa, kun käytössä on letkusto, jossa 1 ml vastaa 20 tippaa (gtt)?",
+    "explanation": "Laskutoimitus: (135 ml/h × 20 gtt/ml) / 60 min/h = 2700 gtt / 60 min = 45 gtt/min.",
+    "options": [
+      "40 gtt/min",
+      "45 gtt/min",
+      "50 gtt/min",
+      "55 gtt/min"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Lapsi (22 kg) saa amoksisilliinia 55 mg/kg vuorokaudessa jaettuna kolmeen annokseen. Kuinka suuri on yksittäinen kerta-annos?",
+    "explanation": "Laskutoimitus: 1. Vuorokausiannos: 22 kg × 55 mg/kg = 1210 mg. 2. Kerta-annos: 1210 mg ÷ 3 = 403,33... mg. Kliinisesti annos pyöristetään lähimpään järkevään annokseen, tässä tapauksessa 403 mg.",
+    "options": [
+      "350 mg",
+      "403 mg",
+      "450 mg",
+      "500 mg"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Potilaalle (70 kg) määrätään hepariinia 85 IU/kg. Kuinka monta kansainvälistä yksikköä (IU) lääkettä annetaan?",
+    "explanation": "Laskutoimitus: 70 kg × 85 IU/kg = 5950 IU. Hepariini on 'High Alert' -lääke, jonka annostelu vaatii erityistä tarkkuutta ja usein kaksoistarkastuksen.",
+    "options": [
+      "5600 IU",
+      "5950 IU",
+      "6200 IU",
+      "6500 IU"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Laimennat 2,5 ml lääkettä (vahvuus 60 mg/ml) lisäämällä siihen 7,5 ml keittosuolaa. Mikä on laimennetun liuoksen lopullinen pitoisuus (mg/ml)?",
+    "explanation": "Laskutoimitus: 1. Lääkeaineen määrä: 2,5 ml × 60 mg/ml = 150 mg. 2. Kokonaistilavuus: 2,5 ml + 7,5 ml = 10 ml. 3. Lopullinen pitoisuus: 150 mg / 10 ml = 15 mg/ml.",
+    "options": [
+      "10 mg/ml",
+      "15 mg/ml",
+      "20 mg/ml",
+      "25 mg/ml"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Potilaan Marevan-annos on 4,5 mg. Käytössä on 3 mg:n tabletteja. Kuinka monta tablettia potilaalle annetaan?",
+    "explanation": "Laskutoimitus: 4,5 mg ÷ 3 mg = 1,5 tablettia. Varfariini (Marevan) on 'High Alert' -lääke, jonka annostelu vaatii kaksoistarkastuksen.",
+    "options": [
+      "1 tabletti",
+      "1,5 tablettia",
+      "2 tablettia",
+      "2,5 tablettia"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Vastasyntynyt (3,6 kg) saa gentamysiiniä annoksella 2,8 mg/kg. Kuinka suuri kerta-annos on milligrammoina?",
+    "explanation": "Laskutoimitus: 3,6 kg × 2,8 mg/kg = 10,08 mg. Vastasyntyneiden lääkitys pyöristetään erittäin tarkasti, usein sadasosien tarkkuudella. Kliinisessä kontekstissa vastaus olisi 10,1 mg tai jopa 10,08 mg riippuen käytettävistä ruiskuista.",
+    "options": [
+      "8,2 mg",
+      "9,5 mg",
+      "10,1 mg",
+      "12,0 mg"
+    ],
+    "correct": 2,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Potilaalle (52 kg) on määrätty parasetamolia 18 mg/kg. Käytössä on 500 mg tabletteja. Kuinka monta tablettia annos vastaa?",
+    "explanation": "Laskutoimitus: 1. Kokonaisannos: 52 kg × 18 mg/kg = 936 mg. 2. Tablettien määrä: 936 mg / 500 mg/tbl = 1,872 tablettia. Käytännössä annetaan siis 2 tablettia, jolloin toteutunut annos on 1000 mg.",
+    "options": [
+      "1 tabletti",
+      "1,5 tablettia",
+      "2 tablettia",
+      "2,5 tablettia"
+    ],
+    "correct": 2,
+    "category": "lääkelaskenta",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on INR-arvon (International Normalised Ratio) merkitys lääkehoidossa?",
+    "explanation": "INR-arvo on laboratoriokoe, joka mittaa veren hyytymisaikaa. Sitä käytetään ensisijaisesti varfariinihoidon (Marevan) tehon ja turvallisuuden seurantaan.",
+    "options": [
+      "Se mittaa tulehdustilaa elimistössä",
+      "Se mittaa verensokeritasoa",
+      "Se mittaa veren hyytymistaipumusta",
+      "Se mittaa munuaisten toimintaa"
+    ],
+    "correct": 2,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Kuka Suomessa saa antaa rokotuksia?",
+    "explanation": "Rokotuksia saavat antaa laillistetut terveydenhuollon ammattilaiset, joilla on asianmukainen koulutus, kuten lääkärit, sairaanhoitajat ja terveydenhoitajat. Myös tietyin ehdoin koulutuksen saaneet farmaseutit voivat rokottaa.",
+    "options": [
+      "Vain lääkärit",
+      "Laillistetut terveydenhuollon ammattilaiset, joilla on rokotuslupa",
+      "Kaikki sairaalassa työskentelevät hoitajat",
+      "Kuka tahansa terveydenhuollon opiskelija"
+    ],
+    "correct": 1,
+    "category": "rokotukset",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Kuinka pitkään rokotettua henkilöä tulee yleensä seurata rokotuspaikalla?",
+    "explanation": "Potilasta tulee seurata vähintään 15 minuuttia mahdollisten välittömien allergisten reaktioiden varalta. Jos potilaalla on aiemmin ollut voimakas allerginen reaktio, seuranta-aika voi olla pidempi, esimerkiksi 30 minuuttia.",
+    "options": [
+      "5 minuuttia",
+      "Vähintään 15–30 minuuttia",
+      "1 tunti",
+      "Seuranta ei ole tarpeen"
+    ],
+    "correct": 1,
+    "category": "rokotukset",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on tyypillisin pistopaikka rokotukselle aikuisella?",
+    "explanation": "Yleisin ja suositelluin paikka on olkavarren hartialihas (deltalihas). Se on turvallinen paikka, jossa on vähän suuria hermoja tai verisuonia.",
+    "options": [
+      "Pakaralihas",
+      "Olkavarren hartialihas",
+      "Reiden etuosa",
+      "Vatsan alueen ihonalaiskudos"
+    ],
+    "correct": 1,
+    "category": "rokotukset",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Missä tilanteessa rokotuksen antamista on syytä siirtää?",
+    "explanation": "Rokotusta tulee siirtää, jos henkilöllä on kuumeinen infektiotauti tai jos hän on aiemmin saanut vakavan allergisen reaktion (anafylaksia) kyseiselle rokotteelle. Lievä nuha tai yskä ei yleensä ole este rokotukselle.",
+    "options": [
+      "Aina lievänkin flunssan aikana",
+      "Kuumeisen sairauden tai aiemman anafylaksian vuoksi",
+      "Rokotusta ei koskaan tarvitse siirtää",
+      "Ainoastaan viikonloppuisin"
+    ],
+    "correct": 1,
+    "category": "rokotukset",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten rokotusten turvallisuutta seurataan kansallisesti Suomessa?",
+    "explanation": "Rokotusten turvallisuutta valvotaan aktiivisesti. Terveydenhuollon ammattilaiset ja kansalaiset voivat ilmoittaa epäillyistä haittavaikutuksista Fimean ylläpitämään haittavaikutusrekisteriin. Lisäksi THL seuraa rokotuskattavuutta.",
+    "options": [
+      "Turvallisuutta ei seurata",
+      "Haittavaikutusrekisterin ja rokotusrekisterin avulla",
+      "Ainoastaan sairaaloissa",
+      "Apteekkien kautta satunnaisesti"
+    ],
+    "correct": 1,
+    "category": "rokotukset",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on anafylaktisen reaktion ensisijainen hoito?",
+    "explanation": "Anafylaksia on henkeä uhkaava allerginen reaktio, jonka ensihoito on adrenaliini-injektio lihakseen (yleensä reiden ulkosivuun). Tämän jälkeen soitetaan välittömästi hätänumeroon 112.",
+    "options": [
+      "Potilaan asettaminen istumaan ja odottaminen",
+      "Adrenaliini-injektio lihakseen ja hätäpuhelu",
+      "Antihistamiinitabletin antaminen",
+      "Kortisonivoiteen levittäminen ihottumaan"
+    ],
+    "correct": 1,
+    "category": "kliininen arviointi",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten toimit, jos tajuissaan olevan diabeetikon verensokeri on vaarallisen matala (hypoglykemia)?",
+    "explanation": "Tajuissaan olevalle potilaalle annetaan 15–20 grammaa nopeasti imeytyvää hiilihydraattia, kuten glukoositabletteja, sokeripitoista mehua tai hunajaa. Verensokeri mitataan uudelleen 15 minuutin kuluttua.",
+    "options": [
+      "Annat heti glukagoni-injektion",
+      "Annat 15–20 g nopeasti imeytyvää hiilihydraattia",
+      "Annat ylimääräisen annoksen insuliinia",
+      "Et tee mitään, tila korjaantuu itsestään"
+    ],
+    "correct": 1,
+    "category": "kliininen arviointi",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Missä tilanteessa käytetään glukagonia?",
+    "explanation": "Glukagonia käytetään tajuttoman diabeetikon vaikean hypoglykemian hoidossa, kun suonensisäisen glukoosin antaminen ei ole välittömästi mahdollista. Se annetaan injektiona lihakseen.",
+    "options": [
+      "Korkean verensokerin (hyperglykemia) hoitoon",
+      "Tajuttoman potilaan matalan verensokerin hoitoon",
+      "Diabeetikon ruokailun jälkeiseen verensokerin nousuun",
+      "Aina insuliinihoidon yhteydessä"
+    ],
+    "correct": 1,
+    "category": "kliininen arviointi",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on tavoitearvo HbA1c-kokeelle (ns. 'pitkä sokeri') useimmilla diabeetikoilla?",
+    "explanation": "Yleinen tavoitearvo useimmilla tyypin 2 diabeetikoilla on alle 53 mmol/mol (7 %). Tavoite on kuitenkin aina yksilöllinen ja riippuu potilaan iästä, muista sairauksista ja hypoglykemiariskistä.",
+    "options": [
+      "Alle 40 mmol/mol",
+      "Alle 53 mmol/mol",
+      "Alle 70 mmol/mol",
+      "Alle 90 mmol/mol"
+    ],
+    "correct": 1,
+    "category": "kliininen arviointi",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten lääkehoidon onnistumista arvioidaan?",
+    "explanation": "Onnistumista arvioidaan seuraamalla sekä hoidon vastetta (oireiden lievittyminen, tavoitearvojen saavuttaminen) että mahdollisia haittavaikutuksia. Arviointiin kuuluu potilaan haastattelu, kliiniset mittaukset ja laboratoriokokeet.",
+    "options": [
+      "Vain kysymällä potilaan vointia",
+      "Seuraamalla hoitovastetta ja haittavaikutuksia",
+      "Ainoastaan laboratoriokokeilla",
+      "Luottamalla siihen, että lääke toimii"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on lääkehoidon kokonaisarvioinnin (LHA) ja lääkityksen tarkistuksen (LT) ero?",
+    "explanation": "Lääkityksen tarkistus (LT) on usein hoitajan tai farmaseutin tekemä tekninen tarkistus päällekkäisyyksistä ja yhteensopimattomuuksista. Lääkehoidon kokonaisarviointi (LHA) on laajempi, lääkärin johtama moniammatillinen prosessi, jossa arvioidaan koko lääkityksen tarpeellisuus ja soveltuvuus potilaan kokonaistilanteeseen nähden.",
+    "options": [
+      "Niillä ei ole eroa",
+      "LHA on lääkärin tekemä laajempi arvio, LT on teknisempi tarkistus",
+      "Vain farmaseutti voi tehdä LHA:n",
+      "LT tehdään vain sairaalassa"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mitä lääkepakkauksen musta kärkikolmio (▼) tarkoittaa ja miten sen tulee vaikuttaa potilasohjaukseen?",
+    "explanation": "Musta kärkikolmio tarkoittaa, että lääke on lisäseurannassa. Nämä ovat usein uusia lääkkeitä, joista kaivataan lisää käyttökokemustietoa. Potilasta tulee ohjeistaa ilmoittamaan matalalla kynnyksellä kaikista poikkeavista oireista tai epäillyistä haittavaikutuksista.",
+    "options": [
+      "Lääke on erityisen vaarallinen",
+      "Lääke on lisäseurannassa, ja haitoista tulee ilmoittaa herkästi",
+      "Lääke on geneerinen valmiste",
+      "Lääke on tarkoitettu vain sairaalakäyttöön"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä tarkoitetaan lääkeaineen ensikierron metabolialla ja miten se voidaan ohittaa?",
+    "explanation": "Ensikierron metabolia tarkoittaa suun kautta otetun lääkkeen hajoamista maksassa ennen sen päätymistä systeemiseen verenkiertoon. Tämä heikentää lääkkeen tehoa. Se voidaan ohittaa antamalla lääke esim. kielen alle (sublinguaalisesti), laastarina ihon läpi tai injektiona.",
+    "options": [
+      "Lääkkeen poistumista munuaisten kautta",
+      "Lääkkeen hajoamista maksassa ennen systeemistä verenkiertoa",
+      "Lääkkeen sitoutumista proteiineihin",
+      "Lääkkeen tasaista imeytymistä"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Miksi kylmän lääkkeen tiputtaminen korvaan voi aiheuttaa voimakkaita oireita?",
+    "explanation": "Kylmä neste korvakäytävässä voi ärsyttää tasapainoelintä ja aiheuttaa voimakasta huimausta ja silmävärvettä (nystagmus). Siksi korvatipat tulee aina lämmittää kädenlämpöisiksi ennen antoa.",
+    "options": [
+      "Se heikentää lääkkeen tehoa",
+      "Se voi aiheuttaa huimausta ja silmävärvettä",
+      "Se aiheuttaa aina kipua",
+      "Sillä ei ole merkitystä"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on luotettavin laboratoriokoe munuaisten toiminnan arviointiin lääkeannoksia säädettäessä?",
+    "explanation": "Laskennallinen glomerulusten suodatusnopeus (eGFR) on paras mittari. Pelkkä kreatiniiniarvo (P-Krea) voi olla harhaanjohtava erityisesti iäkkäillä ja vähälihaksisilla, koska se voi pysyä viitearvoissa heikentyneestä munuaistoiminnasta huolimatta.",
+    "options": [
+      "P-Urea (ureapitoisuus)",
+      "P-Krea (kreatiniinipitoisuus)",
+      "eGFR (laskennallinen suodatusnopeus)",
+      "P-Alb (albumiinipitoisuus)"
+    ],
+    "correct": 2,
+    "category": "kliininen arviointi",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä turvallisuusohjeita tulee ehdottomasti noudattaa kotihappihoidossa tulipalovaaran vuoksi?",
+    "explanation": "Happi kiihdyttää palamista. Tupakointi ja avotulen (kuten kynttilät) käyttö on ehdottomasti kielletty samoissa tiloissa. Myös rasvaisten voiteiden käyttöä kasvoilla tulee välttää, ja laitteiston tulee olla etäällä kuumenevista laitteista.",
+    "options": [
+      "Happipullo tulee säilyttää kosteassa",
+      "Tupakointi ja avotuli ovat ehdottomasti kiellettyjä",
+      "Laitteistoa voi rasvata öljyllä",
+      "Erityisiä turvaohjeita ei ole"
+    ],
+    "correct": 1,
+    "category": "kliininen arviointi",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miten geneerinen substituutio apteekissa ja peruslääkevalikoima laitoksessa eroavat toisistaan?",
+    "explanation": "Geneerinen substituutio tarkoittaa apteekin velvollisuutta vaihtaa lääke edullisempaan, samaa lääkeainetta sisältävään valmisteeseen. Peruslääkevalikoima on sairaalan tai terveyskeskuksen kilpailutettu ja rajattu lääkevalikoima, jota yksikössä pääsääntöisesti käytetään.",
+    "options": [
+      "Ne tarkoittavat samaa asiaa",
+      "Geneerinen vaihto tapahtuu apteekissa, peruslääkevalikoima on laitoksen oma lääkelista",
+      "Vain peruslääkevalikoiman lääkkeet ovat korvattavia",
+      "Geneerisessä vaihdossa lääkeaine voi muuttua"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mitä tarkoitetaan lääkeaineen 'vakaalla tilalla' (steady state)?",
+    "explanation": "Vakaa tila saavutetaan säännöllisessä lääkityksessä, kun elimistöön imeytyvän ja sieltä poistuvan lääkeaineen määrä on tasapainossa. Tämä saavutetaan yleensä 3-5 puoliintumisajan jälkeen.",
+    "options": [
+      "Lääkkeen vaikutus on lakannut",
+      "Lääkeainepitoisuus on tasapainossa",
+      "Lääke on aiheuttanut myrkytyksen",
+      "Lääkettä ei ole vielä otettu"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Milloin Alzheimerin taudin lääkkeet, kuten donepetsiili, on suositeltavaa ottaa?",
+    "explanation": "Nämä lääkkeet voivat olla aktivoivia ja aiheuttaa levottomuutta tai unihäiriöitä. Siksi ne on usein hyvä ottaa aamulla, jotta mahdolliset virkistävät vaikutukset ajoittuvat päiväaikaan.",
+    "options": [
+      "Illalla ennen nukkumaanmenoa",
+      "Aamulla",
+      "Keskellä päivää ruokailun yhteydessä",
+      "Ajankohdalla ei ole merkitystä"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on glukokortikoidien (kortisoni) suositeltu antoajankohta ja miksi?",
+    "explanation": "Glukokortikoidit suositellaan otettavaksi kerta-annoksena aamulla. Tämä jäljittelee elimistön omaa kortisolin tuotannon vuorokausirytmiä, joka on korkeimmillaan aamulla, ja vähentää lisämunuaisen oman toiminnan lamaantumista.",
+    "options": [
+      "Illalla, koska se rauhoittaa",
+      "Aamulla, koska se jäljittelee kehon omaa rytmiä",
+      "Useassa erässä pitkin päivää",
+      "Vain joka toinen päivä"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä tarkoittaa farmakokinetiikka?",
+    "explanation": "Farmakokinetiikka kuvaa lääkeaineen vaiheita elimistössä eli sitä, mitä elimistö tekee lääkkeelle. Sen osa-alueita ovat imeytyminen, jakautuminen, aineenvaihdunta ja erittyminen.",
+    "options": [
+      "Mitä lääke tekee elimistölle",
+      "Mitä elimistö tekee lääkkeelle",
+      "Lääkkeen kemiallista rakennetta",
+      "Lääkkeen hintaa"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mitä tarkoittaa farmakodynamiikka?",
+    "explanation": "Farmakodynamiikka kuvaa lääkkeen vaikutuksia elimistössä eli sitä, mitä lääke tekee elimistölle. Se käsittelee lääkkeen vaikutusmekanismeja solutasolla.",
+    "options": [
+      "Mitä lääke tekee elimistölle",
+      "Mitä elimistö tekee lääkkeelle",
+      "Lääkkeen valmistusprosessia",
+      "Lääkkeen säilyvyyttä"
+    ],
+    "correct": 0,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on ero lääkkeenottoneulan ja injektioneulan välillä?",
+    "explanation": "Lääkkeenottoneula (vetoneula) on usein tylppäkärkinen ja paksu, ja se on tarkoitettu vain lääkkeen vetämiseen ampullista tai pullosta. Injektioneula on terävä ja ohuempi, ja se on tarkoitettu lääkkeen pistämiseen potilaaseen. Neulat on aina vaihdettava käyttötarkoituksen mukaan.",
+    "options": [
+      "Niillä ei ole eroa",
+      "Lääkkeenottoneula on lääkkeen vetämiseen, injektioneula pistämiseen",
+      "Lääkkeenottoneula on ohuempi",
+      "Vain injektioneula on steriili"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on suodatinneulan käyttötarkoitus?",
+    "explanation": "Suodatinneulaa käytetään vedettäessä lääkettä lasiampullista. Sen suodatin estää mahdollisten lasinsirujen joutumisen ruiskuun ja lääkkeen mukana potilaaseen. Suodatinneula on vaihdettava tavalliseen injektioneulaan ennen lääkkeen antamista.",
+    "options": [
+      "Se nopeuttaa lääkkeen vetämistä",
+      "Se estää lasinsirujen joutumisen lääkkeen joukkoon",
+      "Sitä käytetään ainoastaan tehohoidossa",
+      "Se on sama kuin lääkkeenottoneula"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miksi depot-valmistetta (esim. depottabletti) ei saa murskata?",
+    "explanation": "Depot-valmisteen rakenne on suunniteltu vapauttamaan lääkeainetta hitaasti ja tasaisesti pitkän ajan kuluessa. Rakenteen rikkominen murskaamalla voi johtaa koko lääkeainemäärän vapautumiseen kerralla, mikä aiheuttaa yliannostus- ja myrkytysvaaran.",
+    "options": [
+      "Koska se maistuu pahalta",
+      "Yliannostusvaaran vuoksi",
+      "Koska se menettää tehonsa",
+      "Koska se tukkii ruokintaletkun"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten varmistat potilaan tunnistamisen luotettavasti, jos hän ei itse pysty kommunikoimaan?",
+    "explanation": "Jos potilas ei voi itse kertoa nimeään, tunnistamiseen on käytettävä vähintään kahta muuta lähdettä. Näitä ovat potilaan tunnistusranneke, toinen hoitaja tai omainen. Potilastietojen kuva ei yksinään ole riittävä tunnistustapa.",
+    "options": [
+      "Arvaamalla potilastietojen kuvan perusteella",
+      "Käyttämällä tunnistusranneketta ja varmistamalla tiedot toiselta hoitajalta",
+      "Antamalla lääkkeen sängyn numeron perusteella",
+      "Kysymällä vieressä olevalta potilaalta"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Potilas saa infuusiona 1500 ml nestettä 8 tunnin aikana. Mikä on infuusionopeus millilitroina tunnissa (ml/h)?",
+    "explanation": "Laskutoimitus: Kokonaistilavuus (1500 ml) jaettuna kokonaisajalla (8 h) antaa nopeuden. 1500 ml / 8 h = 187,5 ml/h. Infuusiopumpussa nopeus asetettaisiin yleensä lähimpään kokonaislukuun, 188 ml/h.",
+    "options": [
+      "175 ml/h",
+      "188 ml/h",
+      "200 ml/h",
+      "225 ml/h"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miksi iäkkäiden lääkehoidossa polyfarmasia (monilääkitys) on merkittävä riski?",
+    "explanation": "Polyfarmasia (usein yli 5 lääkkeen säännöllinen käyttö) lisää merkittävästi lääkkeiden yhteis- ja haittavaikutusten riskiä. Iäkkäillä tämä riski korostuu, koska heidän elimistönsä käsittelee ja poistaa lääkkeitä hitaammin.",
+    "options": [
+      "Se on ainoastaan kallista",
+      "Se lisää yhteis- ja haittavaikutusten riskiä",
+      "Se on merkki hyvästä hoidosta",
+      "Sillä ei ole merkitystä"
+    ],
+    "correct": 1,
+    "category": "erityisryhmät",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Potilaalle on määrätty 2,5 mg enalapriilia. Saatavilla on 5 mg tabletteja, joissa on jakouurre. Kuinka monta tablettia annat?",
+    "explanation": "Laskutoimitus: 2,5 mg / 5 mg = 0,5 tablettia. Koska tabletissa on jakouurre, sen voi turvallisesti puolittaa.",
+    "options": [
+      "Neljäsosatabletin",
+      "Puolikkaan tabletin",
+      "Kokonaisen tabletin",
+      "Kaksi tablettia"
+    ],
+    "correct": 1,
+    "category": "lääkelaskenta",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Mikä on 'kuolleen tilan' (dead space) merkitys injektioita annettaessa?",
+    "explanation": "Kuollut tila on ruiskun kärkeen ja neulaan jäävä pieni tilavuus, johon jää lääkeainetta. Erityisesti pieniä annoksia annettaessa tämä hukkatila on huomioitava vetämällä ruiskuun hieman yli määrätyn annoksen, jotta potilas saa oikean määrän lääkettä.",
+    "options": [
+      "Sillä ei ole merkitystä",
+      "Se on huomioitava pienten annosten tarkassa annostelussa",
+      "Se tarkoittaa, että ruisku on rikki",
+      "Se liittyy vain kuolleiden potilaiden hoitoon"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mitä tarkoittaa aseptinen omatunto?",
+    "explanation": "Aseptinen omatunto on terveydenhuollon ammattilaisen sisäistetty periaate ja vastuu ylläpitää aseptista toimintatapaa kaikissa tilanteissa. Se tarkoittaa, että ammattilainen itse valvoo omaa ja tiimin toimintaa ja korjaa mahdolliset puutteet aseptiikassa, vaikka kukaan ei olisi näkemässä.",
+    "options": [
+      "Sitä, että toimii vain ohjeiden mukaan",
+      "Henkilökohtaista vastuuta aseptiikan noudattamisesta kaikissa tilanteissa",
+      "Pelkoa infektioiden saamisesta",
+      "Sitä, että käyttää aina steriilejä välineitä"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Milloin kädet tulee pestä saippualla ja vedellä käsihuuhteen käytön sijaan?",
+    "explanation": "Kädet tulee aina pestä vedellä ja saippualla, kun niissä on näkyvää likaa, ne ovat kosketuksissa potilaan eritteisiin tai kun hoidetaan potilasta, jolla on ripuli (esim. Clostridium difficile -infektio). Käsihuuhde ei tehoa itiöihin.",
+    "options": [
+      "Ainoastaan työvuoron alussa ja lopussa",
+      "Kun käsissä on näkyvää likaa tai hoidetaan ripulipotilasta",
+      "Aina ennen ruokailua",
+      "Käsihuuhde on aina parempi vaihtoehto"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miten varmistat, että lääke annetaan oikeaan ruokinta- tai PEG-letkuun?",
+    "explanation": "On ehdottoman tärkeää varmistaa, että yhdistät lääkeruiskun oikeaan letkuun, esimerkiksi oraaliruiskun enteraaliseen ravitsemusletkuun. Väärään letkuun (esim. suonensisäiseen kanyyliin) annettu lääke voi olla hengenvaarallinen. Oraaliruiskujen ja -letkujen liittimet ovat usein erivärisiä ja -muotoisia turvallisuussyistä.",
+    "options": [
+      "Kaikki letkut ovat samanlaisia",
+      "Tarkistamalla letkujen merkinnät ja käyttämällä oikeanlaista ruiskua",
+      "Kysymällä potilaalta",
+      "Valitsemalla lähimmän vapaan letkun"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miksi oraalisuspensiota on ravistettava hyvin ennen annostelua?",
+    "explanation": "Suspensio on seos, jossa kiinteä lääkeaine on hienojakoisena nesteessä. Säilytyksen aikana lääkeaine painuu pullon pohjalle. Ravistaminen varmistaa, että lääkeaine sekoittuu tasaisesti nesteeseen ja potilas saa joka kerta oikean annoksen.",
+    "options": [
+      "Jotta se maistuisi paremmalta",
+      "Jotta lääkeaine sekoittuu tasaisesti ja annos on oikea",
+      "Se on vain vanha tapa",
+      "Jotta lääke lämpenee"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Potilaalle on määrätty lääkettä 10 mg suun kautta. Samaa lääkettä annetaan laskimoon 2 mg. Mikä todennäköisesti selittää annoksen eron?",
+    "explanation": "Suun kautta otetun lääkkeen biologinen hyötyosuus on usein huomattavasti alle 100% johtuen epätäydellisestä imeytymisestä ja maksan ensikierron metaboliasta. Laskimoon annetun lääkkeen hyötyosuus on 100%, joten sitä tarvitaan pienempi annos saman vaikutuksen aikaansaamiseksi.",
+    "options": [
+      "Laskimoon annettava lääke on vaarallisempaa",
+      "Suun kautta otetun lääkkeen huono hyötyosuus",
+      "Lääkärin tekemä virhe",
+      "Potilas on tottunut suurempaan annokseen suun kautta"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mitä tarkoittaa, kun lääkeaineella on suuri jakautumistilavuus?",
+    "explanation": "Suuri jakautumistilavuus tarkoittaa, että lääkeaine hakeutuu verenkierrosta laajalti ja tehokkaasti kudoksiin, kuten rasvakudokseen. Tällöin sen pitoisuus veressä on suhteellisen pieni. Tällaisen lääkkeen poistaminen myrkytystilanteessa dialyysillä on tehotonta.",
+    "options": [
+      "Lääke pysyy pääasiassa verenkierrossa",
+      "Lääke hakeutuu tehokkaasti kudoksiin",
+      "Lääke poistuu nopeasti munuaisten kautta",
+      "Lääkkeellä on vähän haittavaikutuksia"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mikä osa lääkeaineen pitoisuudesta veressä on farmakologisesti aktiivinen?",
+    "explanation": "Vain se osa lääkeaineesta, joka on vapaana eikä ole sitoutunut plasman proteiineihin (kuten albumiiniin), on aktiivinen. Vapaa lääkeaine pääsee jakautumaan kudoksiin ja vaikuttamaan kohdesoluissa.",
+    "options": [
+      "Koko lääkeainepitoisuus",
+      "Vain proteiineihin sitoutunut osa",
+      "Vain vapaana oleva, sitoutumaton osa",
+      "Aktiivisuus ei riipu sitoutumisesta"
+    ],
+    "correct": 2,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä on aihio- eli esilääke (prodrug)?",
+    "explanation": "Aihio- eli esilääke on itsessään farmakologisesti inaktiivinen aine, joka muuttuu elimistön aineenvaihdunnassa (yleensä maksassa) aktiiviseksi lääkeaineeksi. Esimerkkejä ovat kodeiini, joka metaboloituu morfiiniksi, ja tramadoli.",
+    "options": [
+      "Erityisen nopeavaikutteinen lääke",
+      "Lääke, jolla ei ole haittavaikutuksia",
+      "Inaktiivinen aine, joka metaboloituu aktiiviseksi lääkkeeksi",
+      "Luontaistuotevalmiste"
+    ],
+    "correct": 2,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  },
+  {
+    "question": "Mikä on maksan CYP450-entsyymijärjestelmän merkitys lääkehoidossa?",
+    "explanation": "CYP450-järjestelmä on keskeinen ryhmä entsyymejä, jotka vastaavat suurimman osan lääkkeiden metaboliasta eli aineenvaihdunnasta. Perinnölliset erot tai muiden lääkkeiden vaikutus näiden entsyymien toimintaan voivat merkittävästi muuttaa lääkkeen tehoa ja haittavaikutusriskiä.",
+    "options": [
+      "Se vastaa lääkkeiden imeytymisestä suolistosta",
+      "Se on tärkein lääkkeitä hajottava entsyymijärjestelmä maksassa",
+      "Se kuljettaa lääkkeitä veressä",
+      "Sillä ei ole merkitystä lääkehoitoon"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mikä on lääkkeen eliminaatio?",
+    "explanation": "Eliminaatio on prosessi, jolla lääkeaine poistuu elimistöstä. Se koostuu kahdesta osasta: aineenvaihdunnasta (metabolia), jossa lääkkeen rakennetta muutetaan, ja erittymisestä (ekskreetio), jossa lääke tai sen aineenvaihduntatuotteet poistuvat (esim. virtsan tai sapen mukana).",
+    "options": [
+      "Ainoastaan lääkkeen imeytyminen",
+      "Lääkkeen aineenvaihdunta ja erittyminen",
+      "Lääkkeen jakautuminen kudoksiin",
+      "Lääkkeen huippupitoisuuden saavuttaminen"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "helppo"
+  },
+  {
+    "question": "Miten kahden eri agonistisen lääkkeen samanaikainen käyttö samaan reseptoriin vaikuttaa?",
+    "explanation": "Jos potilaalle annetaan kahta tai useampaa samaan reseptoriin vaikuttavaa agonistista lääkettä, niiden yhteisvaikutuksena lääkkeen teho tyypillisesti voimistuu, mutta samalla myös haittavaikutusten riski kasvaa. Esimerkkinä kahden eri opioidin samanaikainen käyttö.",
+    "options": [
+      "Vaikutukset kumoavat toisensa",
+      "Vaikutus voimistuu ja haittavaikutusriski kasvaa",
+      "Vain toinen lääkkeistä toimii",
+      "Vaikutuksessa ei tapahdu muutosta"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Miten stressireaktio vaikuttaa sydämen toimintaan ja miten tätä voidaan jäljitellä lääkkeellä?",
+    "explanation": "Stressissä lisämunuainen vapauttaa adrenaliinia, joka sitoutuu sydämen beeta-reseptoreihin, mikä nostaa sykettä ja supistusvoimaa. Sama vaikutus saadaan aikaan antamalla potilaalle adrenaliinia injektiona esimerkiksi anafylaktisessa shokissa.",
+    "options": [
+      "Se hidastaa sydämen lyöntejä",
+      "Se nostaa sykettä ja supistusvoimaa adrenaliinin avulla",
+      "Sillä ei ole vaikutusta sydämeen",
+      "Se laskee verenpainetta"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Potilaan lääkitystä vaihdetaan suun kautta otettavasta tabletista lihakseen annettavaan injektioon. Voiko annos pysyä samana?",
+    "explanation": "Ei yleensä. Lääkkeen biologinen hyötyosuus on eri antoreiteillä erilainen. Lihakseen annettu lääke imeytyy usein tehokkaammin kuin suun kautta otettu, joten tehon heikkenemisen tai liiallisen lisääntymisen välttämiseksi lääkärin tulee määrittää uusi, sopiva annos.",
+    "options": [
+      "Kyllä, annos pysyy aina samana",
+      "Ei, annosta saatetaan joutua muuttamaan",
+      "Kyllä, mutta vain jos lääke on sama",
+      "Injektion annos on aina suurempi"
+    ],
+    "correct": 1,
+    "category": "antoreitit",
+    "difficulty": "keskivaikea"
+  },
+  {
+    "question": "Mitä tarkoittaa, kun sanotaan, että lääkeaineen eliminaatio voi saturoitua?",
+    "explanation": "Tämä tarkoittaa, että elimistön (esim. maksan entsyymien) kyky poistaa lääkeainetta on ylittynyt. Kun eliminaatiokyky on kyllästetty, jo pienetkin annosnostot voivat johtaa pitoisuuden hallitsemattomaan nousuun ja myrkytysvaaraan. Esimerkkinä parasetamoli yliannostuksessa.",
+    "options": [
+      "Lääke poistuu erittäin nopeasti",
+      "Elimistön kyky poistaa lääkettä on ylittynyt",
+      "Lääke ei tehoa enää",
+      "Lääke muuttuu vesiliukoiseksi"
+    ],
+    "correct": 1,
+    "category": "perusteet",
+    "difficulty": "vaikea"
+  }
+]

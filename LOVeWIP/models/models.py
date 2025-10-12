@@ -13,8 +13,9 @@ class User(UserMixin):
     distractor_probability: int = 25
     password: Optional[str] = None
     status: str = 'active'
-    created_at: Optional[datetime] = None
-    
+    created_at: Optional[str] = None
+    expires_at: Optional[datetime] = None # <-- KORJAUS TÄSSÄ
+
     def get_id(self):
         return str(self.id)
     
@@ -29,10 +30,14 @@ class Question:
     correct: int
     explanation: str
     category: str
-    difficulty: int = 1
-    times_seen: int = 0
+    difficulty: str
+    times_shown: int = 0
     times_correct: int = 0
-    created_at: Optional[datetime] = None
+    last_shown: Optional[str] = None
+    ease_factor: float = 2.5
+    interval: int = 1
+    hint_type: Optional[str] = None
+    created_at: Optional[str] = None
 
 @dataclass
 class QuestionAttempt:
@@ -41,7 +46,7 @@ class QuestionAttempt:
     question_id: int
     is_correct: bool
     time_taken: int
-    created_at: datetime
+    created_at: Optional[str] = None  # Muutettu str:ksi tietokannan yhteensopivuuden vuoksi
 
 @dataclass
 class Achievement:
@@ -72,7 +77,7 @@ class DistractorAttempt:
     correct_choice: int
     is_correct: bool
     response_time: int
-    created_at: datetime
+    created_at: Optional[str] = None  # Muutettu str:ksi tietokannan yhteensopivuuden vuoksi
 
 @dataclass
 class SpacedRepetitionCard:

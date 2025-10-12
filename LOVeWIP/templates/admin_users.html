@@ -4,9 +4,16 @@
 {% block content %}
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">👥 Käyttäjien hallinta</h1>
+    <h1 class="mb-0">👥 Käyttäjien hallinta</h1>
+
+    <div>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTestUsersModal">
+            <i class="fas fa-user-plus me-2"></i>Luo testikäyttäjiä
+        </button>
+
         <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">← Palaa Admin-paneeliin</a>
     </div>
+</div>
     
     <div class="card shadow-sm">
         <div class="card-header">
@@ -23,12 +30,14 @@
                             <th>Rooli</th>
                             <th>Luotu</th>
                             <th>Tila</th>
+                            <th>Häiriötekijät Päällä</th>
+                            <th>Häiriötekijöiden Todennäköisyys (%)</th>
                             <th>Toiminnot</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
-                        <tr>
+                        <tr id="user-row-{{ user.id }}">
                             <td>{{ user.id }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.email }}</td>
@@ -47,100 +56,46 @@
                                     <span class="badge bg-danger">Estetty</span>
                                 {% endif %}
                             </td>
+                            <td>{{ 'Kyllä' if user.distractors_enabled else 'Ei' }}</td>
+                            <td>{{ user.distractor_probability }}</td>
                             <td>
                                 {% if user.id != 1 %}
-                                <div class="btn-group" role="group">
-                                    <!-- Poisto -->
-                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ user.id }}">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-danger" onclick="showConfirm('delete', {{ user.id }}, '{{ user.username }}')">
                                         Poista
                                     </button>
-                                    <!-- Estä/Salli -->
-                                    <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#toggleUserModal{{ user.id }}">
+                                    <button type="button" class="btn btn-outline-warning" onclick="showConfirm('toggle', {{ user.id }}, '{{ user.username }}', '{{ user.status }}')">
                                         {{ 'Estä' if user.status == 'active' else 'Salli' }}
                                     </button>
-                                    <!-- Roolin vaihto -->
-                                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#toggleRoleModal{{ user.id }}">
-                                        {{ 'Tee ylläpitäjäksi' if user.role == 'user' else 'Poista ylläpito-oikeudet' }}
+                                    <button type="button" class="btn btn-outline-primary" onclick="showConfirm('role', {{ user.id }}, '{{ user.username }}', '{{ user.role }}')">
+                                        {{ 'Tee ylläpitäjäksi' if user.role == 'user' else 'Poista ylläpito' }}
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info" onclick="showConfirm('edit_settings', {{ user.id }}, '{{ user.username }}', {{ user.distractors_enabled|tojson }}, {{ user.distractor_probability }})">
+                                        Muokkaa asetuksia
                                     </button>
                                 </div>
                                 {% else %}
-                                <span class="text-muted">Pääkäyttäjä</span>
+                                <span class="text-muted small">Pääkäyttäjä</span>
                                 {% endif %}
                             </td>
                         </tr>
-
-                        <!-- Modaalidialogi poistolle -->
-                        <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-labelledby="deleteUserModalLabel{{ user.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteUserModalLabel{{ user.id }}">Vahvista poisto</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <!-- Vahvistusrivi (oletuksena piilotettu) -->
+                        <tr id="confirm-row-{{ user.id }}" class="confirm-row" style="display: none;">
+                            <td colspan="9" class="bg-warning bg-opacity-10">
+                                <div class="p-3">
+                                    <div class="mb-3">
+                                        <strong id="confirm-text-{{ user.id }}"></strong>
                                     </div>
-                                    <div class="modal-body">
-                                        Haluatko varmasti poistaa käyttäjän <strong>{{ user.username }}</strong> ja kaikki hänen tietonsa pysyvästi? <br>Tätä toimintoa ei voi peruuttaa.
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
-                                        <form action="{{ url_for('admin_delete_user_route', user_id=user.id) }}" method="post">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="confirm" value="true">
-                                            <button type="submit" class="btn btn-danger">Kyllä, poista</button>
-                                        </form>
-                                    </div>
+                                    <form id="confirm-form-{{ user.id }}" method="POST">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="confirm" value="true">
+                                        <button type="submit" class="btn btn-danger btn-sm" id="confirm-btn-{{ user.id }}">
+                                            Vahvista
+                                        </button>
+                                    </form>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Modaalidialogi estä/salli -->
-                        <div class="modal fade" id="toggleUserModal{{ user.id }}" tabindex="-1" aria-labelledby="toggleUserModalLabel{{ user.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="toggleUserModalLabel{{ user.id }}">Vahvista toiminto</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        {% if user.status == 'active' %}
-                                            Haluatko varmasti estää käyttäjän <strong>{{ user.username }}</strong>? Tämä toiminto ei ole peruuttamaton.
-                                        {% else %}
-                                            Haluatko varmasti sallia käyttäjän <strong>{{ user.username }}</strong>? Tämä toiminto ei ole peruuttamaton.
-                                        {% endif %}
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
-                                        <form action="{{ url_for('admin_toggle_user_route', user_id=user.id) }}" method="post">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="confirm" value="true">
-                                            <button type="submit" class="btn btn-warning">{{ 'Kyllä, estä' if user.status == 'active' else 'Kyllä, salli' }}</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Modaalidialogi roolin vaihdolle -->
-                        <div class="modal fade" id="toggleRoleModal{{ user.id }}" tabindex="-1" aria-labelledby="toggleRoleModalLabel{{ user.id }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="toggleRoleModalLabel{{ user.id }}">Vahvista roolin vaihto</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Haluatko varmasti {{ 'tehdä' if user.role == 'user' else 'poistaa' }} käyttäjän <strong>{{ user.username }}</strong> {{ 'ylläpitäjäksi' if user.role == 'user' else 'ylläpito-oikeudet' }}? Tämä toiminto ei ole peruuttamaton.
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
-                                        <form action="{{ url_for('admin_toggle_role_route', user_id=user.id) }}" method="post">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <input type="hidden" name="confirm" value="true">
-                                            <button type="submit" class="btn btn-primary">{{ 'Kyllä, tee ylläpitäjäksi' if user.role == 'user' else 'Kyllä, poista ylläpito-oikeudet' }}</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -150,21 +105,135 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
-<!-- Bootstrap JS for modals and alert dismissal -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+{% block extra_scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var modalElements = document.querySelectorAll('.modal');
-        modalElements.forEach(function(modal) {
-            var modalInstance = new bootstrap.Modal(modal);
-            modal.addEventListener('show.bs.modal', function() {
-                console.log('Modal shown for ID: ' + modal.id);
-            });
-            modal.addEventListener('hide.bs.modal', function() {
-                console.log('Modal hidden for ID: ' + modal.id);
-            });
-        });
+function showConfirm(action, userId, username, extra = null, extra2 = null) {
+    // Piilota kaikki vahvistusrivit
+    document.querySelectorAll('.confirm-row').forEach(row => {
+        row.style.display = 'none';
     });
+    
+    const confirmRow = document.getElementById(`confirm-row-${userId}`);
+    const confirmText = document.getElementById(`confirm-text-${userId}`);
+    const confirmForm = document.getElementById(`confirm-form-${userId}`);
+    const confirmBtn = document.getElementById(`confirm-btn-${userId}`);
+    
+    if (action === 'delete') {
+        confirmText.innerHTML = `⚠️ Haluatko varmasti <strong>POISTAA</strong> käyttäjän <strong>${username}</strong> ja kaikki hänen tietonsa?`;
+        confirmForm.action = `/admin/delete_user/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+        `;
+        confirmBtn.className = 'btn btn-danger btn-sm';
+        confirmBtn.textContent = 'Kyllä, poista';
+        confirmBtn.style.display = 'inline-block';
+        
+    } else if (action === 'toggle') {
+        const statusText = extra === 'active' ? 'ESTÄÄ' : 'SALLIA';
+        confirmText.innerHTML = `Haluatko varmasti <strong>${statusText}</strong> käyttäjän <strong>${username}</strong>?`;
+        confirmForm.action = `/admin/toggle_user/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+        `;
+        confirmBtn.className = 'btn btn-warning btn-sm';
+        confirmBtn.textContent = 'Vahvista';
+        confirmBtn.style.display = 'inline-block';
+        
+    } else if (action === 'role') {
+        const roleText = extra === 'user' ? 'tehdä YLLÄPITÄJÄKSI' : 'poistaa YLLÄPITO-OIKEUDET';
+        confirmText.innerHTML = `Haluatko varmasti <strong>${roleText.toUpperCase()}</strong> käyttäjältä <strong>${username}</strong>?`;
+        confirmForm.action = `/admin/toggle_role/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+        `;
+        confirmBtn.className = 'btn btn-primary btn-sm';
+        confirmBtn.textContent = 'Vahvista';
+        confirmBtn.style.display = 'inline-block';
+        
+    } else if (action === 'edit_settings') {
+        confirmText.innerHTML = `Muokkaa häiriötekijäasetuksia käyttäjälle <strong>${username}</strong>`;
+        confirmForm.action = `/admin/edit_user_settings/${userId}`;
+        confirmForm.innerHTML = `
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="confirm" value="true">
+            
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-toggle-on me-1"></i> Häiriötekijät Päällä
+                    </label>
+                    <select class="form-select" name="distractors_enabled">
+                        <option value="1" ${extra === true || extra === 1 || extra === '1' ? 'selected' : ''}>✅ Kyllä</option>
+                        <option value="0" ${extra === false || extra === 0 || extra === '0' ? 'selected' : ''}>❌ Ei</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-percentage me-1"></i> Todennäköisyys (%)
+                    </label>
+                    <input type="number" 
+                           class="form-control" 
+                           name="distractor_probability" 
+                           value="${extra2 || 25}" 
+                           min="0" 
+                           max="100" 
+                           required>
+                    <div class="form-text">0-100% välillä</div>
+                </div>
+            </div>
+            
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="hideConfirm(${userId})">
+                    <i class="fas fa-times me-1"></i> Peruuta
+                </button>
+                <button type="submit" class="btn btn-success btn-sm">
+                    <i class="fas fa-save me-1"></i> Tallenna muutokset
+                </button>
+            </div>
+        `;
+        confirmBtn.style.display = 'none'; // Piilotetaan ulkopuolinen nappi
+    }
+    
+    confirmRow.style.display = 'table-row';
+    confirmRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideConfirm(userId) {
+    const confirmRow = document.getElementById(`confirm-row-${userId}`);
+    confirmRow.style.display = 'none';
+}
 </script>
+<div class="modal fade" id="createTestUsersModal" tabindex="-1" aria-labelledby="createTestUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTestUsersModalLabel"><i class="fas fa-user-plus me-2"></i>Luo testikäyttäjiä</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin_create_test_users_route') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="user_count" class="form-label">Luotavien käyttäjien määrä</label>
+                        <input type="number" class="form-control" id="user_count" name="user_count" value="10" min="1" max="200" required>
+                        <div class="form-text">Syötä numero 1-200 väliltä.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiration_days" class="form-label">Tunnusten voimassaoloaika (päivinä)</label>
+                        <input type="number" class="form-control" id="expiration_days" name="expiration_days" value="30" min="1" max="365" required>
+                        <div class="form-text">Syötä, kuinka monen päivän kuluttua tunnukset vanhenevat (1-365).</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    <button type="submit" class="btn btn-success">Luo käyttäjät</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

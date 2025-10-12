@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Kirjaudu - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-sign-in-alt text-primary me-2"></i>
+                        Kirjaudu sisään
+                    </h2>
+                    
+                    <form method="POST" action="{{ url_for('login_route') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-1"></i>Käyttäjänimi
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" required autofocus placeholder="Syötä käyttäjänimesi">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Salasana
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" required placeholder="Syötä salasanasi">
+                            <div class="text-end mt-2">
+                                <a href="{{ url_for('forgot_password_route') }}" class="small text-decoration-none">
+                                    <i class="fas fa-key me-1"></i>Unohtuiko salasana?
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Kirjaudu
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr>
+                    
+                    <p class="text-center mb-0">
+                        Eikö sinulla ole tiliä? 
+                        <a href="{{ url_for('register_route') }}" class="text-decoration-none fw-bold">
+                            Rekisteröidy tästä
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Info Box -->
+            <div class="alert alert-info mt-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Huomio:</strong> Ensimmäinen rekisteröityvä käyttäjä saa automaattisesti ylläpitäjän oikeudet.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(90, 103, 216, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(90, 103, 216, 0.4);
+    }
+</style>
+{% endblock %}

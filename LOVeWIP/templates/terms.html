@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Käyttöehdot - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container my-5" style="max-width: 800px;">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-file-contract text-primary me-2"></i>
+            Käyttöehdot
+        </h1>
+        <a href="{{ url_for('dashboard_route') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Takaisin
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+            <p class="text-muted">Viimeksi päivitetty: [Lisää päivämäärä tähän]</p>
+            <hr class="mb-4">
+
+            <h3 class="h5 fw-bold mt-4">1. Palvelun kuvaus</h3>
+            <p>LOVe Enhanced ("Palvelu") on oppimisalusta, joka on suunniteltu lääkehoidon osaamisen harjoitteluun. Palvelu on tarkoitettu ainoastaan koulutukselliseksi apuvälineeksi.</p>
+
+            <h3 class="h5 fw-bold mt-4">2. Käyttäjän vastuut</h3>
+            <p>Rekisteröitymällä Palveluun sitoudut noudattamaan näitä käyttöehtoja. Olet vastuussa käyttäjätunnuksesi ja salasanasi salassapidosta sekä kaikesta tililläsi tapahtuvasta toiminnasta.</p>
+
+            <h3 class="h5 fw-bold mt-4">3. Immateriaalioikeudet</h3>
+            <p>Kaikki Palvelun sisältö, mukaan lukien kysymykset, selitykset, ohjelmistokoodi ja ulkoasu, on [Sinun nimesi / Yrityksesi nimi] omaisuutta ja tekijänoikeuslain suojaamaa. Palvelun sisällön kopioiminen tai kaupallinen hyödyntäminen ilman lupaa on kielletty.</p>
+
+            <h3 class="h5 fw-bold mt-4">4. Vastuunrajoitus</h3>
+            <p>Palvelu tarjotaan "sellaisena kuin se on". Vaikka pyrimme sisällön virheettömyyteen, emme takaa tietojen täydellistä oikeellisuutta. Palvelu on koulutustyökalu, eikä se korvaa ammatillista harkintaa, virallisia koulutusvaatimuksia tai potilastyössä noudatettavia hoito-ohjeita. Palveluntarjoaja ei ole vastuussa mistään vahingoista, jotka aiheutuvat Palvelun käytöstä.</p>
+
+            <h3 class="h5 fw-bold mt-4">5. Palvelun muutokset ja tilin sulkeminen</h3>
+            <p>Pidätämme oikeuden muuttaa tai lopettaa Palvelun. Voimme sulkea tai jäädyttää käyttäjätilisi ilman ennakkovaroitusta, mikäli rikot näitä käyttöehtoja.</p>
+
+            <h3 class="h5 fw-bold mt-4">6. Ehtojen muuttaminen</h3>
+            <p>Voimme päivittää näitä käyttöehtoja aika ajoin. Jatkamalla Palvelun käyttöä muutosten jälkeen hyväksyt uudet ehdot.</p>
+
+            <h3 class="h5 fw-bold mt-4">7. Sovellettava laki</h3>
+            <p>Näihin käyttöehtoihin sovelletaan Suomen lakia.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

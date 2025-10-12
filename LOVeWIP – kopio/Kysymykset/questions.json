@@ -1,7 +1,7 @@
 [
     {
-        "question": "Potilaalle on määrätty 12,5 mg metoprololia. Saatavilla on 50 mg tabletteja. Kuinka monta tablettia annat?",
-        "explanation": "Ratkaisu: 12,5 mg ÷ 50 mg = 0,25 tablettia. Aina varmista laskutoimituksen oikeellisuus kahdesti.",
+        "question": "Potilaalle on määrätty 15 mg metoprololia. Saatavilla on 60 mg tabletteja. Kuinka monta tablettia annat?",
+        "explanation": "Ratkaisu: 15 mg ÷ 60 mg = 0,25 tablettia. Aina varmista laskutoimituksen oikeellisuus kahdesti.",
         "options": [
             "0,25 tablettia",
             "0,5 tablettia",
@@ -9,33 +9,33 @@
             "4 tablettia"
         ],
         "correct": 0,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
-        "question": "Infuusionopeus on 75 ml/h. Potilaan tulee saada yhteensä 1000 ml nestettä. Kuinka kauan infuusio kestää?",
-        "explanation": "Ratkaisu: 1000 ml ÷ 75 ml/h ≈ 13,33 tuntia = 13 h 20 min. Pyöristä aina järkevästi.",
+        "question": "Infuusionopeus on 85 ml/h. Potilaan tulee saada yhteensä 1200 ml nestettä. Kuinka kauan infuusio kestää?",
+        "explanation": "Ratkaisu: 1200 ml ÷ 85 ml/h ≈ 14,12 tuntia = 14 h 7 min. Pyöristä aina järkevästi.",
         "options": [
-            "10 h 30 min",
-            "12 h 15 min",
-            "13 h 20 min",
-            "15 h 00 min"
+            "12 h 30 min",
+            "13 h 15 min",
+            "14 h 7 min",
+            "15 h 30 min"
         ],
         "correct": 2,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Lapsi painaa 25 kg. Lääkemääräys on 50 mg/kg/vrk jaettuna neljään annokseen. Kuinka suuri on kerta-annos?",
-        "explanation": "Ratkaisu: (25 kg × 50 mg/kg) ÷ 4 = 1250 mg ÷ 4 = 312,5 mg per kerta.",
+        "question": "Lapsi painaa 28 kg. Lääkemääräys on 45 mg/kg/vrk jaettuna neljään annokseen. Kuinka suuri on kerta-annos?",
+        "explanation": "Ratkaisu: (28 kg × 45 mg/kg) ÷ 4 = 1260 mg ÷ 4 = 315 mg per kerta.",
         "options": [
-            "250 mg",
-            "312,5 mg",
-            "500 mg",
-            "1250 mg"
+            "280 mg",
+            "315 mg",
+            "450 mg",
+            "1260 mg"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
@@ -48,7 +48,7 @@
             "10000 μg"
         ],
         "correct": 2,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
@@ -61,59 +61,59 @@
             "10000 ml"
         ],
         "correct": 2,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
-        "question": "Muunna 2,5 g milligrammoiksi.",
-        "explanation": "2,5 g × 1000 = 2500 mg. Grammasta milligrammaksi kerrotaan 1000:lla.",
+        "question": "Muunna 3,5 g milligrammoiksi.",
+        "explanation": "3,5 g × 1000 = 3500 mg. Grammasta milligrammaksi kerrotaan 1000:lla.",
         "options": [
-            "25 mg",
-            "250 mg",
-            "2500 mg",
-            "25000 mg"
+            "35 mg",
+            "350 mg",
+            "3500 mg",
+            "35000 mg"
         ],
         "correct": 2,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
-        "question": "Muunna 750 mikrogrammaa milligrammoiksi.",
-        "explanation": "750 μg ÷ 1000 = 0,75 mg. Mikrogrammasta milligrammaksi jaetaan 1000:lla.",
+        "question": "Muunna 850 mikrogrammaa milligrammoiksi.",
+        "explanation": "850 μg ÷ 1000 = 0,85 mg. Mikrogrammasta milligrammaksi jaetaan 1000:lla.",
         "options": [
-            "0,075 mg",
-            "0,75 mg",
-            "7,5 mg",
-            "75 mg"
+            "0,085 mg",
+            "0,85 mg",
+            "8,5 mg",
+            "85 mg"
         ],
         "correct": 1,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Muunna 15 desilitraa millilitroiksi.",
-        "explanation": "15 dl × 100 = 1500 ml. Desilitrasta millilitraan kerrotaan 100:lla.",
+        "question": "Muunna 18 desilitraa millilitroiksi.",
+        "explanation": "18 dl × 100 = 1800 ml. Desilitrasta millilitraan kerrotaan 100:lla.",
         "options": [
-            "150 ml",
-            "1500 ml",
-            "15000 ml",
-            "1,5 ml"
+            "180 ml",
+            "1800 ml",
+            "18000 ml",
+            "1,8 ml"
         ],
         "correct": 1,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
-        "question": "Muunna 0,025 g mikrogrammoiksi.",
-        "explanation": "0,025 g × 1 000 000 = 25 000 μg. Grammasta mikrogrammaksi kerrotaan miljoonalla.",
+        "question": "Muunna 0,035 g mikrogrammoiksi.",
+        "explanation": "0,035 g × 1 000 000 = 35 000 μg. Grammasta mikrogrammaksi kerrotaan miljoonalla.",
         "options": [
-            "25 μg",
-            "250 μg",
-            "2500 μg",
-            "25000 μg"
+            "35 μg",
+            "350 μg",
+            "3500 μg",
+            "35000 μg"
         ],
         "correct": 3,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "vaikea"
     },
     {
@@ -126,7 +126,7 @@
             "Pelkästään QR-koodi"
         ],
         "correct": 1,
-        "category": "annosjakelu",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -139,7 +139,7 @@
             "Soitetaan lääkärille"
         ],
         "correct": 1,
-        "category": "annosjakelu",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -152,7 +152,7 @@
             "Vain nesteen kanssa"
         ],
         "correct": 1,
-        "category": "annosjakelu",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -165,7 +165,7 @@
             "Märkätiloissa"
         ],
         "correct": 2,
-        "category": "annosjakelu",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -178,7 +178,7 @@
             "3 kuukautta"
         ],
         "correct": 1,
-        "category": "annosjakelu",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -191,7 +191,7 @@
             "Pienentää kustannuksia"
         ],
         "correct": 1,
-        "category": "annosjakelu",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -204,7 +204,7 @@
             "15 astetta"
         ],
         "correct": 1,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -217,7 +217,7 @@
             "30 sekuntia"
         ],
         "correct": 2,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -230,7 +230,7 @@
             "Reiden takimmainen osa"
         ],
         "correct": 2,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -243,7 +243,7 @@
             "Pistopaikan hieromista"
         ],
         "correct": 1,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -256,7 +256,7 @@
             "Aina rokotuksissa"
         ],
         "correct": 1,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -269,7 +269,7 @@
             "30 G, 8 mm"
         ],
         "correct": 1,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -282,7 +282,7 @@
             "Satunnaisesti"
         ],
         "correct": 1,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -295,7 +295,7 @@
             "Nopea puhallus"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -308,7 +308,7 @@
             "Ei ole tarpeen"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -321,7 +321,7 @@
             "Ei taukoa"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -334,7 +334,7 @@
             "Ei tarvitse opettaa"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -347,7 +347,7 @@
             "Ennen ruokailua"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -360,7 +360,7 @@
             "Ei tarvitse puhdistaa"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -373,7 +373,7 @@
             "Ärsyttävät ensin"
         ],
         "correct": 1,
-        "category": "silmälääkkeet",
+        "category": "antoreitit",
         "difficulty": "vaikea"
     },
     {
@@ -386,7 +386,7 @@
             "Silmän kulmaan"
         ],
         "correct": 1,
-        "category": "silmälääkkeet",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -399,7 +399,7 @@
             "Ei tarvitse painaa"
         ],
         "correct": 1,
-        "category": "silmälääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -412,7 +412,7 @@
             "Silmäkulmaan"
         ],
         "correct": 1,
-        "category": "silmälääkkeet",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -425,7 +425,7 @@
             "Ennen nukkumaanmenoa"
         ],
         "correct": 1,
-        "category": "silmälääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -438,7 +438,7 @@
             "Potilas, annos, aika, lääkäri, hoitaja"
         ],
         "correct": 1,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -451,7 +451,7 @@
             "Vain PKV-lääkkeiden yhteydessä"
         ],
         "correct": 2,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -464,7 +464,7 @@
             "Reseptivapaita lääkkeitä"
         ],
         "correct": 1,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -477,7 +477,7 @@
             "Apteekki tarkistaa"
         ],
         "correct": 1,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -490,7 +490,7 @@
             "Kiireellinen lääke"
         ],
         "correct": 1,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -503,11 +503,11 @@
             "Tilan puute"
         ],
         "correct": 1,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
-        "question": "Mitä on tehtävä, jos huomaa tehneensä lääkitysvirheen?",
+        "question": "Mitä on tehtävä, jos huomaat tehneensä lääkitysvirheen?",
         "explanation": "Ensisijaista on arvioida potilaan tila ja raportoida virheestä välittömästi, jotta haitat voidaan minimoida.",
         "options": [
             "Toivoa ettei kukaan huomaa",
@@ -516,7 +516,7 @@
             "Kertoa vasta työvuoron lopussa"
         ],
         "correct": 1,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -529,7 +529,7 @@
             "Apteekki vaatii"
         ],
         "correct": 2,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -542,7 +542,7 @@
             "Vain puhelimitse lääkärin luvalla"
         ],
         "correct": 2,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -552,10 +552,10 @@
             "Kaikki reseptilääkkeet",
             "Bentsodiatsepiinit ja opioidit",
             "Vain huumausaineet",
-            "Antibiotit"
+            "Antibiootit"
         ],
         "correct": 1,
-        "category": "pkv lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -568,7 +568,7 @@
             "Potilaan mukana"
         ],
         "correct": 1,
-        "category": "pkv lääkkeet",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -581,7 +581,7 @@
             "Vain lääkärin määräyksestä"
         ],
         "correct": 2,
-        "category": "pkv lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -594,7 +594,7 @@
             "Ei tarvitse kaksoistarkastusta"
         ],
         "correct": 1,
-        "category": "pkv lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -607,7 +607,7 @@
             "Ei tarvitse seurata"
         ],
         "correct": 2,
-        "category": "pkv lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -617,10 +617,10 @@
             "Kaikki kipulääkkeet",
             "Vahvat opioidit ja stimulantit",
             "Unilääkkeet",
-            "Antibiotit"
+            "Antibiootit"
         ],
         "correct": 1,
-        "category": "n lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -633,7 +633,7 @@
             "Ei tarvitse dokumentoida"
         ],
         "correct": 1,
-        "category": "n lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -646,7 +646,7 @@
             "Poltetaan"
         ],
         "correct": 2,
-        "category": "n lääkkeet",
+        "category": "perusteet",
         "difficulty": "vaikea"
     },
     {
@@ -659,7 +659,7 @@
             "Kuka tahansa"
         ],
         "correct": 1,
-        "category": "n lääkkeet",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -672,7 +672,7 @@
             "Palautetaan apteekkiin"
         ],
         "correct": 1,
-        "category": "n lääkkeet",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -685,7 +685,7 @@
             "20% glukoosi"
         ],
         "correct": 2,
-        "category": "infuusiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -698,7 +698,7 @@
             "Vain tippataan"
         ],
         "correct": 1,
-        "category": "infuusiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -711,7 +711,7 @@
             "Ei tarvitse tarkistaa"
         ],
         "correct": 1,
-        "category": "infuusiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -724,7 +724,7 @@
             "Kuukausittain"
         ],
         "correct": 1,
-        "category": "infuusiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -737,7 +737,7 @@
             "Yövuoroissa"
         ],
         "correct": 1,
-        "category": "infuusiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -750,7 +750,7 @@
             "Ei tarvitse vetää"
         ],
         "correct": 1,
-        "category": "korva nenä",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -763,7 +763,7 @@
             "Ei tarvitse maata"
         ],
         "correct": 1,
-        "category": "korva nenä",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -776,7 +776,7 @@
             "Ei erityistä tekniikkaa"
         ],
         "correct": 1,
-        "category": "korva nenä",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -789,7 +789,7 @@
             "Ei tarvitse puhdistaa"
         ],
         "correct": 1,
-        "category": "korva nenä",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -802,7 +802,7 @@
             "Ennen ruokaa"
         ],
         "correct": 1,
-        "category": "korva nenä",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -815,7 +815,7 @@
             "Istuen"
         ],
         "correct": 1,
-        "category": "peräsuoli emätin",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -828,7 +828,7 @@
             "Ei tarvitse liukastaa"
         ],
         "correct": 1,
-        "category": "peräsuoli emätin",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -841,7 +841,7 @@
             "Istuen"
         ],
         "correct": 1,
-        "category": "peräsuoli emätin",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -854,7 +854,7 @@
             "Ei syvälle"
         ],
         "correct": 1,
-        "category": "peräsuoli emätin",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -867,7 +867,7 @@
             "Ruokailun jälkeen"
         ],
         "correct": 1,
-        "category": "peräsuoli emätin",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -880,7 +880,7 @@
             "Järjestyksellä ei väliä"
         ],
         "correct": 1,
-        "category": "iholääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -893,7 +893,7 @@
             "Märkä iho"
         ],
         "correct": 1,
-        "category": "iholääkkeet",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -906,7 +906,7 @@
             "Vain illalla"
         ],
         "correct": 1,
-        "category": "iholääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -919,7 +919,7 @@
             "Määrä ei vaikuta"
         ],
         "correct": 1,
-        "category": "iholääkkeet",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -932,7 +932,7 @@
             "Kuivalla iholla"
         ],
         "correct": 1,
-        "category": "iholääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -945,7 +945,7 @@
             "Lääkkeen poistumisaika"
         ],
         "correct": 1,
-        "category": "farmakologia",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -958,7 +958,7 @@
             "Ei vaikuta reseptoriin"
         ],
         "correct": 1,
-        "category": "farmakologia",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -971,7 +971,7 @@
             "Hengittäminen"
         ],
         "correct": 1,
-        "category": "farmakologia",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -984,7 +984,7 @@
             "Kivun lievitykseen"
         ],
         "correct": 0,
-        "category": "farmakologia",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -997,7 +997,7 @@
             "Ei vaikuta mitenkään"
         ],
         "correct": 1,
-        "category": "farmakologia",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1010,7 +1010,7 @@
             "Vihreä"
         ],
         "correct": 1,
-        "category": "happipullot",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
     },
     {
@@ -1023,7 +1023,7 @@
             "Ei painetta"
         ],
         "correct": 1,
-        "category": "happipullot",
+        "category": "kliininen arviointi",
         "difficulty": "keskivaikea"
     },
     {
@@ -1036,12 +1036,12 @@
             "Ei erityistä syytä"
         ],
         "correct": 1,
-        "category": "happipullot",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
     },
     {
         "question": "Miten happipullojen venttiilit avataan?",
-        "explanation": "Varovasti ja hitaasti. Äkillinen avaaminen voi vaurioittaa laitteistoa tai aiheuttaa vaaratilanteen.",
+        "explanation": "Varovasti ja hitaasti. Äillinen avaaminen voi vaurioittaa laitteistoa tai aiheuttaa vaaratilanteen.",
         "options": [
             "Nopeasti auki",
             "Varovasti hitaasti",
@@ -1049,7 +1049,7 @@
             "Ei väliä miten"
         ],
         "correct": 1,
-        "category": "happipullot",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
     },
     {
@@ -1062,7 +1062,7 @@
             "Kuinka tahansa"
         ],
         "correct": 1,
-        "category": "happipullot",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
     },
     {
@@ -1153,7 +1153,7 @@
             "Ei erityistä tarkoitusta"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1166,7 +1166,7 @@
             "Kuka tahansa lääkäri"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1179,7 +1179,7 @@
             "Ei tarvitse päivittää"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1192,7 +1192,7 @@
             "Vain koulutustaustat"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1205,7 +1205,7 @@
             "Vain kokeneille työntekijöille"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1218,7 +1218,7 @@
             "Tahallisia virheitä"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1231,7 +1231,7 @@
             "Väärä pistopaikka"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1244,7 +1244,7 @@
             "Vasta kun kysytään"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1257,7 +1257,7 @@
             "Vain yövuorot"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1270,7 +1270,7 @@
             "Pelkästään teknologialla"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1283,7 +1283,7 @@
             "Kertoa vain lääkärille"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1296,20 +1296,20 @@
             "Välittömästi"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Milloin masennuslääkitystä ei pidä lopettaa äkillisesti?",
-        "explanation": "Koskaan äkillisesti pitkäaikaisen käytön jälkeen. Vierotusoireiden riski. Lopetetaan asteittain.",
+        "question": "Milloin masennuslääkitystä ei pidä lopettaa äillisesti?",
+        "explanation": "Koskaan äillisesti pitkäaikaisen käytön jälkeen. Vierotusoireiden riski. Lopetetaan asteittain.",
         "options": [
             "Voi lopettaa milloin vain",
-            "Ei koskaan äkillisesti",
+            "Ei koskaan äillisesti",
             "Vain lääkärin käskystä",
             "Aina kesälomalla"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1322,12 +1322,12 @@
             "Pelkästään väsymys"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
         "question": "Mitä tulee seurata antipsykoottilääkityksessä?",
-        "explanation": "Ekstrapyramidaalisia haittavaikutuksia, painonnousua ja metabolisia muutoksia (verensokeri, lipidid).",
+        "explanation": "Ekstrapyramidaalisia haittavaikutuksia, painonnousua ja metabolisia muutoksia (verensokeri, lipidit).",
         "options": [
             "Ei mitään erityistä",
             "Ekstrapyramidaalisia oireita ja metaboliaa",
@@ -1335,12 +1335,12 @@
             "Vain verenpainetta"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
         "question": "Mikä on litiumlääkityksen seurannan tärkein asia?",
-        "explanation": "Seerumin litiumpit oisuuden säännöllinen seuranta ja munuaisten toiminta.",
+        "explanation": "Seerumin litiumpitoisuuden säännöllinen seuranta ja munuaisten toiminta.",
         "options": [
             "Painon seuranta",
             "Litium-pitoisuuden seuranta",
@@ -1348,7 +1348,7 @@
             "Ei erityistä seurantaa"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1361,7 +1361,7 @@
             "Satunnaisesti"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1374,7 +1374,7 @@
             "Riippuvuus"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1387,7 +1387,7 @@
             "Ei-opioideilla"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1400,7 +1400,7 @@
             "Ei koskaan"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
@@ -1413,7 +1413,7 @@
             "Vain päiväkäyttöön"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1426,103 +1426,103 @@
             "0-3 asteikko"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
-        "question": "Potilaalle tiputetaan dopamiinia 5 mikrog/kg/min. Potilas painaa 70 kg. Kuinka monta milligrammaa tunnissa?",
-        "explanation": "Ratkaisu: 5 μg/kg/min × 70 kg = 350 μg/min. Tunnissa: 350 × 60 = 21000 μg = 21 mg.",
+        "question": "Potilaalle tiputetaan dopamiinia 4 mikrog/kg/min. Potilas painaa 75 kg. Kuinka monta milligrammaa tunnissa?",
+        "explanation": "Ratkaisu: 4 μg/kg/min × 75 kg = 300 μg/min. Tunnissa: 300 × 60 = 18000 μg = 18 mg.",
         "options": [
+            "15 mg/h",
             "18 mg/h",
             "21 mg/h",
-            "24 mg/h",
-            "28 mg/h"
+            "24 mg/h"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "vaikea"
     },
     {
-        "question": "15% glukoosiliuos 500 ml sisältää kuinka monta grammaa glukoosia?",
-        "explanation": "Ratkaisu: 15% = 15g/100ml. 500ml: (15g × 500ml) ÷ 100ml = 75g.",
+        "question": "18% glukoosiliuos 600 ml sisältää kuinka monta grammaa glukoosia?",
+        "explanation": "Ratkaisu: 18% = 18g/100ml. 600ml: (18g × 600ml) ÷ 100ml = 108g.",
         "options": [
-            "60 g",
-            "75 g", 
             "90 g",
-            "100 g"
+            "108 g",
+            "120 g",
+            "144 g"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Potilas saa insuliinia 0,8 yks/kg. Painaa 82 kg. Käytössä 100 yks/ml. Kuinka monta ml?",
-        "explanation": "Ratkaisu: 82kg × 0,8yks/kg = 65,6 yks. 65,6yks ÷ 100yks/ml = 0,656ml ≈ 0,66ml.",
+        "question": "Potilas saa insuliinia 0,7 yks/kg. Painaa 88 kg. Käytössä 100 yks/ml. Kuinka monta ml?",
+        "explanation": "Ratkaisu: 88kg × 0,7yks/kg = 61,6 yks. 61,6yks ÷ 100yks/ml = 0,616ml ≈ 0,62ml.",
         "options": [
-            "0,60 ml",
-            "0,66 ml",
-            "0,70 ml",
-            "0,82 ml"
+            "0,58 ml",
+            "0,62 ml",
+            "0,68 ml",
+            "0,72 ml"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "vaikea"
     },
     {
-        "question": "Infuusio 125 ml/h. Kuinka monta tippaa minuutissa (1 ml = 20 gtt)?",
-        "explanation": "Ratkaisu: 125ml/h × 20gtt/ml ÷ 60min = 2500gtt ÷ 60 = 41,7 ≈ 42 gtt/min.",
+        "question": "Infuusio 135 ml/h. Kuinka monta tippaa minuutissa (1 ml = 20 gtt)?",
+        "explanation": "Ratkaisu: 135ml/h × 20gtt/ml ÷ 60min = 2700gtt ÷ 60 = 45 gtt/min.",
         "options": [
-            "38 gtt/min",
-            "42 gtt/min", 
+            "40 gtt/min",
             "45 gtt/min",
-            "50 gtt/min"
+            "50 gtt/min",
+            "55 gtt/min"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "vaikea"
     },
     {
-        "question": "Lapsi 18 kg saa amoksisilliinia 50 mg/kg/vrk jaettuna kolmeen annokseen. Kerta-annos?",
-        "explanation": "Ratkaisu: 18kg × 50mg/kg = 900mg/vrk. 900mg ÷ 3 = 300mg/annos.",
+        "question": "Lapsi 22 kg saa amoksisilliinia 55 mg/kg/vrk jaettuna kolmeen annokseen. Kerta-annos?",
+        "explanation": "Ratkaisu: 22kg × 55mg/kg = 1210mg/vrk. 1210mg ÷ 3 = 403,3mg ≈ 403mg/annos.",
         "options": [
-            "250 mg",
-            "300 mg",
-            "350 mg", 
-            "450 mg"
+            "350 mg",
+            "403 mg",
+            "450 mg",
+            "500 mg"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Hepariinia 80 IU/kg, potilas 65 kg. Kuinka monta yksikköä?",
-        "explanation": "Ratkaisu: 65kg × 80 IU/kg = 5200 IU. Hepariini on High Alert -lääke.",
+        "question": "Hepariinia 85 IU/kg, potilas 70 kg. Kuinka monta yksikköä?",
+        "explanation": "Ratkaisu: 70kg × 85 IU/kg = 5950 IU. Hepariini on High Alert -lääke.",
         "options": [
-            "5000 IU",
-            "5200 IU",
-            "5400 IU",
-            "5600 IU"
+            "5600 IU",
+            "5950 IU",
+            "6200 IU",
+            "6500 IU"
         ],
         "correct": 1,
-        "category": "laskut", 
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Laimenna 2ml lääkettä (50mg/ml) 8ml keittosuolaan. Lopullinen pitoisuus?",
-        "explanation": "Ratkaisu: Lääke: 2ml × 50mg/ml = 100mg. Kokonaistilavuus: 10ml. 100mg ÷ 10ml = 10mg/ml.",
+        "question": "Laimenna 2,5ml lääkettä (60mg/ml) 7,5ml keittosuolaan. Lopullinen pitoisuus?",
+        "explanation": "Ratkaisu: Lääke: 2,5ml × 60mg/ml = 150mg. Kokonaistilavuus: 10ml. 150mg ÷ 10ml = 15mg/ml.",
         "options": [
-            "5 mg/ml",
             "10 mg/ml",
+            "15 mg/ml",
             "20 mg/ml",
             "25 mg/ml"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "vaikea"
     },
     {
-        "question": "Warfariinia 3,75 mg. Saatavilla 2,5 mg tabletteja. Kuinka annostelet?",
-        "explanation": "Ratkaisu: 3,75mg ÷ 2,5mg = 1,5 tablettia. Warfariini on High Alert -lääke.",
+        "question": "Warfariinia 4,5 mg. Saatavilla 3 mg tabletteja. Kuinka annostelet?",
+        "explanation": "Ratkaisu: 4,5mg ÷ 3mg = 1,5 tablettia. Warfariini on High Alert -lääke.",
         "options": [
             "1 tabletti",
             "1,5 tablettia",
@@ -1530,33 +1530,33 @@
             "2,5 tablettia"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Vastasyntynyt 3,2 kg saa gentamysiiniä 2,5 mg/kg. Annoskoko?",
-        "explanation": "Ratkaisu: 3,2kg × 2,5mg/kg = 8mg. Vastasyntyneiden lääkitys vaatii erityistarkkuutta.",
+        "question": "Vastasyntynyt 3,6 kg saa gentamysiiniä 2,8 mg/kg. Annoskoko?",
+        "explanation": "Ratkaisu: 3,6kg × 2,8mg/kg = 10,08mg ≈ 10mg. Vastasyntyneiden lääkitys vaatii erityistarkkuutta.",
         "options": [
-            "6 mg",
-            "7 mg",
-            "8 mg", 
-            "10 mg"
+            "8 mg",
+            "9 mg",
+            "10 mg",
+            "12 mg"
         ],
         "correct": 2,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Paracetamolia 15 mg/kg, potilas 45 kg. Käytössä 500 mg tabletteja. Kuinka monta?",
-        "explanation": "Ratkaisu: 45kg × 15mg/kg = 675mg. 675mg ÷ 500mg = 1,35 ≈ 1,5 tablettia.",
+        "question": "Paracetamolia 18 mg/kg, potilas 52 kg. Käytössä 500 mg tabletteja. Kuinka monta?",
+        "explanation": "Ratkaisu: 52kg × 18mg/kg = 936mg. 936mg ÷ 500mg = 1,872 ≈ 2 tablettia.",
         "options": [
             "1 tabletti",
             "1,5 tablettia",
             "2 tablettia",
             "2,5 tablettia"
         ],
-        "correct": 1,
-        "category": "laskut",
+        "correct": 2,
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
@@ -1564,12 +1564,12 @@
         "explanation": "INR-arvo mittaa veren hyytymisaikaa ja sitä käytetään varfariinihoidon seurantaan.",
         "options": [
             "Tulehdusarvo",
-            "Sokeriarvo", 
+            "Sokeriarvo",
             "Hyytymisaikaa mittaava arvo",
             "Munuaisarvo"
         ],
         "correct": 2,
-        "category": "turvallisuus",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1602,7 +1602,7 @@
         "question": "Milloin MPR-rokote annetaan?",
         "explanation": "12 kk ja 6 vuoden iässä. Suojaa tuhkarokkoa, sikotautia ja vihurirokko vastaan.",
         "options": [
-            "6 kk ja 2 vuotta", 
+            "6 kk ja 2 vuotta",
             "12 kk ja 6 vuotta",
             "2 ja 7 vuotta",
             "Vain kerran"
@@ -1647,7 +1647,7 @@
             "Ei lääkkeistä"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1660,7 +1660,7 @@
             "Erillinen järjestelmä"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1673,7 +1673,7 @@
             "Vakuutusasiat"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1686,7 +1686,7 @@
             "Apteekkari"
         ],
         "correct": 1,
-        "category": "lääkehoitosuunnitelma",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1699,7 +1699,7 @@
             "Yötyö"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1712,7 +1712,7 @@
             "Unohdetaan nopeasti"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1725,7 +1725,7 @@
             "Vakuutusasiat"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "helppo"
     },
     {
@@ -1738,7 +1738,7 @@
             "Vain tilastoidaan"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1751,7 +1751,7 @@
             "Kielimuurit"
         ],
         "correct": 1,
-        "category": "vaaratapahtumat",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
@@ -1764,7 +1764,7 @@
             "Parantuva unettomuus"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1777,7 +1777,7 @@
             "Ahdistuksessa"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1790,7 +1790,7 @@
             "Ei vakava oire"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1803,7 +1803,7 @@
             "Turvallisimmat lääkkeet"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1816,7 +1816,7 @@
             "Ei ruokarajoituksia"
         ],
         "correct": 1,
-        "category": "mielenterveyslääkkeet", 
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1829,7 +1829,7 @@
             "Kortikosteroidit"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1842,7 +1842,7 @@
             "Ei voi nostaa"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -1852,10 +1852,10 @@
             "Riippuvuus",
             "Hengityslama",
             "Pahoinvointi",
-            "Maksakatovika"
+            "Maksavaurio"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1868,7 +1868,7 @@
             "Ei koskaan"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1881,59 +1881,59 @@
             "Vähentää tehoa"
         ],
         "correct": 1,
-        "category": "kipu ja palliatiivi",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
-        "question": "Muunna 2,5 kilogrammaa grammoiksi.",
-        "explanation": "2,5 kg × 1000 = 2500 g. Kilogrammasta grammaksi kerrotaan 1000:lla.",
+        "question": "Muunna 3,2 kilogrammaa grammoiksi.",
+        "explanation": "3,2 kg × 1000 = 3200 g. Kilogrammasta grammaksi kerrotaan 1000:lla.",
         "options": [
-            "250 g",
-            "2500 g",
-            "25000 g",
-            "25 g"
+            "320 g",
+            "3200 g",
+            "32000 g",
+            "32 g"
         ],
         "correct": 1,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
-        "question": "Muunna 500 millilitraa desilitroiksi.",
-        "explanation": "500 ml ÷ 100 = 5 dl. Millilitrasta desilitraan jaetaan 100:lla.",
+        "question": "Muunna 650 millilitraa desilitroiksi.",
+        "explanation": "650 ml ÷ 100 = 6,5 dl. Millilitrasta desilitraan jaetaan 100:lla.",
         "options": [
-            "0,5 dl",
-            "5 dl",
-            "50 dl",
-            "500 dl"
+            "0,65 dl",
+            "6,5 dl",
+            "65 dl",
+            "650 dl"
         ],
         "correct": 1,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
-        "question": "Kuinka monta mikrogrammaa on 0,5 grammassa?",
-        "explanation": "0,5 g × 1 000 000 = 500 000 μg. Grammasta mikrogrammaksi kerrotaan miljoonalla.",
+        "question": "Kuinka monta mikrogrammaa on 0,75 grammassa?",
+        "explanation": "0,75 g × 1 000 000 = 750 000 μg. Grammasta mikrogrammaksi kerrotaan miljoonalla.",
         "options": [
-            "5000 μg",
-            "50000 μg", 
-            "500000 μg",
-            "5000000 μg"
+            "7500 μg",
+            "75000 μg",
+            "750000 μg",
+            "7500000 μg"
         ],
         "correct": 2,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Muunna 3,2 dl ml:ksi.",
-        "explanation": "3,2 dl × 100 = 320 ml. Desilitrasta millilitraan kerrotaan 100:lla.",
+        "question": "Muunna 4,8 dl ml:ksi.",
+        "explanation": "4,8 dl × 100 = 480 ml. Desilitrasta millilitraan kerrotaan 100:lla.",
         "options": [
-            "32 ml",
-            "320 ml",
-            "3200 ml", 
-            "0,32 ml"
+            "48 ml",
+            "480 ml",
+            "4800 ml",
+            "0,48 ml"
         ],
         "correct": 1,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
     },
     {
@@ -1946,7 +1946,7 @@
             "10000 ng"
         ],
         "correct": 2,
-        "category": "yksikkömuunnokset",
+        "category": "lääkelaskenta",
         "difficulty": "keskivaikea"
     },
     {
@@ -1959,7 +1959,7 @@
             "1 kuukausi"
         ],
         "correct": 1,
-        "category": "antibiotit",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
@@ -1972,7 +1972,7 @@
             "Ei väliä"
         ],
         "correct": 2,
-        "category": "antibiotit",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -1985,11 +1985,11 @@
             "Sairaalassaolo"
         ],
         "correct": 1,
-        "category": "antibiotit",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Milloin penisilliinia ei voi käyttää?",
+        "question": "Milloin penisilliiniä ei voi käyttää?",
         "explanation": "Penisilliiniallergiassa. Allerginen reaktio voi olla henkeä uhkaava anafylaksia.",
         "options": [
             "Koskaan ei esteitä",
@@ -1998,7 +1998,7 @@
             "Raskauden aikana"
         ],
         "correct": 1,
-        "category": "antibiotit",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
@@ -2011,7 +2011,7 @@
             "Helppo hoitaa"
         ],
         "correct": 1,
-        "category": "antibiotit",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2024,7 +2024,7 @@
             "Suun kautta"
         ],
         "correct": 1,
-        "category": "antibiotit",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2037,20 +2037,20 @@
             "Ihottuma"
         ],
         "correct": 1,
-        "category": "sydänlääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Milloin beetasalpaajia ei pidä lopettaa äkillisesti?",
-        "explanation": "Sepelvaltimotaudissa äkillinen lopetus voi aiheuttaa rebound-ilmiön ja sydäninfarktin.",
+        "question": "Milloin beetasalpaajia ei pidä lopettaa äillisesti?",
+        "explanation": "Sepelvaltimotaudissa äillinen lopetus voi aiheuttaa rebound-ilmiön ja sydäninfarktin.",
         "options": [
             "Voi lopettaa milloin vaan",
-            "Sepelvaltimotaudissa ei äkillisesti",
+            "Sepelvaltimotaudissa ei äillisesti",
             "Vain kesällä",
             "Aina asteittain"
         ],
         "correct": 1,
-        "category": "sydänlääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2063,7 +2063,7 @@
             "Painoa"
         ],
         "correct": 1,
-        "category": "sydänlääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2076,7 +2076,7 @@
             "Munuaishaitat"
         ],
         "correct": 1,
-        "category": "sydänlääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2089,7 +2089,7 @@
             "Diabeteksessa"
         ],
         "correct": 1,
-        "category": "sydänlääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -2102,7 +2102,7 @@
             "Vanhoihin ja uusiin"
         ],
         "correct": 1,
-        "category": "sydänlääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2115,7 +2115,7 @@
             "Estää glukoosin uudelleenimeytymistä"
         ],
         "correct": 1,
-        "category": "diabeteslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -2128,7 +2128,7 @@
             "Kesälomalla"
         ],
         "correct": 1,
-        "category": "diabeteslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2141,7 +2141,7 @@
             "Pakastimessa"
         ],
         "correct": 1,
-        "category": "diabeteslääkkeet",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
@@ -2154,7 +2154,7 @@
             "Ei mitään"
         ],
         "correct": 1,
-        "category": "diabeteslääkkeet",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
     },
     {
@@ -2167,7 +2167,7 @@
             "Aina insuliinin kanssa"
         ],
         "correct": 1,
-        "category": "diabeteslääkkeet",
+        "category": "kliininen arviointi",
         "difficulty": "keskivaikea"
     },
     {
@@ -2180,7 +2180,7 @@
             "Alle 90 mmol/mol"
         ],
         "correct": 1,
-        "category": "diabeteslääkkeet",
+        "category": "kliininen arviointi",
         "difficulty": "keskivaikea"
     },
     {
@@ -2193,7 +2193,7 @@
             "Ihon kautta imeytyvää"
         ],
         "correct": 1,
-        "category": "ravitsemus",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
@@ -2206,7 +2206,7 @@
             "Ei koskaan"
         ],
         "correct": 1,
-        "category": "ravitsemus",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -2219,7 +2219,7 @@
             "Ei tarvitse tarkistaa"
         ],
         "correct": 1,
-        "category": "ravitsemus",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -2232,7 +2232,7 @@
             "Ei tarvitse huuhdella"
         ],
         "correct": 1,
-        "category": "ravitsemus",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
@@ -2245,11 +2245,11 @@
             "Kaikki tabletit kielletty"
         ],
         "correct": 1,
-        "category": "ravitsemus",
+        "category": "antoreitit",
         "difficulty": "vaikea"
     },
     {
-        "question": "Mikä on ikääntyneiden erityispiirre lääkehoidossa?",
+        "question": "Mikä on iäkkäiden erityispiirre lääkehoidossa?",
         "explanation": "Hidastunut metabolia, munuaisten heikentynyt toiminta ja lisääntynyt herkkyys haittavaikutuksille.",
         "options": [
             "Ei erityispiirteitä",
@@ -2258,7 +2258,7 @@
             "Vähemmän haittavaikutuksia"
         ],
         "correct": 1,
-        "category": "geriatria",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -2271,7 +2271,7 @@
             "Liikuntasuosituksia"
         ],
         "correct": 1,
-        "category": "geriatria",
+        "category": "erityisryhmät",
         "difficulty": "vaikea"
     },
     {
@@ -2281,10 +2281,10 @@
             "Ei lisääntynyttä riskiä",
             "Verenpaine-, uni- ja psyykenlääkkeet",
             "Vain kipulääkkeet",
-            "Antibiotit"
+            "Antibiootit"
         ],
         "correct": 1,
-        "category": "geriatria",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -2297,12 +2297,12 @@
             "Minkä tahansa määrän lääkkeitä"
         ],
         "correct": 1,
-        "category": "geriatria",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
         "question": "Mikä on lääkelistaseulonta (medication review)?",
-        "explanation": "Systemaattinen kaikkien potilaslääkkeiden tarkistus tehon, turvallisuuden ja tarpeellisuuden osalta.",
+        "explanation": "Systemaattinen kaikkien potilaan lääkkeiden tarkistus tehon, turvallisuuden ja tarpeellisuuden osalta.",
         "options": [
             "Lääkkeiden hintojen vertailua",
             "Systemaattinen lääkkeiden tarkistus",
@@ -2310,7 +2310,7 @@
             "Reseptien uusinta"
         ],
         "correct": 1,
-        "category": "geriatria",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
@@ -2323,7 +2323,7 @@
             "Silmämääräisesti"
         ],
         "correct": 1,
-        "category": "lasten lääkehoito",
+        "category": "erityisryhmät",
         "difficulty": "helppo"
     },
     {
@@ -2336,385 +2336,34 @@
             "Kustannukset"
         ],
         "correct": 1,
-        "category": "lasten lääkehoito",
+        "category": "erityisryhmät",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Milloin lasta ei voi pakottaa ottamaan lääkettä?",
-        "explanation": "Kun lapsi on riittävän vanha ymmärtämään (12-15v) ja kyse ei ole henkeä uhkaavasta tilanteesta.",
+        "question": "InfuusionestettÃ¤ tiputetaan 35 gtt/min. Pussin koko 800 ml. Kuinka kauan kestÃ¤Ã¤ (1 ml = 20 gtt)?",
+        "explanation": "Ratkaisu: 35 gtt/min Ã· 20 gtt/ml = 1,75 ml/min. 800 ml Ã· 1,75 ml/min = 457 min = 7 h 37 min.",
         "options": [
-            "Lasta voi aina pakottaa",
-            "Kun lapsi ymmärtää eikä kyse hengenvaarasta",
-            "Ei koskaan",
-            "Vain vanhempien luvalla"
-        ],
-        "correct": 1,
-        "category": "lasten lääkehoito",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Miten lasten nestehukka korvataan?",
-        "explanation": "Asteittain 24-48 tunnin aikana hypernatremian välttämiseksi. Seurataan elektrolyyttejä.",
-        "options": [
-            "Nopeasti kerralla",
-            "Asteittain 24-48h aikana",
-            "Ei tarvitse korvata",
-            "Aina suun kautta"
-        ],
-        "correct": 1,
-        "category": "lasten lääkehoito",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Mikä on vastasyntyneen erityispiirre lääkehoidossa?",
-        "explanation": "Kypsymätön maksa ja munuaiset, ohut ihon estekerros ja suuri pinta-ala/paino -suhde.",
-        "options": [
-            "Ei erityispiirteitä",
-            "Kypsymätön maksa ja munuaiset",
-            "Nopea lääkkeiden poistuminen",
-            "Vähäiset haittavaikutukset"
-        ],
-        "correct": 1,
-        "category": "lasten lääkehoito",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Mitä huomioidaan kotisairaanhoidon lääkehoidossa?",
-        "explanation": "Potilaan ja omaisten osaaminen, lääkkeiden säilytys ja tiedonkulku ammattilaisten välillä.",
-        "options": [
-            "Vain lääkärin määräykset",
-            "Potilaan osaaminen ja tiedonkulku",
-            "Kustannukset",
-            "Matka-ajat"
-        ],
-        "correct": 1,
-        "category": "kotisairaanhoito",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten lääkkeiden säilytys järjestetään kotona?",
-        "explanation": "Lukitussa paikassa lasten ulottumattomissa. Huoneenlämpö, kuiva ja pimeä paikka.",
-        "options": [
-            "Kylpyhuoneessa",
-            "Lukitussa, kuivassa ja pimeässä paikassa",
-            "Jääkaapissa aina",
-            "Ikkunalaudalla"
-        ],
-        "correct": 1,
-        "category": "kotisairaanhoito",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Milloin omaisen osallistuminen lääkehoitoon on mahdollista?",
-        "explanation": "Asianmukaisen koulutuksen, perehdytyksen ja kirjallisen luvan jälkeen. Hoitosuunnitelmassa määriteltävä.",
-        "options": [
-            "Aina automaattisesti",
-            "Koulutuksen ja luvan jälkeen",
-            "Ei koskaan",
-            "Vain lääkärin läsnäollessa"
-        ],
-        "correct": 1,
-        "category": "kotisairaanhoito",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten tiedonkulku toimii kotisairaanhoidossa?",
-        "explanation": "Potilastietojärjestelmien, lääkekorttien ja säännöllisen raportoinnin avulla.",
-        "options": [
-            "Vain puhelimitse",
-            "Potilastietojärjestelmien ja raportoinnin avulla",
-            "Paperisten viestien kanssa",
-            "Ei järjestelmällistä tiedonkulkua"
-        ],
-        "correct": 1,
-        "category": "kotisairaanhoito",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Mitä huomioidaan kotona annettavassa infuusiohoidossa?",
-        "explanation": "Potilaan ja perheen kyky hoitoon, aseptiikka ja komplikaatioiden tunnistaminen.",
-        "options": [
-            "Vain lääkkeen annostus",
-            "Potilaan kyky ja aseptiikka",
-            "Kustannukset",
-            "Nopeus"
-        ],
-        "correct": 1,
-        "category": "kotisairaanhoito",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Mikä on farmaseutin rooli lääkehoidossa?",
-        "explanation": "Lääkeneuvonta, yhteisvaikutusten tarkistus, lääkehoidon arviointi ja osastofarmasiatoiminta.",
-        "options": [
-            "Vain lääkkeiden myynti",
-            "Lääkeneuvonta ja yhteisvaikutusten tarkistus",
-            "Diagnoosin asettaminen",
-            "Ei roolia lääkehoidossa"
-        ],
-        "correct": 1,
-        "category": "apteekki ja lääkehuolto",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Milloin lääke voidaan korvata biosimilaarilla?",
-        "explanation": "Kun biosimilaari on viranomaisten hyväksymä vastinlääke biologiselle lääkkeelle.",
-        "options": [
-            "Ei koskaan",
-            "Viranomaishyväksynnän jälkeen",
-            "Aina automaattisesti",
-            "Vain kustannussyistä"
-        ],
-        "correct": 1,
-        "category": "apteekki ja lääkehuolto",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Mitä tarkoittaa lääkkeen geneerinen korvattavuus?",
-        "explanation": "Apteekin velvollisuus tarjota halvinta saatavilla olevaa vaikuttavaltaan samaa lääkettä.",
-        "options": [
-            "Lääke on kallis",
-            "Halvimman vastinlääkkeen tarjoaminen",
-            "Lääke on uusi",
-            "Ei korvattavuutta"
-        ],
-        "correct": 1,
-        "category": "apteekki ja lääkehuolto",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten lääkejäte hävitetään asianmukaisesti?",
-        "explanation": "Palautetaan apteekkiin ongelmajätteenä. Ei saa heittää sekajätteeseen tai viemäriin.",
-        "options": [
-            "Sekajätteeseen",
-            "Apteekkiin ongelmajätteenä",
-            "Viemäriin",
-            "Polttamalla kotona"
-        ],
-        "correct": 1,
-        "category": "apteekki ja lääkehuolto",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Mikä on osastofarmasian hyöty?",
-        "explanation": "Vähentää lääkitysvirheitä, parantaa lääkitysturvallisuutta ja tehostaa lääkehoidon toteutumista.",
-        "options": [
-            "Säästää aikaa",
-            "Vähentää lääkitysvirheitä ja parantaa turvallisuutta",
-            "Alentaa kustannuksia",
-            "Ei merkittäviä hyötyjä"
-        ],
-        "correct": 1,
-        "category": "apteekki ja lääkehuolto",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Milloin lääkkeet tilataan keskitetysti sairaalaan?",
-        "explanation": "Säännöllisesti kulutuksen mukaan, kiireelliset tilaukset päivittäin tai useammin.",
-        "options": [
-            "Kerran vuodessa",
-            "Kulutuksen mukaan säännöllisesti",
-            "Vain ongelmatilanteissa",
-            "Ei keskitettyä tilaamista"
-        ],
-        "correct": 1,
-        "category": "apteekki ja lääkehuolto",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Infuusionestettä tiputetaan 30 gtt/min. Pussin koko 1000 ml. Kuinka kauan kestää (1 ml = 20 gtt)?",
-        "explanation": "Ratkaisu: 30 gtt/min ÷ 20 gtt/ml = 1,5 ml/min. 1000 ml ÷ 1,5 ml/min = 667 min = 11 h 7 min.",
-        "options": [
+            "6 h 45 min",
+            "7 h 37 min",
             "8 h 20 min",
-            "11 h 7 min",
-            "9 h 30 min",
-            "12 h 00 min"
+            "9 h 15 min"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "vaikea"
     },
     {
-        "question": "Enalapriilia 7,5 mg. Saatavilla 5 mg tabletteja. Kuinka monta tablettia?",
-        "explanation": "Ratkaisu: 7,5 mg ÷ 5 mg = 1,5 tablettia. Enalapriili on ACE-estäjä.",
+        "question": "Enalapriilia 6,25 mg. Saatavilla 2,5 mg tabletteja. Kuinka monta tablettia?",
+        "explanation": "Ratkaisu: 6,25 mg ÷ 2,5 mg = 2,5 tablettia. Enalapriili on ACE-estäjä.",
         "options": [
-            "1 tabletti",
-            "1,5 tablettia",
             "2 tablettia",
-            "2,5 tablettia"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Lääkeampullissa 5 ml, pitoisuus 25 mg/ml. Annetaan 60 mg. Kuinka paljon jää?",
-        "explanation": "Ratkaisu: Tarvittava: 60 mg ÷ 25 mg/ml = 2,4 ml. Jäljelle: 5 ml - 2,4 ml = 2,6 ml.",
-        "options": [
-            "2,2 ml",
-            "2,4 ml",
-            "2,6 ml",
-            "2,8 ml"
-        ],
-        "correct": 2,
-        "category": "laskut",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Furosemidia 60 mg. Saatavilla 40 mg tabletteja. Kuinka monta tablettia?",
-        "explanation": "Ratkaisu: 60 mg ÷ 40 mg = 1,5 tablettia. Furosemidi on diureetti.",
-        "options": [
-            "1 tabletti",
-            "1,5 tablettia",
-            "2 tablettia",
-            "2,5 tablettia"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Infuusiopumppu 85 ml/h. 500 ml pussi. Kuinka kauan kestää?",
-        "explanation": "Ratkaisu: 500 ml ÷ 85 ml/h = 5,88 h ≈ 5 h 53 min.",
-        "options": [
-            "5 h 30 min",
-            "5 h 53 min",
-            "6 h 15 min",
-            "6 h 30 min"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Morfiinia annetaan 5 ml/h infuusiopumpulla. Pitoisuus 2 mg/ml. Vuorokausiannos?",
-        "explanation": "Ratkaisu: 5 ml/h × 2 mg/ml = 10 mg/h. Vuorokaudessa: 10 mg/h × 24 h = 240 mg.",
-        "options": [
-            "200 mg",
-            "240 mg",
-            "280 mg",
-            "300 mg"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Kortisonivoide 1% hydrokortisonia. 30 g voiteessa vaikuttavaa ainetta?",
-        "explanation": "Ratkaisu: 1% = 1 g/100 g. 30 g voiteessa: (1 g × 30 g) ÷ 100 g = 0,3 g = 300 mg.",
-        "options": [
-            "250 mg",
-            "300 mg",
-            "350 mg",
-            "400 mg"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "250 ml nestettä tiputetaan 45 min. Tiputusnopeus gtt/min (1 ml = 20 gtt)?",
-        "explanation": "Ratkaisu: 250 ml ÷ 45 min = 5,56 ml/min. Tippoina: 5,56 × 20 = 111,1 ≈ 111 gtt/min.",
-        "options": [
-            "100 gtt/min",
-            "111 gtt/min",
-            "125 gtt/min",
-            "140 gtt/min"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Lapselle (8 kg) digoksiinia 10 mikrog/kg. Käytössä 0,05 mg/ml. Kuinka monta ml?",
-        "explanation": "Ratkaisu: 8 kg × 10 μg/kg = 80 μg = 0,08 mg. 0,08 mg ÷ 0,05 mg/ml = 1,6 ml.",
-        "options": [
-            "1,2 ml",
-            "1,4 ml",
-            "1,6 ml",
-            "1,8 ml"
-        ],
-        "correct": 2,
-        "category": "laskut",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "2,5 ml lääkettä, pitoisuus 40 mg/ml. Vaikuttavaa ainetta?",
-        "explanation": "Ratkaisu: 2,5 ml × 40 mg/ml = 100 mg vaikuttavaa ainetta.",
-        "options": [
-            "80 mg",
-            "100 mg",
-            "120 mg",
-            "160 mg"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "20% keittosuolasta tehdään 0,9% fysiologista. 100 ml väkevästä, kuinka paljon lopullista?",
-        "explanation": "Ratkaisu: C1×V1 = C2×V2. 20% × 100 ml = 0,9% × V2. V2 = 2000/0,9 = 2222 ml.",
-        "options": [
-            "1,8 l",
-            "2,0 l",
-            "2,2 l",
-            "2,5 l"
-        ],
-        "correct": 2,
-        "category": "laskut",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Tramadolia tippoja. Tipassa 2,5 mg. Potilas saa 15 tippaa. Milligrammoja?",
-        "explanation": "Ratkaisu: 15 tippaa × 2,5 mg/tippa = 37,5 mg tramadolia.",
-        "options": [
-            "30 mg",
-            "35 mg",
-            "37,5 mg",
-            "40 mg"
-        ],
-        "correct": 2,
-        "category": "laskut",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Atenololia 75 mg. Saatavilla 25 mg tabletteja. Kuinka monta?",
-        "explanation": "Ratkaisu: 75 mg ÷ 25 mg = 3 tablettia. Atenololi on beetasalpaaja.",
-        "options": [
-            "1 tabletti",
-            "2 tablettia",
+            "2,5 tablettia",
             "3 tablettia",
-            "4 tablettia"
-        ],
-        "correct": 2,
-        "category": "laskut",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Potilaan tulee saada yhteensä 1500 ml nestettä 8 tunnin aikana. ml/h?",
-        "explanation": "Ratkaisu: 1500 ml ÷ 8 h = 187,5 ml/h ≈ 188 ml/h.",
-        "options": [
-            "175 ml/h",
-            "188 ml/h",
-            "200 ml/h",
-            "225 ml/h"
+            "3,5 tablettia"
         ],
         "correct": 1,
-        "category": "laskut",
+        "category": "lääkelaskenta",
         "difficulty": "helppo"
-    },
-    {
-        "question": "Väkevä liuos 30 mg/ml. Valmistetaan 250 ml liuosta, pitoisuus 6 mg/ml. Tarvittava väkevä?",
-        "explanation": "Ratkaisu: 250 ml × 6 mg/ml = 1500 mg. Väkevää: 1500 mg ÷ 30 mg/ml = 50 ml.",
-        "options": [
-            "40 ml",
-            "50 ml",
-            "60 ml",
-            "75 ml"
-        ],
-        "correct": 1,
-        "category": "laskut",
-        "difficulty": "vaikea"
     },
     {
         "question": "Miten verensokerin mittausvälineet huolletaan?",
@@ -2726,12 +2375,12 @@
             "Kuukausittainen huolto"
         ],
         "correct": 1,
-        "category": "näyttöjen ottaminen",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
     },
     {
         "question": "Mistä verensokeri mitataan luotettavimmin?",
-        "explanation": "Sormenpäästä tai korvanlehden reunasta. Vaihtoehtoieset paikat kämmen ja olkavarsi.",
+        "explanation": "Sormenpäästä tai korvanlehden reunasta. Vaihtoehtoiset paikat kämmen ja olkavarsi.",
         "options": [
             "Ranteesta",
             "Sormenpäästä",
@@ -2739,73 +2388,8 @@
             "Nilkasta"
         ],
         "correct": 1,
-        "category": "näyttöjen ottaminen",
+        "category": "kliininen arviointi",
         "difficulty": "helppo"
-    },
-    {
-        "question": "Milloin verensokerin mittaustulos voi olla virheellinen?",
-        "explanation": "Märkien sormien, vanhan liuskan, väärän koodin tai äärimmäisten lämpötilojen yhteydessä.",
-        "options": [
-            "Ei koskaan",
-            "Märkien sormien ja vanhan liuskan kanssa",
-            "Vain yöllä",
-            "Ruokailun jälkeen"
-        ],
-        "correct": 1,
-        "category": "näyttöjen ottaminen",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten virtsanäyte otetaan oikein?",
-        "explanation": "Keskivirtsanäyte puhtaaseen astiaan genitaalien pesun jälkeen. Ensimmäinen suihkaus hylätään.",
-        "options": [
-            "Ensimmäinen suihkaus",
-            "Keskivirtsanäyte pesun jälkeen",
-            "Mikä tahansa virtsa",
-            "Viimeinen pisara"
-        ],
-        "correct": 1,
-        "category": "näyttöjen ottaminen",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Kuinka pitkään virtsanäyte säilyy?",
-        "explanation": "Jääkaapissa 24 tuntia, huoneenlämmössä korkeintaan 2 tuntia bakterioiden kasvun vuoksi.",
-        "options": [
-            "Viikko huoneenlämmössä",
-            "Jääkaapissa 24h, huoneenlämmössä 2h",
-            "Kuukausi jäässä",
-            "Ei säily ollenkaan"
-        ],
-        "correct": 1,
-        "category": "näyttöjen ottaminen",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten ketoaineet mitataan virtsasta?",
-        "explanation": "Liuskatestillä, joka värjäytyy ketoaineiden mukaan vaaleanpunaisesta tummanpunaiseen.",
-        "options": [
-            "Ei voi mitata virtsasta",
-            "Liuskatestillä värjäytymisen mukaan",
-            "Vain verestä",
-            "Haistamalla"
-        ],
-        "correct": 1,
-        "category": "näyttöjen ottaminen",
-        "difficulty": "helppo"
-    },
-    {
-        "question": "Milloin happisaturaatiota ei voi mitata pulssioksimetrilla?",
-        "explanation": "Häkämyrkytyksessä, vaikeassa verenkiertohäiriössä tai kynsillakalla käsissä.",
-        "options": [
-            "Koskaan ei esteitä",
-            "Häkämyrkytyksessä ja verenkiertohäiriössä",
-            "Vain yöllä",
-            "Kuumeessa"
-        ],
-        "correct": 1,
-        "category": "näyttöjen ottaminen",
-        "difficulty": "keskivaikea"
     },
     {
         "question": "Mikä on anafylaksian ensihoidon tärkein toimenpide?",
@@ -2817,7 +2401,7 @@
             "Kortisonit"
         ],
         "correct": 1,
-        "category": "hätätilanteet",
+        "category": "kliininen arviointi",
         "difficulty": "keskivaikea"
     },
     {
@@ -2830,73 +2414,8 @@
             "Suun kautta"
         ],
         "correct": 1,
-        "category": "hätätilanteet",
+        "category": "kliininen arviointi",
         "difficulty": "vaikea"
-    },
-    {
-        "question": "Mitä tehdään vakavan hypoglykemian yhteydessä?",
-        "explanation": "Glukagoni lihakseen tai 50% glukoosi suoneen. Hätäilmoitus ja seuranta.",
-        "options": [
-            "Insuliinia lisää",
-            "Glukagoni tai 50% glukoosi i.v.",
-            "Vain odottaminen",
-            "Sokerivettä suun kautta"
-        ],
-        "correct": 1,
-        "category": "hätätilanteet",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten opioidien yliannostus hoidetaan?",
-        "explanation": "Naloksoni 0,4-2 mg i.v. tai i.m. Toistetaan tarvittaessa. Seurataan hengitystä.",
-        "options": [
-            "Ei voi hoitaa",
-            "Naloksoni i.v. tai i.m.",
-            "Lisää opioideja",
-            "Vain happea"
-        ],
-        "correct": 1,
-        "category": "hätätilanteet",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Milloin bentsodiatsepiinien yliannostuksessa käytetään flumazenilia?",
-        "explanation": "Vakavassa hengityslammassa tai koomassa. Voi aiheuttaa kouristuksia kroonisesti käyttäneillä.",
-        "options": [
-            "Aina bentsodiatsepiinien kanssa",
-            "Vain vakavassa hengityslammassa",
-            "Ei koskaan",
-            "Vain sairaalassa"
-        ],
-        "correct": 1,
-        "category": "hätätilanteet",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Miten status epilepticus hoidetaan akuutisti?",
-        "explanation": "Diasepami i.v. tai midatsolami nenään. Hapetusta ja hengityksen turvaaminen.",
-        "options": [
-            "Ei mitään",
-            "Diasepami i.v. tai midatsolami nenään",
-            "Fenytoyini",
-            "Vain seuranta"
-        ],
-        "correct": 1,
-        "category": "hätätilanteet",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Milloin kouristus keskeytetään lääkkeellisesti?",
-        "explanation": "Jos kestää yli 5 minuuttia tai toistuu lähekkäin ilman toipumista.",
-        "options": [
-            "Heti kun alkaa",
-            "Jos kestää yli 5 minuuttia",
-            "Vasta 30 min jälkeen",
-            "Ei koskaan"
-        ],
-        "correct": 1,
-        "category": "hätätilanteet",
-        "difficulty": "keskivaikea"
     },
     {
         "question": "Mitä on tärkeä tietää spacer-kammion käytöstä?",
@@ -2908,7 +2427,7 @@
             "Vaikeuttaa hengitystä"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
@@ -2921,241 +2440,72 @@
             "Ei tarvitse puhdistaa"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
-        "question": "Milloin inhalaattorin käyttöä tulee välttää?",
-        "explanation": "Jos potilaalla on vaikea hengenahdistus, tajuttomuus tai huono yhteistyökyky.",
+        "question": "Milloin tilajatkeen (spacer) käyttö on pakollista MDI-inhalaattorissa?",
+        "explanation": "Aina kun käytetään sumute-inhalaattoria (MDI). Tilajatke parantaa lääkkeen kulkeutumista merkittävästi.",
         "options": [
-            "Ei koskaan esteitä",
-            "Vaikea hengenahdistus tai tajuttomuus",
-            "Ruokailun jälkeen",
-            "Yöaikaan"
+            "Vain lapsilla",
+            "Aina MDI-sumutetta käytettäessä",
+            "Vain kortikosteroideissa",
+            "Ei koskaan pakollinen"
         ],
         "correct": 1,
-        "category": "inhalaatiot",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Mikä on turbuhaler-inhalaattorin oikea tekniikka?",
-        "explanation": "Voimakas ja syvä sisäänhengitys pystyasennossa, hengityksen pidättäminen 10 sekuntia.",
-        "options": [
-            "Hidas hengitys",
-            "Voimakas ja syvä sisäänhengitys",
-            "Normaali hengitys",
-            "Uloshengitys laitteeseen"
-        ],
-        "correct": 1,
-        "category": "inhalaatiot",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten doseerisumuttimen annostemäärä tarkistetaan?",
-        "explanation": "Laskurista tai painon perusteella. Kelluvuustesti vedessä ei ole luotettava.",
-        "options": [
-            "Vain kelluvuustestillä",
-            "Laskurista tai punnituksella",
-            "Ravistelun äänen perusteella",
-            "Ei voi tarkistaa"
-        ],
-        "correct": 1,
-        "category": "inhalaatiot",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Mikä on insuliinipunoksen (lipohypertrofian) syy?",
-        "explanation": "Saman pistopaikan toistuvasta käytöstä. Huonontaa insuliinin imeytymistä.",
-        "options": [
-            "Allerginen reaktio",
-            "Saman pistopaikan toistuva käyttö",
-            "Liian nopea pistäminen",
-            "Väärä insuliinityyppi"
-        ],
-        "correct": 1,
-        "category": "injektiot",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Kuinka syvälle ihonalainen injektio pistetään?",
-        "explanation": "90 asteen kulmassa tai 45 astetta jos ihonalaiskudosta vähän. Syvyys 4-8 mm.",
-        "options": [
-            "Vain ihon pinnalle",
-            "4-8 mm syvyydelle",
-            "Lihakseen saakka",
-            "Suoneen"
-        ],
-        "correct": 1,
-        "category": "injektiot",
+        "category": "antoreitit",
         "difficulty": "helppo"
     },
     {
-        "question": "Milloin injektiossa ei aspiroida?",
-        "explanation": "Rokotuksissa ja insuliini-injektioissa, koska suoniosuma on epätodennäköinen.",
+        "question": "Mikä on depottabletin tunnistaminen pakkausmerkinnöistä?",
+        "explanation": "SR, Retard, Depot, XR, LA merkinnät osoittavat depottabletin. Näitä EI SAA murskata.",
         "options": [
-            "Ei koskaan",
-            "Rokotuksissa ja insuliini-injektioissa",
-            "Aina on aspiroitava",
-            "Vain yöinjektioissa"
+            "Mikä tahansa tabletti",
+            "SR, Retard, Depot, XR, LA -merkinnät",
+            "Vain kapseleissa",
+            "Ei voi tunnistaa"
         ],
         "correct": 1,
-        "category": "injektiot",
+        "category": "perusteet",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Miten Z-track -tekniikka tehdään?",
-        "explanation": "Ihoa siirretään sivuun ennen pistonmää, injektio annetaan ja iho vapautetaan neulan poiston jälkeen.",
+        "question": "Milloin lääke tulee antaa kielen alle (sublinguaalisesti)?",
+        "explanation": "Kun halutaan nopea vaikutus ohittaen maksan (esim. nitroglyseriini angina pectoris -kohtauksessa).",
         "options": [
-            "Pystysuoraan pistonmää",
-            "Ihoa siirretään sivuun ennen pistämistä",
-            "Viistosti pistäminen",
-            "Ei erityistä tekniikkaa"
-        ],
-        "correct": 1,
-        "category": "injektiot",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Milloin intramuskulaarista injektiota vältetään?",
-        "explanation": "Antikoagulaatiohoidossa, trombosytopeniassa ja hyytymishäiriöissä.",
-        "options": [
-            "Koskaan ei esteitä",
-            "Antikoagulaatiohoidossa ja hyytymishäiriöissä",
-            "Iäkkäillä potilailla",
-            "Päiväaikaan"
-        ],
-        "correct": 1,
-        "category": "injektiot",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Mitä PKV-lääkkeisiin kuuluu hydroksitsiinin lisäksi?",
-        "explanation": "Oksikodoni, kodeiini, tramadoli, buprenorfiini ja mitatsepaami.",
-        "options": [
-            "Paracetamoli",
-            "Oksikodoni ja tramadoli",
-            "Ibuprofeeni",
-            "Aspiriini"
-        ],
-        "correct": 1,
-        "category": "pkv lääkkeet",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Miten PKV-lääkkeiden hävikki dokumentoidaan?",
-        "explanation": "Täsmälleen samoin kuin annoskin: päivämäärä, aika, määrä, syy ja todistajan allekirjoitus.",
-        "options": [
-            "Ei tarvitse dokumentoida",
-            "Päivämäärä, määrä, syy ja todistaja",
-            "Vain määrä",
-            "Pelkkä allekirjoitus"
-        ],
-        "correct": 1,
-        "category": "pkv lääkkeet",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Milloin PKV-lääkkeestä voi kieltäytyä?",
-        "explanation": "Kun potilaalla ei ole riittävästi oireita (kivun, ahdistuksen tai unettomuuden), lääke ei ole tarpeen.",
-        "options": [
-            "Ei koskaan",
-            "Kun oireet eivät sitä edellytä",
+            "Aina kun mahdollista",
+            "Kun halutaan nopea vaikutus",
             "Vain yöllä",
-            "Aina potilaan pyynnöstä"
+            "Ei koskaan"
         ],
         "correct": 1,
-        "category": "pkv lääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     },
     {
-        "question": "Kuinka kauan PKV-lääkkeen vaikutusta seurataan antamisen jälkeen?",
-        "explanation": "Vaikutuksen alkamista, tehoa ja haittavaikutuksia seurataan säännöllisesti ainakin 2-4 tunnin ajan.",
+        "question": "Mikä on Z-track -tekniikan tarkoitus injektiossa?",
+        "explanation": "Estää lääkkeen vuotaminen takaisin pistoskanavaa pitkin ja vähentää ärsytystä.",
         "options": [
-            "15 minuuttia",
-            "2-4 tuntia",
-            "24 tuntia",
-            "Ei tarvitse seurata"
+            "Nopeuttaa pistämistä",
+            "Estää lääkkeen vuotaminen takaisin",
+            "Vähentää kipua",
+            "Ei erityistä tarkoitusta"
         ],
         "correct": 1,
-        "category": "pkv lääkkeet",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Mikä on buprenorfiinin erityispiirre?",
-        "explanation": "Osittainen opioidagonisti, kattovaikutus hengityslaamalle. Vaikea antagonisoida naloksonilla.",
-        "options": [
-            "Tavallinen opiodi",
-            "Osittainen agonisti, kattovaikutus",
-            "Ei-opiodi",
-            "Vain päiväkäyttöön"
-        ],
-        "correct": 1,
-        "category": "pkv lääkkeet",
+        "category": "antoreitit",
         "difficulty": "vaikea"
     },
     {
-        "question": "Mitkä ADHD-lääkkeet kuuluvat N-lääkkeisiin?",
-        "explanation": "Metylfenidaatti (Concerta), deksamfetamiini ja lisdeksamfetamiini ovat keskushermostostimulantteja.",
+        "question": "Milloin aspiraatiota EI tehdä injektiossa?",
+        "explanation": "Rokotuksissa, insuliini-injektioissa ja hepariinissa, koska suoniosuma on epätodennäköinen.",
         "options": [
-            "Kaikki ADHD-lääkkeet",
-            "Metylfenidaatti ja amfetamiinijohdokset",
-            "Vain atomoksetiini",
-            "Ei mikään"
+            "Aina pitää aspiroida",
+            "Rokotuksissa ja insuliinissa",
+            "Ei koskaan aspiroida",
+            "Vain i.m.-injektioissa"
         ],
         "correct": 1,
-        "category": "n lääkkeet",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Miten N-lääkepotilas tunnistetaan?",
-        "explanation": "Henkilöllisyys varmistettava kuva-asiakirjasta. Lääkekortti ja hoitosuunnitelmasta.",
-        "options": [
-            "Pelkästään nimestä",
-            "Kuva-asiakirjasta ja hoitosuunnitelmasta",
-            "Ei erityistä tunnistamista",
-            "Omasta muistista"
-        ],
-        "correct": 1,
-        "category": "n lääkkeet",
-        "difficulty": "keskivaikea"
-    },
-    {
-        "question": "Milloin N-lääkkeen määräämisoikeus voidaan evätä lääkäriltä?",
-        "explanation": "Väärinkäytöksen, riippuvuuden tai epäasianmukaisen määräämispraksyksen yhteydessä.",
-        "options": [
-            "Ei koskaan",
-            "Väärinkäytöksen tai epäasianmukaisen määräämispraksyksen yhteydessä",
-            "Iän perusteella",
-            "Satunnaisesti"
-        ],
-        "correct": 1,
-        "category": "n lääkkeet",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Miten metadonia säilytetään?",
-        "explanation": "Erityisen turvallisesti lukossa, erillään muista N-lääkkeistä sen suurentunen väärinkäyttöriskin vuoksi.",
-        "options": [
-            "Tavallisessa lääkekaapissa",
-            "Erityisen turvallisesti lukossa",
-            "Potilaan luona",
-            "Jääkaapissa"
-        ],
-        "correct": 1,
-        "category": "n lääkkeet",
-        "difficulty": "vaikea"
-    },
-    {
-        "question": "Kuinka usein N-lääkkeiden varastomäärä tarkistetaan?",
-        "explanation": "Päivittäin tai jokaisen käytön yhteydessä. Poikkeamat selvitettävä välittömästi.",
-        "options": [
-            "Viikoittain",
-            "Päivittäin tai jokaisen käytön yhteydessä",
-            "Kuukausittain",
-            "Ei tarvitse tarkistaa"
-        ],
-        "correct": 1,
-        "category": "n lääkkeet",
+        "category": "antoreitit",
         "difficulty": "keskivaikea"
     }
 ]

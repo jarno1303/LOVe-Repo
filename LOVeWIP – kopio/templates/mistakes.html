@@ -1,0 +1,444 @@
+{% extends "base.html" %}
+
+{% block title %}Kehityskohteet - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-chart-line me-2 text-warning"></i>Kehityskohteet</h1>
+        <a href="{{ url_for('dashboard_route') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Takaisin
+        </a>
+    </div>
+
+    <!-- Loading spinner -->
+    <div id="loading-spinner" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Ladataan...</span>
+        </div>
+        <p class="mt-3 text-muted">Ladataan kehityskohteita...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="text-center py-5" style="display: none;">
+        <div class="card shadow-lg border-0 p-5">
+            <div class="card-body">
+                <i class="fas fa-check-circle fa-5x text-success mb-4"></i>
+                <h2 class="mb-3">Hienoa työtä!</h2>
+                <p class="lead text-muted mb-4">
+                    Et ole vielä vastannut yhteenkään kysymykseen väärin, tai olet jo kertanut kaikki väärät vastaukset.
+                </p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{{ url_for('practice_route') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle me-2"></i>Aloita harjoittelu
+                    </a>
+                    <a href="{{ url_for('dashboard_route') }}" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-home me-2"></i>Etusivulle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div id="content" style="display: none;">
+        <!-- Info card -->
+        <div class="alert alert-info mb-4">
+            <div class="d-flex align-items-start">
+                <i class="fas fa-info-circle fa-2x me-3 mt-1"></i>
+                <div class="flex-grow-1">
+                    <strong>Kertaa ja opi</strong> - Nämä kysymykset ovat niitä, joissa tarvitset vielä harjoittelua.
+                    <div class="mt-2 p-3 bg-white rounded border border-primary">
+                        <div class="mb-2">
+                            <i class="fas fa-hand-pointer me-2 text-primary"></i>
+                            <strong>Valitse vapaasti:</strong>
+                        </div>
+                        <ul class="mb-0 ps-4">
+                            <li>Rastita <strong>yksittäisiä kysymyksiä</strong> joita haluat kerrata</li>
+                            <li>Rastita <strong>useita kysymyksiä</strong> (esim. vain heikoimmat)</li>
+                            <li>Käytä <strong>"Valitse kaikki"</strong> -nappia valitaksesi kaikki kerralla</li>
+                            <li>Tai paina suoraan <strong>"Kertaa kaikki"</strong> ilman valintoja</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 mb-0" id="total-mistakes">0</h3>
+                        <p class="text-muted mb-0">Kehityskohdetta</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="display-4 mb-0" id="avg-success-rate">0%</h3>
+                        <p class="text-muted mb-0">Keskim. onnistuminen</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <button class="btn btn-success btn-lg w-100" onclick="startReviewAll()">
+                            <i class="fas fa-redo me-2"></i>Kertaa kaikki
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Questions list -->
+        <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0">
+                <i class="fas fa-list me-2"></i>Kysymykset joita kannattaa kerrata
+            </h5>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-light" onclick="selectAllQuestions()" id="select-all-btn">
+                    <i class="fas fa-check-square me-1"></i>Valitse kaikki
+                </button>
+                <button class="btn btn-sm btn-outline-light" onclick="clearAllSelections()" id="clear-all-btn" style="display: none;">
+                    <i class="fas fa-times me-1"></i>Tyhjennä
+                </button>
+            </div>
+        </div>
+        
+        <!-- Kategoriavalitsimet -->
+        <div id="category-filters" class="d-flex flex-wrap gap-2" style="display: none;">
+            <small class="text-white-50 me-2 align-self-center">
+                <i class="fas fa-filter me-1"></i>Pikalinkit:
+            </small>
+            <!-- Kategorianapit luodaan JavaScriptillä -->
+        </div>
+    </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 5%;" class="text-center">
+                                    <i class="fas fa-check-square text-muted" title="Valitse kysymyksiä"></i>
+                                </th>
+                                <th style="width: 45%;">Kysymys</th>
+                                <th style="width: 15%;">Kategoria</th>
+                                <th style="width: 10%;" class="text-center">Onnistuminen</th>
+                                <th style="width: 15%;" class="text-center">Tilasto</th>
+                                <th style="width: 10%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="questions-tbody">
+                            <!-- Questions populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Explanation Modal -->
+<div class="modal fade" id="explanationModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-lightbulb me-2"></i>Selitys
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <h6 class="mb-3" id="modal-question"></h6>
+                <div id="modal-explanation"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sulje</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let incorrectQuestions = [];
+let explanationModal = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
+    loadIncorrectQuestions();
+});
+
+async function loadIncorrectQuestions() {
+    try {
+        const response = await fetch('/api/incorrect_questions');
+        const data = await response.json();
+        
+        if (data.questions.length === 0) {
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'block';
+            return;
+        }
+        
+        incorrectQuestions = data.questions;
+        displayQuestions();
+        
+        document.getElementById('loading-spinner').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Virhe kysymysten lataamisessa:', error);
+        document.getElementById('loading-spinner').innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                Virhe kysymysten lataamisessa. <a href="javascript:location.reload()">Yritä uudelleen</a>
+            </div>
+        `;
+    }
+}
+
+function displayQuestions() {
+    const tbody = document.getElementById('questions-tbody');
+    tbody.innerHTML = '';
+    
+    const avgSuccessRate = incorrectQuestions.reduce((sum, q) => sum + q.success_rate, 0) / incorrectQuestions.length;
+    document.getElementById('total-mistakes').textContent = incorrectQuestions.length;
+    document.getElementById('avg-success-rate').textContent = Math.round(avgSuccessRate) + '%';
+    
+    // Laske kategoriat ja niiden määrät
+    const categoryCounts = {};
+    incorrectQuestions.forEach(q => {
+        categoryCounts[q.category] = (categoryCounts[q.category] || 0) + 1;
+    });
+    
+    // Luo kategoriavalitsimet
+    const filterContainer = document.getElementById('category-filters');
+    if (Object.keys(categoryCounts).length > 1) {
+        filterContainer.style.display = 'flex';
+        filterContainer.innerHTML = '<small class="text-white-50 me-2 align-self-center"><i class="fas fa-filter me-1"></i>Pikalinkit:</small>';
+        
+        Object.entries(categoryCounts).sort().forEach(([category, count]) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-sm btn-outline-light';
+            btn.innerHTML = `<i class="fas fa-check-double me-1"></i>${category} (${count})`;
+            btn.onclick = () => selectCategory(category);
+            btn.title = `Valitse kaikki ${count} ${category}-kysymystä`;
+            filterContainer.appendChild(btn);
+        });
+    }
+    
+    incorrectQuestions.forEach((q, index) => {
+        const row = document.createElement('tr');
+        row.className = 'question-row';
+        
+        const questionText = q.question.length > 80 ? q.question.substring(0, 80) + '...' : q.question;
+        
+        let badgeClass = 'danger';
+        if (q.success_rate >= 50) badgeClass = 'warning';
+        if (q.success_rate >= 75) badgeClass = 'success';
+        
+        let difficultyBadge = '';
+        if (q.difficulty === 'helppo') {
+            difficultyBadge = '<span class="badge bg-success">Helppo</span>';
+        } else if (q.difficulty === 'keskivaikea') {
+            difficultyBadge = '<span class="badge bg-warning">Keskivaikea</span>';
+        } else {
+            difficultyBadge = '<span class="badge bg-danger">Vaikea</span>';
+        }
+        
+        let lastShownText = '-';
+        if (q.last_shown) {
+            const lastDate = new Date(q.last_shown);
+            const now = new Date();
+            const diffDays = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) lastShownText = 'Tänään';
+            else if (diffDays === 1) lastShownText = 'Eilen';
+            else if (diffDays < 7) lastShownText = diffDays + 'pv sitten';
+            else lastShownText = Math.floor(diffDays / 7) + 'vk sitten';
+        }
+        
+        row.innerHTML = `
+            <td class="text-center">
+                <input type="checkbox" class="question-checkbox" data-question-id="${q.id}" data-index="${index}" data-category="${q.category}">
+            </td>
+            <td>
+                <div class="fw-bold">${questionText}</div>
+                <small class="text-muted">${difficultyBadge}</small>
+            </td>
+            <td>
+                <span class="badge bg-primary">${q.category}</span>
+            </td>
+            <td class="text-center">
+                <span class="badge bg-${badgeClass} fs-6">${q.success_rate}%</span>
+            </td>
+            <td class="text-center">
+                <small class="text-muted">
+                    ${q.times_correct}/${q.times_shown} oikein<br>
+                    ${lastShownText}
+                </small>
+            </td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-info me-1" onclick="showExplanation(${index})" title="Näytä selitys">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+    
+    document.querySelectorAll('.question-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateReviewButton);
+    });
+    
+    updateReviewButton();
+}
+
+function selectCategory(category) {
+    // Valitse kaikki tämän kategorian kysymykset
+    document.querySelectorAll('.question-checkbox').forEach(cb => {
+        if (cb.dataset.category === category) {
+            cb.checked = true;
+        }
+    });
+    updateReviewButton();
+    
+    // Näytä pieni notifikaatio
+    const filterContainer = document.getElementById('category-filters');
+    const notification = document.createElement('small');
+    notification.className = 'text-white ms-2';
+    notification.innerHTML = '<i class="fas fa-check-circle me-1"></i>Valittu!';
+    notification.style.animation = 'fadeOut 2s forwards';
+    filterContainer.appendChild(notification);
+    
+    setTimeout(() => notification.remove(), 2000);
+}
+
+function selectAllQuestions() {
+    const checkboxes = document.querySelectorAll('.question-checkbox');
+    checkboxes.forEach(cb => cb.checked = true);
+    updateReviewButton();
+}
+
+function clearAllSelections() {
+    const checkboxes = document.querySelectorAll('.question-checkbox');
+    checkboxes.forEach(cb => cb.checked = false);
+    updateReviewButton();
+}
+
+function updateReviewButton() {
+    const selectedCount = document.querySelectorAll('.question-checkbox:checked').length;
+    const reviewButton = document.querySelector('.btn-success.btn-lg');
+    const clearButton = document.getElementById('clear-all-btn');
+    
+    if (selectedCount === 0) {
+        reviewButton.innerHTML = '<i class="fas fa-redo me-2"></i>Kertaa kaikki';
+        if (clearButton) clearButton.style.display = 'none';
+    } else {
+        reviewButton.innerHTML = `<i class="fas fa-redo me-2"></i>Kertaa valitut (${selectedCount})`;
+        if (clearButton) clearButton.style.display = 'inline-block';
+    }
+}
+
+function showExplanation(index) {
+    const q = incorrectQuestions[index];
+    document.getElementById('modal-question').textContent = q.question;
+    document.getElementById('modal-explanation').innerHTML = `
+        <div class="alert alert-light">
+            <strong>Selitys:</strong><br>
+            ${q.explanation}
+        </div>
+        <p class="mb-0"><strong>Kategoria:</strong> ${q.category}</p>
+    `;
+    explanationModal.show();
+}
+
+function startReviewAll() {
+    const selectedCheckboxes = document.querySelectorAll('.question-checkbox:checked');
+    
+    let questionsToReview;
+    if (selectedCheckboxes.length === 0) {
+        questionsToReview = incorrectQuestions;
+    } else {
+        questionsToReview = Array.from(selectedCheckboxes).map(cb => {
+            const index = parseInt(cb.dataset.index);
+            return incorrectQuestions[index];
+        });
+    }
+    
+    if (questionsToReview.length === 0) {
+        alert('Ei kysymyksiä kertaukseen!');
+        return;
+    }
+    
+    const categories = [...new Set(questionsToReview.map(q => q.category))];
+    const params = new URLSearchParams();
+    categories.forEach(cat => params.append('categories', cat));
+    params.append('count', questionsToReview.length);
+    
+    window.location.href = '/practice?' + params.toString();
+}
+</script>
+
+<style>
+    .question-checkbox {
+        cursor: pointer;
+        transform: scale(1.3);
+        margin: 0;
+    }
+    
+    .question-row {
+        transition: all 0.2s ease;
+    }
+    
+    .question-row:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.005);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    .question-row:has(.question-checkbox:checked) {
+        background-color: #e7f3ff;
+        border-left: 4px solid #0d6efd;
+    }
+    
+    .question-row:has(.question-checkbox:checked):hover {
+        background-color: #d0e7ff;
+    }
+    
+    #select-all-btn:hover,
+    #clear-all-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #f8f9fa;
+        z-index: 10;
+    }
+
+#category-filters {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 0.75rem;
+}
+
+#category-filters .btn-outline-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+</style>
+{% endblock %}

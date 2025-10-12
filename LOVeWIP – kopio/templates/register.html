@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Rekisteröidy - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">
+                        <i class="fas fa-user-plus text-primary me-2"></i>
+                        Luo uusi tili
+                    </h2>
+                    
+                    <form method="POST" action="{{ url_for('register_route') }}" id="registerForm">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">
+                                <i class="fas fa-user me-1"></i>Käyttäjänimi
+                            </label>
+                            <input type="text" class="form-control form-control-lg" id="username" name="username" required autofocus placeholder="esim. käyttäjä123" pattern="[a-zA-Z0-9_]{3,30}" title="3-30 merkkiä, vain kirjaimet, numerot ja alaviiva">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>3-30 merkkiä, vain kirjaimet, numerot ja alaviiva (_)
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-1"></i>Sähköpostiosoite
+                            </label>
+                            <input type="email" class="form-control form-control-lg" id="email" name="email" required placeholder="esim. nimi@example.com">
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>Käytetään vain tilin palautukseen
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Salasana
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="password" name="password" required placeholder="Vähintään 8 merkkiä">
+                            <div class="form-text">
+                                <i class="fas fa-shield-alt me-1"></i>Vähintään 8 merkkiä, iso kirjain, pieni kirjain ja numero
+                            </div>
+                            
+                            <!-- Password strength indicator -->
+                            <div class="mt-2">
+                                <div class="progress" style="height: 5px;">
+                                    <div id="passwordStrength" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small id="passwordStrengthText" class="text-muted"></small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">
+                                <i class="fas fa-lock me-1"></i>Vahvista salasana
+                            </label>
+                            <input type="password" class="form-control form-control-lg" id="confirmPassword" name="confirmPassword" required placeholder="Syötä salasana uudelleen">
+                            <div id="passwordMatch" class="form-text"></div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-user-plus me-2"></i>Rekisteröidy
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <hr>
+                    
+                    <p class="text-center mb-0">
+                        Onko sinulla jo tili? 
+                        <a href="{{ url_for('login_route') }}" class="text-decoration-none fw-bold">
+                            Kirjaudu tästä
+                        </a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Password requirements info -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <i class="fas fa-shield-alt text-success me-2"></i>Salasanavaatimukset
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Vähintään 8 merkkiä pitkä</li>
+                        <li>Vähintään yksi iso kirjain (A-Z)</li>
+                        <li>Vähintään yksi pieni kirjain (a-z)</li>
+                        <li>Vähintään yksi numero (0-9)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Password strength checker
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthBar = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('passwordStrengthText');
+        
+        let strength = 0;
+        let feedback = [];
+        
+        // Check length
+        if (password.length >= 8) strength++;
+        else feedback.push('vähintään 8 merkkiä');
+        
+        // Check for uppercase
+        if (/[A-Z]/.test(password)) strength++;
+        else feedback.push('iso kirjain');
+        
+        // Check for lowercase
+        if (/[a-z]/.test(password)) strength++;
+        else feedback.push('pieni kirjain');
+        
+        // Check for numbers
+        if (/[0-9]/.test(password)) strength++;
+        else feedback.push('numero');
+        
+        // Update progress bar
+        const percentage = (strength / 4) * 100;
+        strengthBar.style.width = percentage + '%';
+        
+        // Update colors and text
+        if (strength === 0) {
+            strengthBar.className = 'progress-bar bg-danger';
+            strengthText.textContent = '';
+        } else if (strength === 1) {
+            strengthBar.className = 'progress-bar bg-danger';
+            strengthText.textContent = 'Heikko - Puuttuu: ' + feedback.join(', ');
+            strengthText.className = 'text-danger small';
+        } else if (strength === 2) {
+            strengthBar.className = 'progress-bar bg-warning';
+            strengthText.textContent = 'Kohtalainen - Puuttuu: ' + feedback.join(', ');
+            strengthText.className = 'text-warning small';
+        } else if (strength === 3) {
+            strengthBar.className = 'progress-bar bg-info';
+            strengthText.textContent = 'Hyvä - Puuttuu: ' + feedback.join(', ');
+            strengthText.className = 'text-info small';
+        } else {
+            strengthBar.className = 'progress-bar bg-success';
+            strengthText.textContent = 'Vahva - Kaikki vaatimukset täyttyvät';
+            strengthText.className = 'text-success small';
+        }
+        
+        // Check password match
+        checkPasswordMatch();
+    });
+    
+    // Check password match
+    document.getElementById('confirmPassword').addEventListener('input', checkPasswordMatch);
+    
+    function checkPasswordMatch() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const matchDiv = document.getElementById('passwordMatch');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        if (confirmPassword.length === 0) {
+            matchDiv.textContent = '';
+            matchDiv.className = 'form-text';
+            return;
+        }
+        
+        if (password === confirmPassword) {
+            matchDiv.innerHTML = '<i class="fas fa-check-circle text-success me-1"></i>Salasanat täsmäävät';
+            matchDiv.className = 'form-text text-success';
+        } else {
+            matchDiv.innerHTML = '<i class="fas fa-times-circle text-danger me-1"></i>Salasanat eivät täsmää';
+            matchDiv.className = 'form-text text-danger';
+        }
+    }
+    
+    // Form validation on submit
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Salasanat eivät täsmää!');
+            return false;
+        }
+        
+        // Check password requirements
+        if (password.length < 8) {
+            e.preventDefault();
+            alert('Salasanan tulee olla vähintään 8 merkkiä pitkä!');
+            return false;
+        }
+        
+        if (!/[A-Z]/.test(password)) {
+            e.preventDefault();
+            alert('Salasanan tulee sisältää vähintään yksi iso kirjain!');
+            return false;
+        }
+        
+        if (!/[a-z]/.test(password)) {
+            e.preventDefault();
+            alert('Salasanan tulee sisältää vähintään yksi pieni kirjain!');
+            return false;
+        }
+        
+        if (!/[0-9]/.test(password)) {
+            e.preventDefault();
+            alert('Salasanan tulee sisältää vähintään yksi numero!');
+            return false;
+        }
+    });
+</script>
+
+<style>
+    .card {
+        border-radius: 15px;
+        border: none;
+    }
+    
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(90, 103, 216, 0.25);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(90, 103, 216, 0.4);
+    }
+    
+    .progress {
+        border-radius: 10px;
+        background-color: #e9ecef;
+    }
+    
+    .progress-bar {
+        border-radius: 10px;
+        transition: width 0.3s ease, background-color 0.3s ease;
+    }
+</style>
+{% endblock %}

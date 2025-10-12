@@ -1,0 +1,26 @@
+# Jätä huomiotta Pythonin välimuistikansiot
+__pycache__/
+
+# Jätä huomiotta virtuaaliympäristöjen kansiot
+venv/
+env/
+.venv/
+
+# Jätä huomiotta paikalliset tietokantatiedostot
+*.db
+*.sqlite3
+
+# Jätä huomiotta tiedostot, joissa säilytetään salaisuuksia ja API-avaimia
+.env
+.env.*
+secrets.ini
+
+# Jätä huomiotta käyttöjärjestelmän luomat tiedostot (esim. Mac)
+.DS_Store
+
+__pycache__/
+*.pyc
+.env
+love_enhanced_web.db
+venv/
+logs/

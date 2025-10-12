@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Sivua ei löytynyt{% endblock %}
+
+{% block content %}
+<div class="container text-center d-flex align-items-center justify-content-center" style="min-height: 60vh;">
+    <div>
+        <i class="fas fa-map-signs fa-5x text-warning mb-4"></i>
+        <h1 class="display-1 fw-bold">404</h1>
+        <h2 class="mb-4">Sivua ei löytynyt</h2>
+        <p class="lead text-muted mb-4" style="max-width: 500px; margin: auto;">
+            Pahoittelut, etsimääsi polkua ei ole olemassa tai se on siirretty.
+        </p>
+        <a href="{{ url_for('dashboard_route') if current_user.is_authenticated else url_for('index_route') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-home me-2"></i>Palaa kojelaudalle
+        </a>
+    </div>
+</div>
+{% endblock %}

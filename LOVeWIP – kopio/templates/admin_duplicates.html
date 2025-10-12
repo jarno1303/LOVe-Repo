@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Duplikaattien tarkistus{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-search me-2"></i>Duplikaattien tarkistus
+        </h2>
+        <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Takaisin
+        </a>
+    </div>
+
+    <!-- Haku-lomake -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                
+                <div class="row align-items-end">
+                    <div class="col-md-8">
+                        <label for="threshold" class="form-label">
+                            Samankaltaisuuden kynnysarvo (%)
+                        </label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="threshold" 
+                               name="threshold" 
+                               min="50" 
+                               max="100" 
+                               step="1"
+                               value="{{ threshold or 95 }}"
+                               required>
+                        <small class="form-text text-muted">
+                            100% = täysin identtiset, 95% = hyvin samankaltaiset, 80% = jonkin verran samankaltaiset
+                        </small>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search me-2"></i>Etsi duplikaatit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tulokset -->
+    {% if similar_questions is not none %}
+        {% if similar_questions|length == 0 %}
+            <div class="alert alert-success">
+                <i class="bi bi-check-circle me-2"></i>
+                Ei löytynyt duplikaatteja tai samankaltaisuus {{ threshold }}% kysymyksiä!
+            </div>
+        {% else %}
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                Löydettiin <strong>{{ similar_questions|length }}</strong> samankaltaista kysymysparia
+                (kynnysarvo: {{ threshold }}%)
+            </div>
+
+            <!-- Massapoisto-työkalut -->
+            <div class="card mb-4 border-warning">
+                <div class="card-header bg-warning bg-opacity-10">
+                    <h5 class="mb-0">
+                        <i class="bi bi-trash-fill me-2"></i>Massapoisto
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="mb-2">
+                                <strong>Valittu:</strong> <span id="selected-count">0</span> / {{ similar_questions|length }} paria
+                            </p>
+                            <p class="text-muted small mb-0">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Poistaa aina <strong>uudemman</strong> kysymyksen (korkeampi ID), säilyttää vanhemman
+                            </p>
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-outline-primary me-2" onclick="toggleAll()">
+                                <i class="bi bi-check-square me-1"></i>Valitse kaikki
+                            </button>
+                            <button type="button" class="btn btn-danger" onclick="deleteSelected()" id="delete-btn" disabled>
+                                <i class="bi bi-trash-fill me-1"></i>Poista valitut
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form massapoistoa varten -->
+            <form id="bulk-delete-form" method="POST" action="{{ url_for('admin_bulk_delete_duplicates_route') }}" style="display: none;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <input type="hidden" name="question_ids" id="question-ids-input" value="">
+            </form>
+
+            <!-- Duplikaattiparit -->
+            {% for pair in similar_questions %}
+            <div class="card mb-3 border-warning">
+                <div class="card-header bg-warning bg-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                            <input class="form-check-input duplicate-checkbox" 
+                                   type="checkbox" 
+                                   value="{{ pair.id2 }}"
+                                   id="check-{{ loop.index }}"
+                                   onchange="updateSelection()">
+                            <label class="form-check-label" for="check-{{ loop.index }}">
+                                <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                                Samankaltaisuus: <strong>{{ pair.similarity }}%</strong>
+                            </label>
+                        </div>
+                        <span class="text-muted">
+                            ID: {{ pair.id1 }} ↔️ ID: {{ pair.id2 }}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-success">Säilytetään: #{{ pair.id1 }}</span>
+                                    <a href="{{ url_for('admin_edit_question_route', question_id=pair.id1) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> Muokkaa
+                                    </a>
+                                </div>
+                                <p class="mb-0">{{ pair.question1 }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="border rounded p-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge bg-danger">Poistetaan: #{{ pair.id2 }}</span>
+                                    <a href="{{ url_for('admin_edit_question_route', question_id=pair.id2) }}" 
+                                       class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i> Muokkaa
+                                    </a>
+                                </div>
+                                <p class="mb-0">{{ pair.question2 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Yksittäisen poisto -->
+                    <div class="mt-3 text-end">
+                        <form method="POST" 
+                              action="{{ url_for('admin_delete_question_route', question_id=pair.id2) }}" 
+                              class="d-inline"
+                              onsubmit="return confirm('Haluatko varmasti poistaa kysymyksen #{{ pair.id2 }}?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash me-1"></i>Poista vain #{{ pair.id2 }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Yhteenveto -->
+            <div class="alert alert-secondary mt-4">
+                <strong>Yhteenveto:</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Löydettiin {{ similar_questions|length }} samankaltaista paria</li>
+                    <li>Voit valita useita pareja ja poistaa ne kerralla</li>
+                    <li>Järjestelmä poistaa aina uudemman (korkeampi ID = #{{ similar_questions[0].id2 }} jne.)</li>
+                    <li>Vanhempi kysymys säilyy aina (alempi ID = #{{ similar_questions[0].id1 }} jne.)</li>
+                </ul>
+            </div>
+        {% endif %}
+    {% endif %}
+</div>
+
+<script>
+let allCheckboxes = document.querySelectorAll('.duplicate-checkbox');
+
+function updateSelection() {
+    let checkedCount = document.querySelectorAll('.duplicate-checkbox:checked').length;
+    document.getElementById('selected-count').textContent = checkedCount;
+    document.getElementById('delete-btn').disabled = checkedCount === 0;
+}
+
+function toggleAll() {
+    let allChecked = document.querySelectorAll('.duplicate-checkbox:checked').length === allCheckboxes.length;
+    
+    allCheckboxes.forEach(checkbox => {
+        checkbox.checked = !allChecked;
+    });
+    
+    updateSelection();
+}
+
+function deleteSelected() {
+    let checkedBoxes = document.querySelectorAll('.duplicate-checkbox:checked');
+    
+    if (checkedBoxes.length === 0) {
+        alert('Valitse vähintään yksi duplikaattipari poistettavaksi.');
+        return;
+    }
+    
+    let questionIds = Array.from(checkedBoxes).map(cb => cb.value);
+    let count = questionIds.length;
+    
+    let confirmMsg = `Haluatko varmasti poistaa ${count} kysymystä?\n\n` +
+                     `⚠️ HUOM: Poistetaan aina uudempi (korkeampi ID).\n` +
+                     `✅ Vanhempi kysymys säilyy.\n\n` +
+                     `Tätä toimintoa EI VOI perua!`;
+    
+    if (confirm(confirmMsg)) {
+        document.getElementById('question-ids-input').value = questionIds.join(',');
+        document.getElementById('bulk-delete-form').submit();
+    }
+}
+</script>
+{% endblock %}

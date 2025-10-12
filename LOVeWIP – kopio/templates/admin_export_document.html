@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Vie kysymykset dokumenttiin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-file-earmark-arrow-down me-2"></i>Vie kysymykset dokumenttiin
+        </h2>
+        <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Takaisin
+        </a>
+    </div>
+
+    <!-- Ohje -->
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle me-2"></i>
+        <strong>Vie kysymykset ammattimaiseen PDF- tai Word-dokumenttiin.</strong>
+        <ul class="mb-0 mt-2">
+            <li>Valitse haluamasi muoto, suodattimet ja järjestys</li>
+            <li>Voit sisällyttää vastaukset ja selitykset</li>
+            <li>Duplikaattitarkistus suositellaan ennen vientiä</li>
+        </ul>
+    </div>
+
+    <!-- Lomake -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin_export_questions_document_route') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+
+                <!-- Muoto -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-file-earmark me-2"></i>Dokumentin muoto
+                    </label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_pdf" value="pdf" checked>
+                                <label class="form-check-label" for="format_pdf">
+                                    <i class="bi bi-file-pdf text-danger me-1"></i> PDF-dokumentti
+                                    <small class="text-muted d-block">Suositeltu tulostukseen ja jakamiseen</small>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="format" id="format_word" value="word">
+                                <label class="form-check-label" for="format_word">
+                                    <i class="bi bi-file-word text-primary me-1"></i> Word-dokumentti (.docx)
+                                    <small class="text-muted d-block">Muokattavissa Word-ohjelmalla</small>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Asetukset -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-gear me-2"></i>Sisältöasetukset
+                    </label>
+                    
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="include_answers" id="include_answers" checked>
+                        <label class="form-check-label" for="include_answers">
+                            <strong>Sisällytä oikeat vastaukset ja selitykset</strong>
+                            <small class="text-muted d-block">Merkitsee oikeat vastaukset ja näyttää selitykset</small>
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="check_duplicates" id="check_duplicates">
+                        <label class="form-check-label" for="check_duplicates">
+                            <strong>Tarkista duplikaatit ennen vientiä</strong>
+                            <small class="text-muted d-block">Näyttää varoituksen jos löytyy samankaltaisia kysymyksiä</small>
+                        </label>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Järjestys -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-sort-down me-2"></i>Kysymysten järjestys
+                    </label>
+                    <select class="form-select" name="sort_by" id="sort_by">
+                        <option value="id">ID-numero (nouseva)</option>
+                        <option value="id_desc">ID-numero (laskeva)</option>
+                        <option value="category" selected>Kategoria (aakkosjärjestys)</option>
+                        <option value="difficulty">Vaikeustaso (helposta vaikeaan)</option>
+                        <option value="alphabetical">Kysymysteksti (aakkosjärjestys)</option>
+                    </select>
+                </div>
+
+                <hr>
+
+                <!-- Suodattimet -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-folder me-2"></i>Kategoriat
+                        </label>
+                        <small class="text-muted d-block mb-2">Jätä tyhjäksi sisällyttääksesi kaikki</small>
+                        
+                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 4px; padding: 10px;">
+                            {% for cat in categories %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="categories" 
+                                       id="cat_{{ loop.index }}" value="{{ cat }}">
+                                <label class="form-check-label" for="cat_{{ loop.index }}">
+                                    {{ cat.title() }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-speedometer2 me-2"></i>Vaikeustasot
+                        </label>
+                        <small class="text-muted d-block mb-2">Jätä tyhjäksi sisällyttääksesi kaikki</small>
+                        
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="difficulties" 
+                                   id="diff_helppo" value="helppo">
+                            <label class="form-check-label" for="diff_helppo">
+                                <span class="badge bg-success">Helppo</span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="difficulties" 
+                                   id="diff_keskivaikea" value="keskivaikea">
+                            <label class="form-check-label" for="diff_keskivaikea">
+                                <span class="badge bg-warning text-dark">Keskivaikea</span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="difficulties" 
+                                   id="diff_vaikea" value="vaikea">
+                            <label class="form-check-label" for="diff_vaikea">
+                                <span class="badge bg-danger">Vaikea</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Yhteenveto -->
+                <div class="alert alert-light border">
+                    <strong><i class="bi bi-clipboard-data me-2"></i>Yhteenveto:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Kysymyksiä tietokannassa: <strong>{{ total_questions }}</strong></li>
+                        <li>Suodattimien jälkeen: <strong><span id="filtered-count">{{ total_questions }}</span></strong></li>
+                    </ul>
+                </div>
+
+                <!-- Toimintopainikkeet -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">
+                        <i class="bi bi-x-lg me-2"></i>Peruuta
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-download me-2"></i>Luo ja lataa dokumentti
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Päivitä suodatettujen kysymysten määrä (yksinkertaistettu versio)
+    const categoryCheckboxes = document.querySelectorAll('input[name="categories"]');
+    const difficultyCheckboxes = document.querySelectorAll('input[name="difficulties"]');
+    const filteredCount = document.getElementById('filtered-count');
+    const totalQuestions = {{ total_questions }};
+    
+    function updateCount() {
+        const selectedCategories = Array.from(categoryCheckboxes)
+            .filter(cb => cb.checked)
+            .length;
+        const selectedDifficulties = Array.from(difficultyCheckboxes)
+            .filter(cb => cb.checked)
+            .length;
+        
+        // Jos mitään ei valittu, näytä kaikki
+        if (selectedCategories === 0 && selectedDifficulties === 0) {
+            filteredCount.textContent = totalQuestions;
+        } else {
+            // Yksinkertaistettu arvio (tarkempi vaatisi AJAX-kutsun)
+            filteredCount.textContent = '~' + Math.floor(totalQuestions * 0.7);
+        }
+    }
+    
+    categoryCheckboxes.forEach(cb => cb.addEventListener('change', updateCount));
+    difficultyCheckboxes.forEach(cb => cb.addEventListener('change', updateCount));
+});
+</script>
+{% endblock %}

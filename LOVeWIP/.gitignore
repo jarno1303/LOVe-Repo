@@ -1,26 +1,48 @@
-# Jätä huomiotta Pythonin välimuistikansiot
-__pycache__/
+# Tietokannat
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
 
-# Jätä huomiotta virtuaaliympäristöjen kansiot
+# SQLite DB Pro
+*.sqbpro
+*.sqbpro2.sqbpro
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
 venv/
 env/
-.venv/
+ENV/
 
-# Jätä huomiotta paikalliset tietokantatiedostot
-*.db
-*.sqlite3
-
-# Jätä huomiotta tiedostot, joissa säilytetään salaisuuksia ja API-avaimia
+# Environment variables
 .env
-.env.*
-secrets.ini
+.env.local
 
-# Jätä huomiotta käyttöjärjestelmän luomat tiedostot (esim. Mac)
-.DS_Store
-
-__pycache__/
-*.pyc
-.env
-love_enhanced_web.db
-venv/
+# Lokit
 logs/
+*.log
+
+# Word-dokumentit (valinnainen)
+*.docx
+*.doc
+
+# Tekstimuistiinpanot
+*.txt
+!requirements.txt
+!requirements_test.txt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
