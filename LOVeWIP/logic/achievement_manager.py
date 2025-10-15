@@ -1,9 +1,7 @@
 """
 Achievement Manager - Saavutusten hallinta ja tarkistus
 """
-
-import sqlite3
-import datetime
+from datetime import datetime
 from models.models import Achievement
 
 # Saavutusten määrittelyt
@@ -128,15 +126,14 @@ class EnhancedAchievementManager:
         new_achievements = []
         context = context or {}
         
-        with sqlite3.connect(self.db_manager.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            
+        try:
             # Hae jo avatut saavutukset
-            unlocked = conn.execute(
+            unlocked_rows = self.db_manager._execute(
                 "SELECT achievement_id FROM user_achievements WHERE user_id = ?", 
-                (user_id,)
-            ).fetchall()
-            unlocked_ids = {row['achievement_id'] for row in unlocked}
+                (user_id,),
+                fetch='all'
+            )
+            unlocked_ids = {row['achievement_id'] for row in unlocked_rows} if unlocked_rows else set()
             
             # Lista tarkistettavista saavutuksista ja niiden funktioista
             achievements_to_check = [
@@ -149,8 +146,8 @@ class EnhancedAchievementManager:
                 ('streak_3', self.check_streak_3),
                 ('streak_7', self.check_streak_7),
                 ('streak_30', self.check_streak_30),
-                ('category_master_farmakologia', lambda c, u: self.check_category_master(c, u, 'farmakologia')),
-                ('category_master_annosjakelu', lambda c, u: self.check_category_master(c, u, 'annosjakelu')),
+                ('category_master_farmakologia', lambda uid: self.check_category_master(uid, 'farmakologia')),
+                ('category_master_annosjakelu', lambda uid: self.check_category_master(uid, 'annosjakelu')),
                 ('simulation_complete', self.check_simulation_complete),
                 ('early_bird', self.check_early_bird),
                 ('night_owl', self.check_night_owl),
@@ -158,102 +155,85 @@ class EnhancedAchievementManager:
             
             # Konteksti-riippuvaiset saavutukset
             if context.get('simulation_perfect'):
-                achievements_to_check.append(('simulation_perfect', lambda c, u: True))
+                achievements_to_check.append(('simulation_perfect', lambda uid: True))
             
             if context.get('fast_answer') and context['fast_answer'] < 5:
-                achievements_to_check.append(('speed_demon', lambda c, u: True))
+                achievements_to_check.append(('speed_demon', lambda uid: True))
             
             # Tarkista jokainen saavutus
             for achievement_id, check_func in achievements_to_check:
                 if achievement_id not in unlocked_ids:
                     try:
-                        if check_func(conn, user_id):
-                            self.unlock_achievement(conn, user_id, achievement_id)
+                        if check_func(user_id):
+                            self.unlock_achievement(user_id, achievement_id)
                             new_achievements.append(achievement_id)
                             print(f"✅ Saavutus avattu: {achievement_id} (käyttäjä: {user_id})")
                     except Exception as e:
                         print(f"❌ Virhe saavutuksen {achievement_id} tarkistuksessa: {e}")
         
+        except Exception as e:
+            print(f"CRITICAL ERROR checking achievements: {e}")
+
         return new_achievements
 
     # ========== SAAVUTUSTARKISTUKSET ==========
 
-    def check_first_steps(self, conn, user_id):
+    def check_first_steps(self, user_id):
         """Vastasi ensimmäiseen kysymykseen."""
-        count = conn.execute(
-            "SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", 
-            (user_id,)
-        ).fetchone()['count']
-        return count >= 1
+        result = self.db_manager._execute("SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", (user_id,), fetch='one')
+        return result and result['count'] >= 1
 
-    def check_quick_learner(self, conn, user_id):
+    def check_quick_learner(self, user_id):
         """Vastasi 10 kysymykseen alle 10 sekunnissa."""
-        count = conn.execute(
-            "SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ? AND time_taken < 10", 
-            (user_id,)
-        ).fetchone()['count']
-        return count >= 10
+        result = self.db_manager._execute("SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ? AND time_taken < 10", (user_id,), fetch='one')
+        return result and result['count'] >= 10
 
-    def check_perfectionist(self, conn, user_id):
+    def check_perfectionist(self, user_id):
         """100% oikein 20 kysymyksessä peräkkäin."""
-        rows = conn.execute(
-            "SELECT correct FROM question_attempts WHERE user_id = ? ORDER BY timestamp DESC LIMIT 20", 
-            (user_id,)
-        ).fetchall()
-        
-        if len(rows) < 20:
+        rows = self.db_manager._execute("SELECT correct FROM question_attempts WHERE user_id = ? ORDER BY timestamp DESC LIMIT 20", (user_id,), fetch='all')
+        if not rows or len(rows) < 20:
             return False
-        
         return all(row['correct'] for row in rows)
 
-    def check_dedicated(self, conn, user_id):
+    def check_dedicated(self, user_id):
         """Vastasi 100 kysymykseen."""
-        count = conn.execute(
-            "SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", 
-            (user_id,)
-        ).fetchone()['count']
-        return count >= 100
+        result = self.db_manager._execute("SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", (user_id,), fetch='one')
+        return result and result['count'] >= 100
 
-    def check_expert(self, conn, user_id):
+    def check_expert(self, user_id):
         """Vastasi 500 kysymykseen."""
-        count = conn.execute(
-            "SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", 
-            (user_id,)
-        ).fetchone()['count']
-        return count >= 500
+        result = self.db_manager._execute("SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", (user_id,), fetch='one')
+        return result and result['count'] >= 500
 
-    def check_master(self, conn, user_id):
+    def check_master(self, user_id):
         """Vastasi 1000 kysymykseen."""
-        count = conn.execute(
-            "SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", 
-            (user_id,)
-        ).fetchone()['count']
-        return count >= 1000
+        result = self.db_manager._execute("SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", (user_id,), fetch='one')
+        return result and result['count'] >= 1000
 
-    def check_streak_3(self, conn, user_id):
+    def check_streak_3(self, user_id):
         """Harjoitteli 3 päivää peräkkäin."""
-        return self._check_streak(conn, user_id, 3)
+        return self._check_streak(user_id, 3)
 
-    def check_streak_7(self, conn, user_id):
+    def check_streak_7(self, user_id):
         """Harjoitteli 7 päivää peräkkäin."""
-        return self._check_streak(conn, user_id, 7)
+        return self._check_streak(user_id, 7)
 
-    def check_streak_30(self, conn, user_id):
+    def check_streak_30(self, user_id):
         """Harjoitteli 30 päivää peräkkäin."""
-        return self._check_streak(conn, user_id, 30)
+        return self._check_streak(user_id, 30)
 
-    def _check_streak(self, conn, user_id, days):
+    def _check_streak(self, user_id, days):
         """Apufunktio putken tarkistamiseen."""
         # Hae viimeiset X päivää joina käyttäjä on harjoitellut
-        rows = conn.execute("""
+        rows = self.db_manager._execute("""
             SELECT DISTINCT date(timestamp) as practice_date 
             FROM question_attempts 
             WHERE user_id = ? 
             ORDER BY practice_date DESC 
             LIMIT ?
-        """, (user_id, days)).fetchall()
+        """, (user_id, days), fetch='all')
         
-        if len(rows) < days:
+        if not rows or len(rows) < days:
             return False
         
         # Tarkista että päivät ovat peräkkäisiä
@@ -266,76 +246,54 @@ class EnhancedAchievementManager:
         
         return True
 
-    def check_category_master(self, conn, user_id, category):
+    def check_category_master(self, user_id, category):
         """Sai 90% kategorian kysymyksistä oikein."""
-        result = conn.execute("""
+        result = self.db_manager._execute("""
             SELECT 
                 COUNT(*) as total,
-                SUM(CASE WHEN qa.correct = 1 THEN 1 ELSE 0 END) as correct
+                SUM(CASE WHEN qa.correct = TRUE THEN 1 ELSE 0 END) as correct
             FROM question_attempts qa
             JOIN questions q ON qa.question_id = q.id
             WHERE qa.user_id = ? AND q.category = ?
-        """, (user_id, category)).fetchone()
+        """, (user_id, category), fetch='one')
         
-        if result['total'] < 20:  # Vähintään 20 kysymystä kategoriasta
+        if not result or result['total'] < 20:  # Vähintään 20 kysymystä kategoriasta
             return False
         
         success_rate = result['correct'] / result['total']
         return success_rate >= 0.9
 
-    def check_simulation_complete(self, conn, user_id):
+    def check_simulation_complete(self, user_id):
         """Suoritti ensimmäisen koesimulaation."""
-        # Tarkista onko study_sessions taulua
-        try:
-            count = conn.execute("""
-                SELECT COUNT(*) as count 
-                FROM study_sessions 
-                WHERE user_id = ? AND session_type = 'simulation' AND end_time IS NOT NULL
-            """, (user_id,)).fetchone()['count']
-            return count >= 1
-        except:
-            # Jos taulua ei ole, käytä question_attempts määrää
-            count = conn.execute(
-                "SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", 
-                (user_id,)
-            ).fetchone()['count']
-            return count >= 50
+        # TÄMÄ ON SIMPLIFIOITU, TARKASTAA VAIN YLI 50 VASTAUSTA.
+        # OIKEA TOTEUTUS VAATISI TIEDON SIMULAATION PÄÄTTYMISESTÄ.
+        result = self.db_manager._execute("SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ?", (user_id,), fetch='one')
+        return result and result['count'] >= 50
 
-    def check_early_bird(self, conn, user_id):
+    def check_early_bird(self, user_id):
         """Harjoitteli ennen klo 8:00."""
-        count = conn.execute("""
-            SELECT COUNT(*) as count 
-            FROM question_attempts 
-            WHERE user_id = ? AND time(timestamp) < '08:00:00'
-        """, (user_id,)).fetchone()['count']
-        return count >= 1
+        time_function = "EXTRACT(HOUR FROM timestamp)" if self.db_manager.is_postgres else "strftime('%H', timestamp)"
+        query = f"SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ? AND {time_function} < '08'"
+        result = self.db_manager._execute(query, (user_id,), fetch='one')
+        return result and result['count'] >= 1
 
-    def check_night_owl(self, conn, user_id):
+    def check_night_owl(self, user_id):
         """Harjoitteli klo 22:00 jälkeen."""
-        count = conn.execute("""
-            SELECT COUNT(*) as count 
-            FROM question_attempts 
-            WHERE user_id = ? AND time(timestamp) >= '22:00:00'
-        """, (user_id,)).fetchone()['count']
-        return count >= 1
-
+        time_function = "EXTRACT(HOUR FROM timestamp)" if self.db_manager.is_postgres else "strftime('%H', timestamp)"
+        query = f"SELECT COUNT(*) as count FROM question_attempts WHERE user_id = ? AND {time_function} >= '22'"
+        result = self.db_manager._execute(query, (user_id,), fetch='one')
+        return result and result['count'] >= 1
     # ========== MUUT METODIT ==========
 
-    def unlock_achievement(self, conn, user_id, achievement_id):
+    def unlock_achievement(self, user_id, achievement_id):
         """
         Tallentaa avatun saavutuksen käyttäjälle.
-        
-        Args:
-            conn: SQLite connection
-            user_id: Käyttäjän ID
-            achievement_id: Saavutuksen ID
         """
         try:
-            conn.execute("""
-                INSERT OR IGNORE INTO user_achievements (user_id, achievement_id, unlocked_at) 
-                VALUES (?, ?, datetime('now'))
-            """, (user_id, achievement_id))
-            conn.commit()
+            self.db_manager._execute("""
+                INSERT INTO user_achievements (user_id, achievement_id, unlocked_at) 
+                VALUES (?, ?, ?)
+            """, (user_id, achievement_id, datetime.now()), fetch='none')
         except Exception as e:
             print(f"Virhe saavutuksen tallennuksessa: {e}")
     
@@ -349,14 +307,14 @@ class EnhancedAchievementManager:
         Returns:
             Lista Achievement-objekteja
         """
-        with sqlite3.connect(self.db_manager.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            rows = conn.execute(
-                "SELECT * FROM user_achievements WHERE user_id = ?", 
-                (user_id,)
-            ).fetchall()
+        rows = self.db_manager._execute(
+            "SELECT * FROM user_achievements WHERE user_id = ?", 
+            (user_id,),
+            fetch='all'
+        )
             
-            achievements = []
+        achievements = []
+        if rows:
             for row in rows:
                 ach_id = row['achievement_id']
                 if ach_id in ENHANCED_ACHIEVEMENTS:
@@ -371,8 +329,8 @@ class EnhancedAchievementManager:
                         unlocked_at=row['unlocked_at']
                     )
                     achievements.append(unlocked_ach)
-            
-            return achievements
+        
+        return achievements
     
     def get_achievement_progress(self, user_id):
         """

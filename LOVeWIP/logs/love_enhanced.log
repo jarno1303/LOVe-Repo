@@ -1407,3 +1407,6 @@
 2025-10-12 12:46:52,305 WARNING: Brevo ei konfiguroitu. Palautuslinkki: http://127.0.0.1:5000/reset-password/Imphcm5vLmsubGFodGlAbWFpbC5jb20i.aOt5DA.q8bwonwqMeYMf9OARXYeCYBYkHg [in C:\Users\UserX\Documents\GitHub\LOVe-Repo\lovewip\app.py:221]
 2025-10-12 12:46:52,308 INFO: Password reset requested for: jarno.k.lahti@mail.com [in C:\Users\UserX\Documents\GitHub\LOVe-Repo\lovewip\app.py:1251]
 2025-10-12 12:47:21,311 INFO: Password reset successful for: jarno.k.lahti@mail.com [in C:\Users\UserX\Documents\GitHub\LOVe-Repo\lovewip\app.py:1306]
+2025-10-12 17:33:17,714 INFO: LOVe Enhanced startup [in C:\Users\UserX\Documents\GitHub\LOVe-Repo\lovewip\app.py:104]
+2025-10-12 17:33:17,716 ERROR: Virhe häiriötekijätaulun luomisessa: invalid dsn: missing "=" after "sqlite:///love_enhanced_web.db" in connection info string
+ [in C:\Users\UserX\Documents\GitHub\LOVe-Repo\lovewip\app.py:175]

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# models/models.py
 from dataclasses import dataclass
 from typing import List, Optional
 from datetime import datetime
@@ -5,6 +7,7 @@ from flask_login import UserMixin
 
 @dataclass
 class User(UserMixin):
+    """Käyttäjämalli Flask-Login yhteensopiva."""
     id: int
     username: str
     email: str
@@ -14,16 +17,19 @@ class User(UserMixin):
     password: Optional[str] = None
     status: str = 'active'
     created_at: Optional[str] = None
-    expires_at: Optional[datetime] = None # <-- KORJAUS TÄSSÄ
+    expires_at: Optional[datetime] = None
 
     def get_id(self):
+        """Palauttaa käyttäjän ID:n merkkijonona."""
         return str(self.id)
     
     def is_admin(self):
+        """Tarkistaa onko käyttäjä admin."""
         return self.role == 'admin'
 
 @dataclass
 class Question:
+    """Kysymysmalli."""
     id: int
     question: str
     options: List[str]
@@ -38,18 +44,21 @@ class Question:
     interval: int = 1
     hint_type: Optional[str] = None
     created_at: Optional[str] = None
+    question_normalized: Optional[str] = None
 
 @dataclass
 class QuestionAttempt:
+    """Kysymykseen vastaamisen yritys."""
     id: int
     user_id: int
     question_id: int
     is_correct: bool
     time_taken: int
-    created_at: Optional[str] = None  # Muutettu str:ksi tietokannan yhteensopivuuden vuoksi
+    created_at: Optional[str] = None
 
 @dataclass
 class Achievement:
+    """Saavutus."""
     id: str
     name: str
     description: str
@@ -59,6 +68,7 @@ class Achievement:
 
 @dataclass
 class UserStats:
+    """Käyttäjän tilastot."""
     user_id: int
     total_attempts: int
     correct_attempts: int
@@ -70,6 +80,7 @@ class UserStats:
 
 @dataclass
 class DistractorAttempt:
+    """Häiriötekijäyritys."""
     id: int
     user_id: int
     distractor_scenario: str
@@ -77,10 +88,11 @@ class DistractorAttempt:
     correct_choice: int
     is_correct: bool
     response_time: int
-    created_at: Optional[str] = None  # Muutettu str:ksi tietokannan yhteensopivuuden vuoksi
+    created_at: Optional[str] = None
 
 @dataclass
 class SpacedRepetitionCard:
+    """Väliajoin kertauksen kortti."""
     id: int
     user_id: int
     question_id: int
@@ -93,6 +105,7 @@ class SpacedRepetitionCard:
 
 @dataclass
 class LearningSession:
+    """Oppimissessio."""
     id: int
     user_id: int
     session_type: str
@@ -104,6 +117,7 @@ class LearningSession:
     
 @dataclass
 class CategoryProgress:
+    """Kategoriakohtainen edistyminen."""
     category: str
     total_questions: int
     attempted_questions: int

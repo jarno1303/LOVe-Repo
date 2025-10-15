@@ -1,17 +1,6 @@
-import random
-import sqlite3
+import json
 from models.models import Question
 from typing import List
-import json
-
-# Lista häiriöskenaarioista (ei muutoksia)
-DISTRACTORS = [
-    {
-        "scenario": "Potilaan omainen tulee kysymään, voisitko tuoda hänen läheiselleen lasin vettä.",
-        "options": ["Lupaan tuoda veden heti lääkkeenjaon jälkeen.", "Keskeytän ja haen veden välittömästi."]
-    },
-    # ... (muut häiriöskenaariot säilyvät ennallaan)
-]
 
 class SpacedRepetitionManager:
     """SM-2 algoritmin toteutus, nyt käyttäjäkohtainen."""
@@ -35,39 +24,58 @@ class SpacedRepetitionManager:
     
     def get_due_questions(self, user_id, limit=20) -> List[Question]:
         """Hakee käyttäjän erääntyvät kertauskysymykset."""
-        with sqlite3.connect(self.db_manager.db_path) as conn:
-            conn.row_factory = sqlite3.Row
-            query = """
+        date_func = "DATE" if not self.db_manager.is_postgres else ""
+        query = f"""
+            SELECT 
+                q.*,
+                p.times_shown, p.times_correct, p.last_shown, p.ease_factor, p.interval
+            FROM questions q
+            JOIN user_question_progress p ON q.id = p.question_id
+            WHERE p.user_id = ?
+              AND p.last_shown IS NOT NULL
+              AND {date_func}(p.last_shown, '+' || p.interval || ' days') <= {date_func}('now')
+            ORDER BY {date_func}(p.last_shown, '+' || p.interval || ' days') ASC
+            LIMIT ?
+        """
+        if self.db_manager.is_postgres:
+             query = """
                 SELECT 
                     q.*,
                     p.times_shown, p.times_correct, p.last_shown, p.ease_factor, p.interval
                 FROM questions q
                 JOIN user_question_progress p ON q.id = p.question_id
-                WHERE p.user_id = ?
+                WHERE p.user_id = %s
                   AND p.last_shown IS NOT NULL
-                  AND datetime(p.last_shown, '+' || p.interval || ' days') <= datetime('now')
-                ORDER BY datetime(p.last_shown, '+' || p.interval || ' days') ASC
-                LIMIT ?
+                  AND p.last_shown + (p.interval * INTERVAL '1 day') <= NOW()
+                ORDER BY p.last_shown + (p.interval * INTERVAL '1 day') ASC
+                LIMIT %s
             """
-            rows = conn.execute(query, (user_id, limit)).fetchall()
+        
+        rows = self.db_manager._execute(query, (user_id, limit), fetch='all')
             
-            # Korjattu: Poistettu 'updated_at', jota Question-luokka ei odota.
-            questions = [Question(
-                id=row['id'], question=row['question'], explanation=row['explanation'],
-                options=json.loads(row['options']), correct=row['correct'], category=row['category'],
-                difficulty=row['difficulty'], created_at=row['created_at'],
-                times_shown=row['times_shown'] or 0, times_correct=row['times_correct'] or 0,
-                last_shown=row['last_shown'], ease_factor=row['ease_factor'] or 2.5,
-                interval=row['interval'] or 1
-            ) for row in rows]
-            return questions
+        questions = []
+        if rows:
+            for row in rows:
+                try:
+                    questions.append(Question(
+                        id=row['id'], question=row['question'], explanation=row['explanation'],
+                        options=json.loads(row['options']), correct=row['correct'], category=row['category'],
+                        difficulty=row['difficulty'], created_at=row.get('created_at'),
+                        times_shown=row.get('times_shown', 0) or 0, 
+                        times_correct=row.get('times_correct', 0) or 0,
+                        last_shown=row.get('last_shown'), 
+                        ease_factor=row.get('ease_factor', 2.5) or 2.5,
+                        interval=row.get('interval', 1) or 1
+                    ))
+                except (json.JSONDecodeError, TypeError) as e:
+                    print(f"Error parsing question data in get_due_questions: {e}")
+                    continue
+        return questions
 
-    # Korjattu: Metodi nimetty uudelleen vastaamaan app.py:n kutsua.
     def record_review(self, user_id, question_id, interval, ease_factor):
         """Päivittää käyttäjän SR-tiedot kysymykselle."""
-        with sqlite3.connect(self.db_manager.db_path) as conn:
-            conn.execute("""
-                UPDATE user_question_progress
-                SET interval = ?, ease_factor = ?
-                WHERE user_id = ? AND question_id = ?
-            """, (interval, ease_factor, user_id, question_id))
+        self.db_manager._execute("""
+            UPDATE user_question_progress
+            SET interval = ?, ease_factor = ?
+            WHERE user_id = ? AND question_id = ?
+        """, (interval, ease_factor, user_id, question_id), fetch='none')

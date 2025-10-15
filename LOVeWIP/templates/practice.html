@@ -28,14 +28,12 @@
 
     <div id="questionScreen" style="display: none;">
          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-            
             <div class="mb-2 mb-md-0">
                 <h2 class="mb-0">
                     <i class="fas fa-book-open text-primary me-2"></i>
                     Harjoittele
                 </h2>
             </div>
-            
             <div class="flex-grow-1 ms-md-4">
                 <div class="d-flex justify-content-end mb-1">
                     <span id="progressText" class="fw-bold text-muted">Kysymys 0 / 0</span>
@@ -44,7 +42,6 @@
                     <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-
         </div>
 
         <div class="card shadow-sm mb-4">
@@ -110,7 +107,6 @@
     </div>
 </div>
 
-<!-- Häiriötekijä Modal -->
 <div class="modal fade" id="distractorModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-warning">
@@ -122,12 +118,12 @@
             <div class="modal-body">
                 <p class="fw-bold" id="distractor-scenario"></p>
                 <p><strong>Miten toimit?</strong></p>
-                <div id="distractor-options"></div>
-                <div id="distractor-feedback" class="d-none mt-3"></div>
+                <div id="distractor-options" class="d-grid gap-2"></div>
+                <div id="distractor-feedback" class="alert d-none"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" id="submit-distractor" class="btn btn-warning" onclick="submitDistractor()">Vastaa</button>
-                <button type="button" id="continue-quiz" class="btn btn-primary d-none" data-bs-dismiss="modal">Jatka harjoitusta</button>
+                <button type="button" id="continue-quiz" class="btn btn-primary d-none" onclick="closeDistractor()">Jatka harjoitusta</button>
             </div>
         </div>
     </div>
@@ -157,22 +153,18 @@
                 <button class="btn btn-outline-secondary" onclick="calcInput('8')">8</button>
                 <button class="btn btn-outline-secondary" onclick="calcInput('9')">9</button>
                 <button class="btn btn-warning" onclick="calcInput('/')">/</button>
-                
                 <button class="btn btn-outline-secondary" onclick="calcInput('4')">4</button>
                 <button class="btn btn-outline-secondary" onclick="calcInput('5')">5</button>
                 <button class="btn btn-outline-secondary" onclick="calcInput('6')">6</button>
                 <button class="btn btn-warning" onclick="calcInput('*')">×</button>
-                
                 <button class="btn btn-outline-secondary" onclick="calcInput('1')">1</button>
                 <button class="btn btn-outline-secondary" onclick="calcInput('2')">2</button>
                 <button class="btn btn-outline-secondary" onclick="calcInput('3')">3</button>
                 <button class="btn btn-warning" onclick="calcInput('-')">−</button>
-                
                 <button class="btn btn-outline-secondary" onclick="calcInput('0')">0</button>
                 <button class="btn btn-outline-secondary" onclick="calcInput('.')">.</button>
                 <button class="btn btn-success" onclick="calcEqual()">=</button>
                 <button class="btn btn-warning" onclick="calcInput('+')">+</button>
-                
                 <button class="btn btn-danger" onclick="calcClear()" style="grid-column: span 4;">C</button>
             </div>
         </div>
@@ -208,65 +200,6 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="helperBody">
-                </div>
-
-            <div id="mnemonic-templates" style="display: none;">
-                <style>
-                    .mnemonic-card { border-radius: 8px; padding: 1.5rem; text-align: center; color: #fff; }
-                    .mnemonic-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
-                    .mnemonic-card h4 { font-weight: bold; }
-                    .mnemonic-card .subtitle { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }
-                    .mnemonic-card p { margin-bottom: 1.25rem; }
-                    .mnemonic-card .formula-box { background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 4px; font-family: monospace, monospace; font-size: 1.1rem; }
-                    .theme-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                    .theme-info { background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%); }
-                    .theme-warning { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
-                    .theme-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-                    .theme-danger { background: linear-gradient(135deg, #e53935 0%, #e35d5b 100%); }
-                    .theme-accent { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
-                </style>
-                <div id="mnemonic-dose" class="mnemonic-card theme-primary">
-                    <div class="icon"><i class="fas fa-calculator"></i></div>
-                    <h4>Annoslaskennan perussääntö</h4>
-                    <p class="subtitle">Jakolaskukaava</p>
-                    <p>Jaa lääkärin määräämä annos lääkkeen saatavilla olevalla vahvuudella.</p>
-                    <div class="formula-box">Määrätty &divide; Saatavilla = Tarvittava määrä</div>
-                </div>
-                <div id="mnemonic-infusion" class="mnemonic-card theme-info">
-                    <div class="icon"><i class="fas fa-tint"></i></div>
-                    <h4>Tippojen perusmuunnos</h4>
-                    <p class="subtitle">1 ml = 20 gtt</p>
-                    <p>Standardi tippakerroin on 20 tippaa per millilitra, ellei infuusiovälineistössä toisin mainita.</p>
-                    <div class="formula-box">Helppo muistaa: "kaksi-nolla"</div>
-                </div>
-                <div id="mnemonic-percent" class="mnemonic-card theme-warning">
-                     <div class="icon"><i class="fas fa-percentage"></i></div>
-                     <h4>Prosenttiliuoksen periaate</h4>
-                     <p class="subtitle">% = grammaa / 100 ml</p>
-                     <p>Liuoksen prosentti tarkoittaa aina, kuinka monta grammaa vaikuttavaa ainetta on 100 ml:ssa nestettä.</p>
-                     <div class="formula-box">Esim: 5 % glukoosi = 5g / 100ml</div>
-                </div>
-                <div id="mnemonic-conversion" class="mnemonic-card theme-success">
-                    <div class="icon"><i class="fas fa-exchange-alt"></i></div>
-                    <h4>Yksikkömuunnokset</h4>
-                    <p class="subtitle">Tuhannen potenssit</p>
-                    <p>Suuremmasta pienempään: kerro tuhannella. Pienemmästä suurempaan: jaa tuhannella.</p>
-                    <div class="formula-box">g &rarr; mg: &times;1000 <br>L &rarr; ml: &times;1000</div>
-                </div>
-                <div id="mnemonic-check" class="mnemonic-card theme-danger">
-                    <div class="icon"><i class="fas fa-clipboard-check"></i></div>
-                    <h4>Tuloksen tarkistus</h4>
-                    <p class="subtitle">Järkevyysarviointi</p>
-                    <p>Varmista aina, että laskun lopputulos on käytännössä järkevä. Suuret tai hyvin pienet luvut ovat usein virheen merkki.</p>
-                    <div class="formula-box">Jos vastaus tuntuu oudolta, laske uudelleen.</div>
-                </div>
-                <div id="mnemonic-percent-shortcut" class="mnemonic-card theme-accent">
-                    <div class="icon"><i class="fas fa-bolt"></i></div>
-                    <h4>Prosenttien pikalasku</h4>
-                    <p class="subtitle">% &rarr; mg/ml</p>
-                    <p>Saat muutettua prosenttiluvun vahvuudeksi (mg/ml) nopeasti kertomalla sen kymmenellä.</p>
-                    <div class="formula-box">0,9 % &times; 10 = 9 mg/ml</div>
-                </div>
             </div>
             <div class="modal-footer">
                 <a href="{{ url_for('calculator_route') }}" class="btn btn-outline-primary" target="_blank">
@@ -278,29 +211,137 @@
     </div>
 </div>
 
+<div id="mnemonic-templates" style="display: none;">
+    <style>
+        .mnemonic-card { border-radius: 8px; padding: 1.5rem; text-align: center; color: #fff; }
+        .mnemonic-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .mnemonic-card h4 { font-weight: bold; }
+        .mnemonic-card .subtitle { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }
+        .mnemonic-card p { margin-bottom: 1.25rem; }
+        .mnemonic-card .formula-box { background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 4px; font-family: monospace, monospace; font-size: 1.1rem; }
+        .theme-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-info { background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%); }
+        .theme-warning { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+        .theme-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .theme-danger { background: linear-gradient(135deg, #e53935 0%, #e35d5b 100%); }
+        .theme-accent { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+    </style>
+    <div id="mnemonic-dose" class="mnemonic-card theme-primary">
+        <div class="icon"><i class="fas fa-calculator"></i></div>
+        <h4>Annoslaskennan perussääntö</h4>
+        <p class="subtitle">Jakolaskukaava</p>
+        <p>Jaa lääkärin määräämä annos lääkkeen saatavilla olevalla vahvuudella.</p>
+        <div class="formula-box">Määrätty &divide; Saatavilla = Tarvittava määrä</div>
+    </div>
+    <div id="mnemonic-infusion" class="mnemonic-card theme-info">
+        <div class="icon"><i class="fas fa-tint"></i></div>
+        <h4>Tippojen perusmuunnos</h4>
+        <p class="subtitle">1 ml = 20 gtt</p>
+        <p>Standardi tippakerroin on 20 tippaa per millilitra, ellei infuusiovälineistössä toisin mainita.</p>
+        <div class="formula-box">Helppo muistaa: "kaksi-nolla"</div>
+    </div>
+    <div id="mnemonic-percent" class="mnemonic-card theme-warning">
+         <div class="icon"><i class="fas fa-percentage"></i></div>
+         <h4>Prosenttiliuoksen periaate</h4>
+         <p class="subtitle">% = grammaa / 100 ml</p>
+         <p>Liuoksen prosentti tarkoittaa aina, kuinka monta grammaa vaikuttavaa ainetta on 100 ml:ssa nestettä.</p>
+         <div class="formula-box">Esim: 5 % glukoosi = 5g / 100ml</div>
+    </div>
+    <div id="mnemonic-conversion" class="mnemonic-card theme-success">
+        <div class="icon"><i class="fas fa-exchange-alt"></i></div>
+        <h4>Yksikkömuunnokset</h4>
+        <p class="subtitle">Tuhannen potenssit</p>
+        <p>Suuremmasta pienempään: kerro tuhannella. Pienemmästä suurempaan: jaa tuhannella.</p>
+        <div class="formula-box">g &rarr; mg: &times;1000 <br>L &rarr; ml: &times;1000</div>
+    </div>
+    <div id="mnemonic-check" class="mnemonic-card theme-danger">
+        <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+        <h4>Tuloksen tarkistus</h4>
+        <p class="subtitle">Järkevyysarviointi</p>
+        <p>Varmista aina, että laskun lopputulos on käytännössä järkevä. Suuret tai hyvin pienet luvut ovat usein virheen merkki.</p>
+        <div class="formula-box">Jos vastaus tuntuu oudolta, laske uudelleen.</div>
+    </div>
+    <div id="mnemonic-percent-shortcut" class="mnemonic-card theme-accent">
+        <div class="icon"><i class="fas fa-bolt"></i></div>
+        <h4>Prosenttien pikalasku</h4>
+        <p class="subtitle">% &rarr; mg/ml</p>
+        <p>Saat muutettua prosenttiluvun vahvuudeksi (mg/ml) nopeasti kertomalla sen kymmenellä.</p>
+        <div class="formula-box">0,9 % &times; 10 = 9 mg/ml</div>
+    </div>
+</div>
+
 <script>
     let questions = [];
     let currentQuestionIndex = 0;
     let correctAnswers = 0;
     let selectedOption = null;
     let startTime = null;
+    let distractorStartTime = null; // Lisätty distractor-vasteajan mittaukseen
     let explanationModal = null;
     let helperModal = null;
-
-    // Häiriötekijä-muuttujat
     let selectedDistractorOption = null;
     let currentDistractor = null;
     let distractorModalInstance = null;
-
     let calcCurrentValue = '0', calcOperator = '', calcPreviousValue = '';
-    let isDragging = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+    let isDragging = false, xOffset = 0, yOffset = 0;
+
+    // Hae CSRF-token meta-tagista
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    // --- DISTRACTOR-VAKIOT ---
+    const DISTRACTORS = {{ constants.DISTRACTORS|tojson|safe }};
+    const userDistractorsEnabled = {{ current_user.distractors_enabled|tojson|safe }};
+    const userDistractorProbability = {{ current_user.distractor_probability|tojson|safe }} / 100.0;
 
     document.addEventListener('DOMContentLoaded', function() {
         explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
         helperModal = new bootstrap.Modal(document.getElementById('helperModal'));
+        distractorModalInstance = new bootstrap.Modal(document.getElementById('distractorModal'));
         initCalculatorDrag();
         fetchQuestions();
     });
+
+    async function fetchQuestions() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categories = urlParams.getAll('categories');
+            const difficulties = urlParams.getAll('difficulties');
+            const limit = urlParams.get('count') || '10';
+
+            const limitNum = parseInt(limit);
+            if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+                throw new Error('Kysymysten määrän tulee olla 1-100 välillä');
+            }
+            
+            const apiUrl = new URL('/api/questions', window.location.origin);
+            apiUrl.searchParams.append('count', limit);
+            categories.forEach(cat => apiUrl.searchParams.append('categories', cat));
+            difficulties.forEach(diff => apiUrl.searchParams.append('difficulties', diff));
+            
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+                throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä.');
+            }
+            
+            questions = data.questions;
+            startTime = Date.now();
+            showScreen('question');
+            displayCurrentQuestion();
+        } catch (error) {
+            let userMessage = error.message.includes('NetworkError') || error.message.includes('Failed to fetch') 
+                ? 'Verkkovirhe. Tarkista internet-yhteytesi ja yritä uudelleen.'
+                : error.message || 'Kysymysten lataaminen epäonnistui.';
+            showScreen('error', userMessage);
+        }
+    }
 
     function continueToNext() {
         explanationModal.hide();
@@ -324,36 +365,6 @@
             document.getElementById('questionScreen').style.display = 'block';
         } else if (screenName === 'results') {
             document.getElementById('resultsScreen').style.display = 'block';
-        }
-    }
-
-    async function fetchQuestions() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoriesArray = urlParams.getAll('categories');
-            const difficultiesArray = urlParams.getAll('difficulties');
-            const categories = categoriesArray.join(',');
-            const difficulties = difficultiesArray.join(',');
-            const limit = urlParams.get('count') || '10';
-            
-            const limitNum = parseInt(limit);
-            if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) throw new Error('Kysymysten määrän tulee olla 1-100 välillä');
-            
-            const response = await fetch(`/api/questions?limit=${limit}&category=${encodeURIComponent(categories)}&difficulties=${encodeURIComponent(difficulties)}`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            
-            const data = await response.json();
-            if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä.');
-            
-            questions = data.questions;
-            startTime = Date.now();
-            showScreen('question');
-            displayCurrentQuestion();
-        } catch (error) {
-            let userMessage = error.message.includes('NetworkError') || error.message.includes('Failed to fetch') 
-                ? 'Verkkovirhe. Tarkista internet-yhteytesi ja yritä uudelleen.'
-                : error.message || 'Kysymysten lataaminen epäonnistui.';
-            showScreen('error', userMessage);
         }
     }
 
@@ -383,108 +394,95 @@
         });
         document.getElementById('submitBtn').style.display = 'inline-block';
         document.getElementById('nextBtn').style.display = 'none';
-
-        // Tarkista häiriötekijä toisen kysymyksen jälkeen
-        if (currentQuestionIndex > 0) {
-            checkForDistractor();
-        }
-    }
-
-    // Häiriötekijän tarkistus
-    async function checkForDistractor() {
-        try {
-            console.log("Tarkistetaan häiriötekijä...");
-            const response = await fetch('/api/check_distractor');
-            const data = await response.json();
-            
-            if (data.success && data.distractor) {
-                console.log('Häiriötekijä saatu:', data.distractor);
-                const delay = 2000 + Math.random() * 4000;
-                setTimeout(() => showDistractor(data.distractor), delay);
-            } else {
-                console.log("Ei häiriötekijää.");
-            }
-        } catch (error) {
-            console.error('Häiriötekijän tarkistus epäonnistui:', error);
-        }
-    }
-
-    // Näytä häiriötekijä
-    function showDistractor(distractor) {
-        if (!distractorModalInstance) {
-            distractorModalInstance = new bootstrap.Modal(document.getElementById('distractorModal'));
-        }
         
-        currentDistractor = distractor;
+        // Näytetään häiriötekijä VASTA kun kysymys on ladattu taustalle
+        if (currentQuestionIndex > 0 && userDistractorsEnabled && Math.random() < userDistractorProbability) {
+            showDistractor();
+        }
+    }
+    
+    function showDistractor() {
+        distractorStartTime = Date.now();
+        currentDistractor = DISTRACTORS[Math.floor(Math.random() * DISTRACTORS.length)];
         selectedDistractorOption = null;
         
-        document.getElementById('distractor-scenario').textContent = distractor.scenario;
+        document.getElementById('distractor-scenario').textContent = currentDistractor.scenario;
         const optionsContainer = document.getElementById('distractor-options');
         optionsContainer.innerHTML = '';
         
-        distractor.options.forEach((option, index) => {
-            const div = document.createElement('div');
-            div.className = 'distractor-option border rounded p-3 mb-2';
-            div.style.cursor = 'pointer';
-            div.textContent = option;
-            div.onclick = () => selectDistractorOption(index);
-            optionsContainer.appendChild(div);
+        currentDistractor.options.forEach((opt, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline-secondary distractor-option';
+            button.textContent = opt;
+            button.onclick = () => {
+                selectedDistractorOption = index;
+                document.querySelectorAll('#distractor-options button').forEach((btn, i) => {
+                    btn.classList.toggle('active', i === index);
+                });
+            };
+            optionsContainer.appendChild(button);
         });
-        
+
+        document.getElementById('submit-distractor').style.display = 'block';
+        document.getElementById('continue-quiz').style.display = 'none';
         document.getElementById('distractor-feedback').classList.add('d-none');
-        document.getElementById('submit-distractor').classList.remove('d-none');
-        document.getElementById('continue-quiz').classList.add('d-none');
         
         distractorModalInstance.show();
     }
 
-    // Valitse häiriötekijän vaihtoehto
-    function selectDistractorOption(index) {
-        selectedDistractorOption = index;
-        document.querySelectorAll('.distractor-option').forEach(option => {
-            option.classList.remove('border-primary', 'bg-light');
-        });
-        document.querySelectorAll('.distractor-option')[index].classList.add('border-primary', 'bg-light');
-    }
-
-    // Lähetä häiriötekijän vastaus
     async function submitDistractor() {
         if (selectedDistractorOption === null) {
             alert('Valitse vastaus ensin!');
             return;
         }
         
+        const responseTime = Math.floor((Date.now() - distractorStartTime) / 1000); // Laske vasteaika
+        
         try {
             const response = await fetch('/api/submit_distractor', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({
                     scenario: currentDistractor.scenario,
                     user_choice: selectedDistractorOption,
-                    response_time: 5000
+                    response_time: responseTime
                 })
             });
-            const result = await response.json();
-            
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                alert(`Virhe: ${errorData.error || 'Häiriötekijän tallennus epäonnistui'}`);
+                return;
+            }
+
+            const data = await response.json();
+            const isCorrect = data.is_correct;
             const feedback = document.getElementById('distractor-feedback');
-            const isCorrect = result.is_correct;
-            
-            feedback.className = `alert ${isCorrect ? 'alert-success' : 'alert-danger'} mt-3`;
-            feedback.innerHTML = `<strong>${isCorrect ? '✅ Oikein!' : '❌ Väärin!'}</strong><br>${isCorrect ? 'Hyvä ratkaisu!' : 'Parempi vastaus olisi ollut: ' + currentDistractor.options[result.correct_choice]}`;
             feedback.classList.remove('d-none');
-            
-            document.getElementById('submit-distractor').classList.add('d-none');
-            document.getElementById('continue-quiz').classList.remove('d-none');
-        } catch (error) {
-            console.error('Virhe häiriötekijän lähetyksessä:', error);
-            alert('Vastauksen lähetys epäonnistui. Yritä uudelleen.');
+            feedback.className = `alert ${isCorrect ? 'alert-success' : 'alert-warning'}`;
+            feedback.innerHTML = isCorrect ? 
+                '<strong>Oikein!</strong> Hyvä päätös paineen alla.' : 
+                `<strong>Huomio!</strong> Oikea toimintatapa olisi ollut: <i>"${currentDistractor.options[currentDistractor.correct]}"</i>`;
+                
+            document.getElementById('submit-distractor').style.display = 'none';
+            document.getElementById('continue-quiz').style.display = 'block';
+        } catch(e) {
+            console.error("Häiriötekijän tallennus epäonnistui", e);
+            alert('Häiriötekijän tallennus epäonnistui. Yritä uudelleen.');
         }
     }
-
+    
     async function loadQuestionProgress(questionId) {
         const progressInfo = document.getElementById('question-progress-info');
         try {
             const response = await fetch(`/api/question_progress/${questionId}`);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Edistymisen haku epäonnistui');
+            }
             const data = await response.json();
             if (data.times_shown > 0) {
                 document.getElementById('prog-times-shown').textContent = data.times_shown;
@@ -506,6 +504,7 @@
             }
         } catch (error) {
             console.error('Virhe edistymisen lataamisessa:', error);
+            alert(`Virhe edistymisen lataamisessa: ${error.message}`);
             progressInfo.style.display = 'none';
         }
     }
@@ -529,14 +528,20 @@
         try {
             const response = await fetch('/api/submit_answer', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({
                     question_id: question.id,
                     selected_option_text: question.options[selectedOption],
                     time_taken: timeTaken
                 })
             });
-            if (!response.ok) throw new Error('Vastauksen lähetys epäonnistui');
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Vastauksen lähetys epäonnistui');
+            }
             const data = await response.json();
             if (data.correct) correctAnswers++;
             showAnswerFeedback(data.correct, data.correct_answer_index);
@@ -544,13 +549,14 @@
             document.getElementById('submitBtn').style.display = 'none';
         } catch (error) {
             console.error('Virhe vastauksen lähetyksessä:', error);
-            alert('Vastauksen lähetys epäonnistui. Yritä uudelleen.');
+            alert(`Vastauksen lähetys epäonnistui: ${error.message}`);
         }
     }
 
     function showAnswerFeedback(isCorrect, correctIndex) {
         document.querySelectorAll('.option-item').forEach((item, index) => {
             item.classList.remove('border-primary', 'bg-light');
+            item.onclick = null; // Estä klikkaukset vastauksen jälkeen
             if (index === correctIndex) item.classList.add('border-success', 'bg-success', 'bg-opacity-10');
             else if (index === selectedOption && !isCorrect) item.classList.add('border-danger', 'bg-danger', 'bg-opacity-10');
         });
@@ -640,118 +646,93 @@
 
     function initCalculatorDrag() {
         const calcHeader = document.getElementById('calc-header');
+        const calcModal = document.getElementById('calculator-modal');
+
         calcHeader.addEventListener('mousedown', dragStart);
-        document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', dragEnd);
-        calcHeader.addEventListener('touchstart', dragStart);
-        document.addEventListener('touchmove', drag);
+        document.addEventListener('mousemove', drag);
+
+        calcHeader.addEventListener('touchstart', dragStart, { passive: false });
         document.addEventListener('touchend', dragEnd);
+        document.addEventListener('touchmove', drag, { passive: false });
     }
 
     function dragStart(e) {
-        if (e.type === "touchstart") {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-        } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
+        const calcModal = document.getElementById('calculator-modal');
+        isDragging = true;
+        
+        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+        const rect = calcModal.getBoundingClientRect();
+        
+        if (calcModal.style.right || calcModal.style.bottom) {
+            calcModal.style.right = 'auto';
+            calcModal.style.bottom = 'auto';
+            calcModal.style.top = rect.top + 'px';
+            calcModal.style.left = rect.left + 'px';
         }
-        if (e.target.closest('#calc-header')) isDragging = true;
+
+        xOffset = clientX - calcModal.offsetLeft;
+        yOffset = clientY - calcModal.offsetTop;
     }
 
     function drag(e) {
         if (isDragging) {
             e.preventDefault();
             const calcModal = document.getElementById('calculator-modal');
-            if (e.type === "touchmove") {
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-            } else {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-            }
-            xOffset = currentX; yOffset = currentY;
-            const rect = calcModal.getBoundingClientRect();
-            calcModal.style.right = 'auto'; calcModal.style.bottom = 'auto';
-            calcModal.style.left = `${rect.left + currentX}px`;
-            calcModal.style.top = `${rect.top + currentY}px`;
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            
+            calcModal.style.left = (clientX - xOffset) + 'px';
+            calcModal.style.top = (clientY - yOffset) + 'px';
         }
     }
 
     function dragEnd() {
-        initialX = currentX; initialY = currentY;
         isDragging = false;
     }
 
     function identifyQuestionType(question) {
-    const text = question.question.toLowerCase();
-    const category = (question.category || '').toLowerCase();
-
-    // 1. If the category is NOT 'lääkelaskenta', it's a theory question.
-    if (category !== 'lääkelaskenta') {
-        return 'theory';
-    }
-
-    // 2. If the category IS 'lääkelaskenta', then figure out which type of calculation it is.
-    if (text.includes('infuusio') || text.includes('tippa') || text.includes('gtt') || text.includes('ml/h')) {
-        return 'infusion';
-    }
-    if (text.includes('%') || text.includes('prosentti')) {
-        return 'percent';
-    }
-    if (text.includes('muunna') || text.includes('monta gramma') || text.includes('monta milligramma') || text.includes('monta mikrogramma') || text.includes('monta millilitra') || text.includes('monta litra')) {
-        return 'conversion';
-    }
-    if (text.includes('paino') || text.includes('/kg')) {
-        return 'weight';
+        const text = question.question.toLowerCase();
+        const category = (question.category || '').toLowerCase();
+        if (category !== 'lääkelaskenta') return 'theory';
+        if (text.includes('infuusio') || text.includes('tippa') || text.includes('gtt') || text.includes('ml/h')) return 'infusion';
+        if (text.includes('%') || text.includes('prosentti')) return 'percent';
+        if (text.includes('muunna') || text.includes('monta gramma') || text.includes('monta milligramma') || text.includes('monta mikrogramma') || text.includes('monta millilitra') || text.includes('monta litra')) return 'conversion';
+        if (text.includes('paino') || text.includes('/kg')) return 'weight';
+        return 'dose';
     }
     
-    // If it's a calculation but doesn't match a specific sub-type, default to dose calculation.
-    return 'dose';
-}
-    
-    // --- NÄMÄ OVAT UUSIA TAI MUOKATTUJA ---
     function generateDoseHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; }
     function generateInfusionHelper(question) { return document.getElementById('mnemonic-infusion').innerHTML; }
     function generatePercentHelper(question) { return document.getElementById('mnemonic-percent').innerHTML; }
     function generateConversionHelper(question) { return document.getElementById('mnemonic-conversion').innerHTML; }
-    function generateWeightHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; } // Käyttää annoslaskennan pohjaa
-    
-    function generateGenericHelper(question) {
-        // Tämän pitäisi nyt osua vain aitoihin teoriakysymyksiin
-        return `<div class="alert alert-info"><h5><i class="fas fa-book me-2"></i>Teoriakysymys</h5><p>Lue kysymys huolella ja pohdi vastausta potilasturvallisuuden näkökulmasta.</p></div>`;
-    }
+    function generateWeightHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; }
+    function generateGenericHelper(question) { return `<div class="alert alert-info"><h5><i class="fas fa-book me-2"></i>Teoriakysymys</h5><p>Lue kysymys huolella ja pohdi vastausta potilasturvallisuuden näkökulmasta.</p></div>`; }
 
     function openHelper() {
         const question = questions[currentQuestionIndex];
         const helperBody = document.getElementById('helperBody');
         const questionType = identifyQuestionType(question);
         let helperContent = '';
-        
         switch(questionType) {
-            case 'dose': 
-                helperContent = generateDoseHelper(question); 
-                break;
-            case 'infusion': 
-                helperContent = generateInfusionHelper(question); 
-                break;
-            case 'percent': 
-                helperContent = generatePercentHelper(question); 
-                break;
-            case 'conversion': 
-                helperContent = generateConversionHelper(question); 
-                break;
-            case 'weight': 
-                helperContent = generateWeightHelper(question); 
-                break;
-            default: 
-                helperContent = generateGenericHelper(question); 
-                break;
+            case 'dose': helperContent = generateDoseHelper(question); break;
+            case 'infusion': helperContent = generateInfusionHelper(question); break;
+            case 'percent': helperContent = generatePercentHelper(question); break;
+            case 'conversion': helperContent = generateConversionHelper(question); break;
+            case 'weight': helperContent = generateWeightHelper(question); break;
+            default: helperContent = generateGenericHelper(question); break;
         }
-        
         helperBody.innerHTML = helperContent;
         helperModal.show();
+
+        function closeDistractor() {
+    if (distractorModalInstance) {
+        distractorModalInstance.hide();
     }
+}
+
 </script>
 
 <style>
@@ -768,14 +749,7 @@
     #calculator-modal .btn { padding: 12px; font-size: 1.1rem; font-weight: bold; }
     #calc-header { user-select: none; }
     #calc-header:active { cursor: grabbing !important; }
-
-    /* Häiriötekijä-tyylit */
-    .distractor-option {
-        transition: all 0.2s ease;
-    }
-    .distractor-option:hover {
-        background-color: #f8f9fa;
-        transform: translateX(5px);
-    }
+    .distractor-option { transition: all 0.2s ease; }
+    .distractor-option:hover { background-color: #f8f9fa; transform: translateX(5px); }
 </style>
 {% endblock %}
