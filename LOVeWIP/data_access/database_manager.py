@@ -144,99 +144,72 @@ class DatabaseManager:
             conn.close()
 
     def migrate_database(self):
-        """Suorittaa tarvittavat tietokantamigraatiot."""
+        """Lisää puuttuvat sarakkeet olemassa oleviin tauluihin."""
+        bool_type = "BOOLEAN DEFAULT false" if self.is_postgres else "INTEGER DEFAULT 0"
+        self._add_column_if_not_exists('user_question_progress', 'mistake_acknowledged', bool_type)
+        self._add_column_if_not_exists('questions', 'status', "TEXT DEFAULT 'validated'")
+        self._add_column_if_not_exists('questions', 'validated_by', 'INTEGER')
+        self._add_column_if_not_exists('questions', 'validated_at', 'TIMESTAMP')
+        self._add_column_if_not_exists('questions', 'validation_comment', 'TEXT')
+
+    # data_access/database_manager.py
+
+    def _add_column_if_not_exists(self, table_name, column_name, column_type):
+        """Apufunktio sarakkeen lisäämiseksi, jos sitä ei ole olemassa."""
         try:
             with self.get_connection() as conn:
                 with conn.cursor(cursor_factory=DictCursor if self.is_postgres else None) as cur:
-                    if self.is_postgres:
-                        cur.execute("SELECT column_name FROM information_schema.columns WHERE table_name = 'users' AND table_schema = 'public'")
-                        user_columns = [row['column_name'] for row in cur.fetchall()]
-                    else:
-                        cur.execute("PRAGMA table_info(users)")
-                        user_columns = [row['name'] for row in cur.fetchall()]
+                    column_exists = False
                     
-                    if 'expires_at' not in user_columns:
-                        self._execute("ALTER TABLE users ADD COLUMN expires_at TIMESTAMP")
-        except Exception as e:
-            logger.warning(f"Migraatiovirhe (voi olla normaali jos tauluja ei ole vielä luotu): {e}")
+                    # --- TÄMÄ LOGIIKKA ON KORJATTU ---
+                    if self.is_postgres:
+                        # PostgreSQL: Tarkista, palauttaako kysely rivin.
+                        cur.execute("""
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name = %s AND column_name = %s
+                        """, (table_name.lower(), column_name.lower()))
+                        if cur.fetchone():
+                            column_exists = True
+                    else:
+                        # SQLite: Tarkista sarakkeet PRAGMA-lauseella.
+                        cur.execute(f"PRAGMA table_info({table_name})")
+                        columns = [row[1] for row in cur.fetchall()]
+                        if column_name in columns:
+                            column_exists = True
+                    # --- KORJAUKSEN LOPPU ---
 
-    def normalize_question(self, text):
-        """Normalisoi kysymystekstin vertailua varten."""
-        if not text: 
-            return ""
-        return " ".join(text.split()).lower().rstrip('?!. ')
+                    if not column_exists:
+                        alter_query = f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_type}"
+                        cur.execute(alter_query)
+                        logger.info(f"Sarake '{column_name}' lisätty tauluun '{table_name}'.")
+                    else:
+                        logger.debug(f"Sarake '{column_name}' on jo olemassa taulussa '{table_name}'.")
+        except Exception as e:
+            logger.error(f"Virhe sarakkeen '{column_name}' lisäämisessä tauluun '{table_name}': {e}")
 
     def create_user(self, username, email, hashed_password, expires_at=None):
-        """Luo uuden käyttäjän ja käsittelee tietokantavirheet oikein."""
+        """Luo uuden käyttäjän."""
         try:
-            # Tarkistetaan ensin, onko käyttäjiä olemassa
-            count_result = self._execute("SELECT COUNT(*) as count FROM users", fetch='one')
-            count = count_result['count'] if count_result else 0
-            role = 'admin' if count == 0 else 'user'
-            
-            # Suoritetaan lisäys
             self._execute(
-                "INSERT INTO users (username, email, password, role, expires_at) VALUES (?, ?, ?, ?, ?)",
-                (username, email, hashed_password, role, expires_at)
+                "INSERT INTO users (username, email, password, expires_at, created_at) VALUES (?, ?, ?, ?, ?)", 
+                (username, email, hashed_password, expires_at, datetime.now())
             )
             return True, None
-        except (psycopg2.IntegrityError, sqlite3.IntegrityError) as e:
-            error_str = str(e).lower()
-            if 'unique constraint' in error_str or 'duplicate key value' in error_str:
-                if 'username' in error_str:
-                    return False, "UNIQUE constraint failed: users.username"
-                elif 'email' in error_str:
-                    return False, "UNIQUE constraint failed: users.email"
+        except Exception as e:
+            logger.error(f"Virhe käyttäjän luomisessa: {e}")
             return False, str(e)
-        except (psycopg2.Error, sqlite3.Error) as e:
-            logger.error(f"Odottamaton tietokantavirhe käyttäjän luonnissa: {e}")
-            return False, str(e)
-
-    def get_user_by_id(self, user_id):
-        """Hakee käyttäjän ID:n perusteella."""
-        return self._execute("SELECT * FROM users WHERE id = ?", (user_id,), fetch='one')
 
     def get_user_by_username(self, username):
         """Hakee käyttäjän käyttäjänimen perusteella."""
         return self._execute("SELECT * FROM users WHERE username = ?", (username,), fetch='one')
 
-    def get_user_by_email(self, email):
-        """Hakee käyttäjän sähköpostin perusteella."""
-        return self._execute("SELECT * FROM users WHERE email = ?", (email,), fetch='one')
+    def get_user_by_id(self, user_id):
+        """Hakee käyttäjän ID:n perusteella."""
+        return self._execute("SELECT * FROM users WHERE id = ?", (user_id,), fetch='one')
 
-    def get_all_users_for_admin(self):
-        """Hakee kaikki käyttäjät admin-näkymää varten."""
-        return self._execute(
-            "SELECT id, username, email, role, status, created_at, distractors_enabled, distractor_probability, expires_at FROM users ORDER BY id", 
-            fetch='all'
-        )
-
-    def get_next_test_user_number(self):
-        """Palauttaa seuraavan vapaan testuser-numeron."""
-        try:
-            test_users = self._execute("SELECT username FROM users WHERE username LIKE 'testuser%'", fetch='all')
-            if not test_users: 
-                return 1
-            max_num = 0
-            for user in test_users:
-                num_part = user['username'].replace('testuser', '')
-                if num_part.isdigit():
-                    num = int(num_part)
-                    if num > max_num: 
-                        max_num = num
-            return max_num + 1
-        except Exception as e:
-            logger.error(f"Virhe testuser-numeron haussa: {e}")
-            return 1
-
-    def update_user_password(self, user_id, new_hashed_password):
-        """Päivittää käyttäjän salasanan."""
-        try:
-            self._execute("UPDATE users SET password = ? WHERE id = ?", (new_hashed_password, user_id))
-            return True, None
-        except Exception as e:
-            logger.error(f"Virhe salasanan päivityksessä: {e}")
-            return False, str(e)
+    def get_all_users(self):
+        """Hakee kaikki käyttäjät."""
+        return self._execute("SELECT * FROM users ORDER BY created_at DESC", fetch='all')
 
     def update_user_role(self, user_id, new_role):
         """Päivittää käyttäjän roolin."""
@@ -247,31 +220,39 @@ class DatabaseManager:
             logger.error(f"Virhe roolin päivityksessä: {e}")
             return False, str(e)
 
-    def update_user(self, user_id, data):
-        """Päivittää käyttäjän tietoja."""
+    def update_user_status(self, user_id, new_status):
+        """Päivittää käyttäjän statuksen."""
         try:
-            set_clauses = []
-            update_params = []
-            if 'distractors_enabled' in data:
-                set_clauses.append("distractors_enabled = ?")
-                update_params.append(bool(data['distractors_enabled']))
-            if 'distractor_probability' in data:
-                set_clauses.append("distractor_probability = ?")
-                update_params.append(max(0, min(100, int(data['distractor_probability']))))
-            
-            if not set_clauses: 
-                return True, None
-            
-            query = f"UPDATE users SET {', '.join(set_clauses)} WHERE id = ?"
-            update_params.append(user_id)
-            self._execute(query, tuple(update_params))
+            self._execute("UPDATE users SET status = ? WHERE id = ?", (new_status, user_id))
             return True, None
         except Exception as e:
-            logger.error(f"Virhe käyttäjätietojen päivityksessä: {e}")
+            logger.error(f"Virhe statuksen päivityksessä: {e}")
             return False, str(e)
 
-    def update_user_practice_preferences(self, user_id, categories, difficulties):
-        """Tallentaa käyttäjän harjoittelupreferenssit."""
+    def update_user_expiration(self, user_id, new_expiration):
+        """Päivittää käyttäjän vanhentumispäivän."""
+        try:
+            self._execute("UPDATE users SET expires_at = ? WHERE id = ?", (new_expiration, user_id))
+            return True, None
+        except Exception as e:
+            logger.error(f"Virhe vanhentumispäivän päivityksessä: {e}")
+            return False, str(e)
+
+    def delete_user(self, user_id):
+        """Poistaa käyttäjän ja siihen liittyvät tiedot."""
+        try:
+            self._execute("DELETE FROM user_question_progress WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM question_attempts WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM active_sessions WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM user_achievements WHERE user_id = ?", (user_id,))
+            self._execute("DELETE FROM users WHERE id = ?", (user_id,))
+            return True, None
+        except Exception as e:
+            logger.error(f"Virhe käyttäjän poistossa: {e}")
+            return False, str(e)
+
+    def update_last_practice_preferences(self, user_id, categories, difficulties):
+        """Päivittää käyttäjän viimeisimmät harjoitusasetukset."""
         try:
             self._execute(
                 "UPDATE users SET last_practice_categories = ?, last_practice_difficulties = ? WHERE id = ?", 
@@ -279,195 +260,216 @@ class DatabaseManager:
             )
             return True, None
         except Exception as e:
-            logger.error(f"Virhe preferenssien tallennuksessa: {e}")
-            return False, str(e)
-
-    def delete_user_by_id(self, user_id):
-        """Poistaa käyttäjän ja kaikki siihen liittyvät tiedot."""
-        try:
-            # Poistetaan ensin viiteavaimet
-            self._execute("DELETE FROM user_question_progress WHERE user_id = ?", (user_id,))
-            self._execute("DELETE FROM question_attempts WHERE user_id = ?", (user_id,))
-            self._execute("DELETE FROM active_sessions WHERE user_id = ?", (user_id,))
-            self._execute("DELETE FROM user_achievements WHERE user_id = ?", (user_id,))
-            # Poistetaan itse käyttäjä
-            self._execute("DELETE FROM users WHERE id = ?", (user_id,))
-            return True, None
-        except Exception as e:
-            logger.error(f"Virhe käyttäjän poistossa: {e}")
+            logger.error(f"Virhe asetusten päivityksessä: {e}")
             return False, str(e)
 
     def get_categories(self):
-        """Hakee kaikki kategoriat tietokannasta."""
-        rows = self._execute("SELECT DISTINCT category FROM questions ORDER BY category", fetch='all')
-        return [row['category'] for row in rows] if rows else []
+        """Hakee kaikki kategoriat."""
+        result = self._execute("SELECT DISTINCT category FROM questions ORDER BY category", fetch='all')
+        return [row['category'] for row in result] if result else []
 
-    # =========================================================================
-    # TÄMÄ FUNKTIO ON KORJATTU ✅
-    # =========================================================================
-    def get_questions(self, user_id, categories=None, difficulties=None, limit=10):
-        """Hakee satunnaisia kysymyksiä tehokkaasti annettujen suodattimien perusteella."""
+    def get_difficulties(self):
+        """Hakee kaikki vaikeustasot."""
+        result = self._execute("SELECT DISTINCT difficulty FROM questions ORDER BY difficulty", fetch='all')
+        return [row['difficulty'] for row in result] if result else []
+
+    def get_question_by_id(self, question_id):
+        """Hakee kysymyksen ID:n perusteella."""
+        row = self._execute("SELECT * FROM questions WHERE id = ?", (question_id,), fetch='one')
+        if row:
+            q_dict = dict(row)
+            q_dict['options'] = json.loads(q_dict['options'])
+            return q_dict
+        return None
+
+    def get_random_questions(self, categories=None, difficulties=None, count=20, exclude_ids=None):
+        """Hakee satunnaisia kysymyksiä annetuilla kriteereillä."""
         try:
-            limit = int(limit) # Varmista, että limit on kokonaisluku
-            logger.info(f"Fetching {limit} questions for user_id={user_id}, categories={categories}, difficulties={difficulties}")
-            
-            # --- Vaihe 1: Hae vain suodatusta vastaavien kysymysten ID:t ---
-            query_ids = "SELECT id FROM questions"
+            query_parts = ["SELECT * FROM questions WHERE 1=1"]
             params = []
-            where_clauses = []
 
-            if categories and isinstance(categories, list) and 'Kaikki kategoriat' not in categories and len(categories) > 0:
-                placeholders = ', '.join([self.param_style] * len(categories))
-                where_clauses.append(f"category IN ({placeholders})")
+            if categories:
+                placeholders = ','.join(['?'] * len(categories))
+                query_parts.append(f"AND category IN ({placeholders})")
                 params.extend(categories)
 
-            if difficulties and isinstance(difficulties, list) and len(difficulties) > 0:
-                placeholders = ', '.join([self.param_style] * len(difficulties))
-                where_clauses.append(f"difficulty IN ({placeholders})")
+            if difficulties:
+                placeholders = ','.join(['?'] * len(difficulties))
+                query_parts.append(f"AND difficulty IN ({placeholders})")
                 params.extend(difficulties)
 
-            if where_clauses:
-                query_ids += " WHERE " + " AND ".join(where_clauses)
+            if exclude_ids:
+                placeholders = ','.join(['?'] * len(exclude_ids))
+                query_parts.append(f"AND id NOT IN ({placeholders})")
+                params.extend(exclude_ids)
 
-            id_rows = self._execute(query_ids, tuple(params), fetch='all')
+            query = " ".join(query_parts) + " ORDER BY RANDOM() LIMIT ?"
+            params.append(count)
+
+            rows = self._execute(query, tuple(params), fetch='all')
             
-            if not id_rows:
-                logger.warning("No question IDs found for the given filters.")
-                return []
-
-            question_ids = [row['id'] for row in id_rows]
-            
-            # --- Vaihe 2: Sekoita ID:t ja valitse haluttu määrä ---
-            random.shuffle(question_ids)
-            selected_ids = question_ids[:limit]
-
-            if not selected_ids:
-                return []
-
-            # --- Vaihe 3: Hae valittujen ID:iden täydet tiedot ---
-            final_query_placeholders = ', '.join([self.param_style] * len(selected_ids))
-            final_query = f"""
-                SELECT q.*, 
-                       COALESCE(p.times_shown, 0) as times_shown, 
-                       COALESCE(p.times_correct, 0) as times_correct, 
-                       COALESCE(p.ease_factor, 2.5) as ease_factor, 
-                       COALESCE(p.interval, 1) as interval
-                FROM questions q 
-                LEFT JOIN user_question_progress p ON q.id = p.question_id AND p.user_id = {self.param_style}
-                WHERE q.id IN ({final_query_placeholders})
-            """
-            
-            final_params = [user_id] + selected_ids
-            rows = self._execute(final_query, tuple(final_params), fetch='all')
-
             questions = []
-            if rows:
-                for row in rows:
-                    try:
-                        row_dict = dict(row)
-                        row_dict['options'] = json.loads(row_dict.get('options', '[]'))
-                        questions.append(Question(**row_dict))
-                    except (json.JSONDecodeError, TypeError) as e:
-                        logger.error(f"Error processing question data for ID {row.get('id', 'N/A')}: {e}")
+            for row in rows:
+                q_dict = dict(row)
+                q_dict['options'] = json.loads(q_dict['options'])
+                questions.append(q_dict)
             
-            # Sekoita lopullinen lista vielä kerran, koska IN-lauseke ei takaa järjestystä
-            random.shuffle(questions)
-            logger.info(f"Successfully fetched and processed {len(questions)} questions.")
             return questions
-
         except Exception as e:
-            logger.error(f"Critical error in get_questions: {e}")
-            import traceback
-            traceback.print_exc()
+            logger.error(f"Virhe kysymysten haussa: {e}")
             return []
 
-    def get_question_by_id(self, question_id, user_id):
-        """Hakee yksittäisen kysymyksen ID:n perusteella."""
-        query = """
-            SELECT q.*, 
-                   COALESCE(p.times_shown, 0) as times_shown, 
-                   COALESCE(p.times_correct, 0) as times_correct,
-                   p.last_shown, 
-                   COALESCE(p.ease_factor, 2.5) as ease_factor, 
-                   COALESCE(p.interval, 1) as interval
-            FROM questions q
-            LEFT JOIN user_question_progress p ON q.id = p.question_id AND p.user_id = ?
-            WHERE q.id = ?
-        """
-        row = self._execute(query, (user_id, question_id), fetch='one')
-        if not row: 
-            return None
+    def get_questions_by_category(self, category, difficulty=None, count=20):
+        """Hakee kysymyksiä tietystä kategoriasta."""
         try:
-            row_dict = dict(row)
-            row_dict['options'] = json.loads(row_dict['options']) if row_dict['options'] else []
-            return Question(**row_dict)
-        except (json.JSONDecodeError, TypeError) as e:
-            logger.error(f"Virhe Question-objektin luonnissa ID:llä {question_id}: {e}")
-            return None
+            if difficulty:
+                query = "SELECT * FROM questions WHERE category = ? AND difficulty = ? ORDER BY RANDOM() LIMIT ?"
+                params = (category, difficulty, count)
+            else:
+                query = "SELECT * FROM questions WHERE category = ? ORDER BY RANDOM() LIMIT ?"
+                params = (category, count)
+            
+            rows = self._execute(query, params, fetch='all')
+            
+            questions = []
+            for row in rows:
+                q_dict = dict(row)
+                q_dict['options'] = json.loads(q_dict['options'])
+                questions.append(q_dict)
+            
+            return questions
+        except Exception as e:
+            logger.error(f"Virhe kategorian kysymysten haussa: {e}")
+            return []
 
-    def update_question_stats(self, question_id, is_correct, time_taken, user_id):
-        """Päivittää kysymyksen tilastot käyttäjälle."""
+    def record_question_attempt(self, user_id, question_id, correct, time_taken):
+        """Tallentaa kysymykseen vastaamisen yrityksen."""
         try:
-            if self.is_postgres:
+            self._execute(
+                "INSERT INTO question_attempts (user_id, question_id, correct, time_taken, timestamp) VALUES (?, ?, ?, ?, ?)", 
+                (user_id, question_id, correct, time_taken, datetime.now())
+            )
+            return True, None
+        except Exception as e:
+            logger.error(f"Virhe yrityksen tallennuksessa: {e}")
+            return False, str(e)
+
+    def update_question_progress(self, user_id, question_id, correct):
+        """Päivittää käyttäjän edistymisen kysymyksessä."""
+        try:
+            existing = self._execute(
+                "SELECT * FROM user_question_progress WHERE user_id = ? AND question_id = ?", 
+                (user_id, question_id), 
+                fetch='one'
+            )
+
+            if existing:
+                new_times_shown = existing['times_shown'] + 1
+                new_times_correct = existing['times_correct'] + (1 if correct else 0)
                 self._execute(
-                    "INSERT INTO user_question_progress (user_id, question_id) VALUES (?, ?) ON CONFLICT (user_id, question_id) DO NOTHING", 
-                    (user_id, question_id)
+                    "UPDATE user_question_progress SET times_shown = ?, times_correct = ?, last_shown = ? WHERE user_id = ? AND question_id = ?", 
+                    (new_times_shown, new_times_correct, datetime.now(), user_id, question_id)
                 )
             else:
                 self._execute(
-                    "INSERT OR IGNORE INTO user_question_progress (user_id, question_id) VALUES (?, ?)", 
-                    (user_id, question_id)
+                    "INSERT INTO user_question_progress (user_id, question_id, times_shown, times_correct, last_shown) VALUES (?, ?, 1, ?, ?)", 
+                    (user_id, question_id, 1 if correct else 0, datetime.now())
                 )
             
-            self._execute(
-                "UPDATE user_question_progress SET times_shown = times_shown + 1, times_correct = times_correct + ?, last_shown = ? WHERE user_id = ? AND question_id = ?",
-                (1 if is_correct else 0, datetime.now(), user_id, question_id)
-            )
-            self._execute(
-                "INSERT INTO question_attempts (user_id, question_id, correct, time_taken) VALUES (?, ?, ?, ?)",
-                (user_id, question_id, bool(is_correct), time_taken)
-            )
+            return True, None
         except Exception as e:
-            logger.error(f"Virhe päivitettäessä kysymystilastoja: {e}")
+            logger.error(f"Virhe edistymisen päivityksessä: {e}")
+            return False, str(e)
 
-    def check_question_duplicate(self, question_text):
-        """Tarkistaa onko samanlainen kysymys jo olemassa."""
+    def get_user_progress(self, user_id, question_id):
+        """Hakee käyttäjän edistymisen tietyssä kysymyksessä."""
+        return self._execute(
+            "SELECT * FROM user_question_progress WHERE user_id = ? AND question_id = ?", 
+            (user_id, question_id), 
+            fetch='one'
+        )
+
+    def get_all_questions(self, limit=None, offset=0):
+        """Hakee kaikki kysymykset."""
         try:
-            normalized = self.normalize_question(question_text)
-            existing = self._execute(
-                "SELECT id, question, category FROM questions WHERE question_normalized = ?", 
-                (normalized,), 
-                fetch='one'
-            )
-            if existing:
-                return True, dict(existing)
-            return False, None
+            if limit:
+                query = "SELECT * FROM questions ORDER BY id LIMIT ? OFFSET ?"
+                params = (limit, offset)
+            else:
+                query = "SELECT * FROM questions ORDER BY id"
+                params = ()
+            
+            rows = self._execute(query, params, fetch='all')
+            
+            questions = []
+            for row in rows:
+                q_dict = dict(row)
+                q_dict['options'] = json.loads(q_dict['options'])
+                questions.append(q_dict)
+            
+            return questions
         except Exception as e:
-            logger.error(f"Virhe duplikaattitarkistuksessa: {e}")
-            return False, None
+            logger.error(f"Virhe kysymysten haussa: {e}")
+            return []
 
-    def bulk_add_questions(self, questions_data):
+    def get_total_question_count(self):
+        """Palauttaa kysymysten kokonaismäärän."""
+        result = self._execute("SELECT COUNT(*) as count FROM questions", fetch='one')
+        return result['count'] if result else 0
+
+    def update_question(self, question_id, question_data):
+        """Päivittää kysymyksen tiedot."""
+        try:
+            options_json = json.dumps(question_data['options'])
+            self._execute(
+                """UPDATE questions SET 
+                   question = ?, explanation = ?, options = ?, correct = ?, 
+                   category = ?, difficulty = ? 
+                   WHERE id = ?""",
+                (question_data['question'], question_data['explanation'], options_json,
+                 question_data['correct'], question_data['category'], question_data['difficulty'], question_id)
+            )
+            return True, None
+        except Exception as e:
+            logger.error(f"Virhe kysymyksen päivityksessä: {e}")
+            return False, str(e)
+
+    def add_question(self, question_data):
+        """Lisää uuden kysymyksen."""
+        try:
+            options_json = json.dumps(question_data['options'])
+            normalized = question_data['question'].lower().strip()
+            
+            self._execute(
+                """INSERT INTO questions 
+                   (question, question_normalized, explanation, options, correct, category, difficulty, created_at) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                (question_data['question'], normalized, question_data['explanation'], options_json,
+                 question_data['correct'], question_data['category'], question_data['difficulty'], datetime.now())
+            )
+            return True, None
+        except Exception as e:
+            logger.error(f"Virhe kysymyksen lisäämisessä: {e}")
+            return False, str(e)
+
+    def bulk_add_questions(self, questions_list):
         """Lisää useita kysymyksiä kerralla."""
-        stats = {'added': 0, 'duplicates': 0, 'skipped': 0, 'errors': []}
+        stats = {'added': 0, 'skipped': 0, 'errors': []}
         
-        for q_data in questions_data:
+        for q_data in questions_list:
             try:
-                # Validoi pakollliset kentät
-                required_fields = ['question', 'explanation', 'options', 'correct', 'category', 'difficulty']
-                if not all(field in q_data for field in required_fields):
-                    stats['skipped'] += 1
-                    stats['errors'].append(f"Puutteelliset tiedot: {q_data.get('question', 'N/A')[:50]}")
-                    continue
-                
-                # Tarkista duplikaatti
-                is_dup, _ = self.check_question_duplicate(q_data['question'])
-                if is_dup:
-                    stats['duplicates'] += 1
-                    continue
-                
-                # Lisää kysymys
-                normalized = self.normalize_question(q_data['question'])
                 options_json = json.dumps(q_data['options'])
+                normalized = q_data['question'].lower().strip()
+                
+                existing = self._execute(
+                    "SELECT id FROM questions WHERE question_normalized = ?", 
+                    (normalized,), 
+                    fetch='one'
+                )
+                
+                if existing:
+                    stats['skipped'] += 1
+                    continue
                 
                 self._execute(
                     """INSERT INTO questions 
@@ -560,9 +562,7 @@ class DatabaseManager:
                     "UPDATE questions SET category = ? WHERE LOWER(category) = LOWER(?)", 
                     (new_cat, old_cat)
                 )
-                # PostgreSQL ja SQLite palauttavat eri tavalla - ei lasketa tässä
             
-            # Laske lopputulema
             categories = self.get_categories()
             category_counts = {}
             for cat in categories:
@@ -653,3 +653,146 @@ class DatabaseManager:
         except Exception as e:
             logger.error(f"Virhe saavutuksen avaamisessa: {e}")
             return False
+
+    # ============================================================================
+    # UUDET KATEGORIATESTIT METODIT v1.1.0
+    # ============================================================================
+
+    def get_questions_by_categories(self, categories, count=30, difficulty=None):
+        """Hae kysymyksiä valituista kategorioista"""
+        try:
+            placeholders = ','.join(['?'] * len(categories))
+            query = f"""
+                SELECT * FROM questions
+                WHERE category IN ({placeholders})
+                AND status = 'approved'
+            """
+            params = list(categories)
+            
+            if difficulty:
+                query += " AND difficulty = ?"
+                params.append(difficulty)
+            
+            query += " ORDER BY RANDOM() LIMIT ?"
+            params.append(count)
+            
+            rows = self._execute(query, tuple(params), fetch='all')
+            
+            questions = []
+            for row in rows:
+                q_dict = dict(row)
+                q_dict['options'] = json.loads(q_dict['options'])
+                questions.append(q_dict)
+            
+            return questions
+        except Exception as e:
+            logger.error(f"Virhe kategorioiden kysymysten haussa: {e}")
+            return []
+
+    def create_test_session(self, user_id, test_type, categories, question_count, time_limit, questions):
+        """Luo uusi testi-sessio"""
+        try:
+            query = """
+                INSERT INTO test_sessions 
+                (user_id, test_type, categories, question_count, time_limit, questions, started_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """
+            
+            if self.is_postgres:
+                query += " RETURNING id"
+            
+            result = self._execute(query, (
+                user_id,
+                test_type,
+                json.dumps(categories),
+                question_count,
+                time_limit,
+                json.dumps(questions),
+                datetime.now()
+            ), fetch='one' if self.is_postgres else None)
+            
+            if self.is_postgres and result:
+                return result['id']
+            else:
+                # SQLite: Hae viimeinen lisätty ID
+                last_id = self._execute("SELECT last_insert_rowid() as id", fetch='one')
+                return last_id['id'] if last_id else None
+                
+        except Exception as e:
+            logger.error(f"Virhe testi-session luomisessa: {e}")
+            return None
+
+    def save_test_results(self, test_id, user_id, score, total_questions, passed, answers):
+        """Tallenna testin tulokset"""
+        try:
+            query = """
+                INSERT INTO test_results
+                (test_id, user_id, score, total_questions, percentage, passed, answers, completed_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            
+            if self.is_postgres:
+                query += " RETURNING id"
+            
+            percentage = (score / total_questions) * 100
+            
+            result = self._execute(query, (
+                test_id,
+                user_id,
+                score,
+                total_questions,
+                percentage,
+                passed,
+                json.dumps(answers),
+                datetime.now()
+            ), fetch='one' if self.is_postgres else None)
+            
+            if self.is_postgres and result:
+                return result['id']
+            else:
+                # SQLite: Hae viimeinen lisätty ID
+                last_id = self._execute("SELECT last_insert_rowid() as id", fetch='one')
+                return last_id['id'] if last_id else None
+                
+        except Exception as e:
+            logger.error(f"Virhe testin tulosten tallennuksessa: {e}")
+            return None
+
+    def get_test_session(self, test_id):
+        """Hae testi-sessio"""
+        try:
+            session = self._execute(
+                "SELECT * FROM test_sessions WHERE id = ?",
+                (test_id,),
+                fetch='one'
+            )
+            
+            if session:
+                session_dict = dict(session)
+                session_dict['categories'] = json.loads(session_dict['categories'])
+                session_dict['questions'] = json.loads(session_dict['questions'])
+                return session_dict
+            return None
+            
+        except Exception as e:
+            logger.error(f"Virhe testi-session haussa: {e}")
+            return None
+
+    def get_all_categories(self):
+        """Hae kaikki kategoriat kysymysmäärien kanssa"""
+        try:
+            rows = self._execute("""
+                SELECT 
+                    category as name,
+                    COUNT(*) as question_count
+                FROM questions
+                WHERE status = 'approved' OR status = 'validated'
+                GROUP BY category
+                ORDER BY category
+            """, fetch='all')
+            
+            return [dict(row) for row in rows] if rows else []
+            
+        except Exception as e:
+            logger.error(f"Virhe kategorioiden haussa: {e}")
+            return []
