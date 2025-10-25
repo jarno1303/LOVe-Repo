@@ -2378,7 +2378,7 @@ def admin_delete_user_route(user_id):
         flash('Pääkäyttäjää ei voi poistaa.', 'danger')
         return redirect(url_for('admin_users_route'))
 
-    success, error = db_manager.delete_user_by_id(user_id)
+    success, error = db_manager.delete_user(user_id)
     
     if success:
         flash(f'Käyttäjä #{user_id} ja kaikki hänen tietonsa on poistettu onnistuneesti.', 'success')

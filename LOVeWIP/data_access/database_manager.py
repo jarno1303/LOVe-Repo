@@ -224,7 +224,7 @@ class DatabaseManager:
                     u.created_at,
                     u.expires_at,
                     COUNT(DISTINCT qa.id) as total_attempts,
-                    COUNT(DISTINCT CASE WHEN qa.correct = 1 THEN qa.id END) as correct_attempts,
+                    COUNT(DISTINCT CASE WHEN qa.correct THEN qa.id END) as correct_attempts,
                     MAX(qa.timestamp) as last_activity
                 FROM users u
                 LEFT JOIN question_attempts qa ON u.id = qa.user_id
