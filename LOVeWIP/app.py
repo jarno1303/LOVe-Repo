@@ -58,7 +58,7 @@ from data_access.database_manager import DatabaseManager
 from logic.stats_manager import EnhancedStatsManager
 from logic.achievement_manager import EnhancedAchievementManager, ENHANCED_ACHIEVEMENTS
 from logic.spaced_repetition import SpacedRepetitionManager
-from logic import simulation_manager # Tuodaan simulation_manager
+from logic.simulation_manager import SimulationManager
 from models.models import User, Question
 from constants import DISTRACTORS
 
