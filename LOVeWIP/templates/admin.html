@@ -1,407 +1,327 @@
 {% extends "base.html" %}
-{% block title %}Admin-paneeli{% endblock %}
+
+{% block title %}Admin Dashboard - {{ org_stats.organization_name if org_stats else 'Oma Organisaatio' }}{% endblock %}
+
+{% block extra_head %}
+{# Säilytetään tyylit, mutta niitä voi siistiä myöhemmin #}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+    /* Säilytetään aiemmat tyylit (.dashboard-header, .kpi-card, .section-header jne.) */
+     :root {
+        --admin-primary: #5b21b6; /* Violetti */
+        --admin-secondary: #7c3aed;
+        --admin-success: #10b981; /* Vihreä */
+        --admin-warning: #f59e0b; /* Keltainen */
+        --admin-danger: #ef4444; /* Punainen */
+        --admin-info: #3b82f6; /* Sininen */
+        --admin-dark: #1f2937; /* Tummanharmaa */
+        --admin-light-bg: #f9fafb; /* Vaaleanharmaa tausta */
+        --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+        background: var(--admin-light-bg);
+    }
+
+    .dashboard-header {
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1.5rem 0;
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+    }
+
+    .dashboard-title {
+        color: var(--admin-dark);
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .dashboard-subtitle {
+        color: #6b7280;
+        font-size: 0.9rem;
+        margin-top: 0.25rem;
+    }
+
+    .kpi-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+        height: 100%;
+    }
+
+    .kpi-card:hover {
+        box-shadow: var(--card-shadow-hover);
+        transform: translateY(-2px);
+    }
+
+    .kpi-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--admin-dark);
+        margin: 0;
+    }
+
+    .kpi-label {
+        color: #6b7280;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--admin-dark);
+        margin: 0;
+    }
+
+    .section-icon {
+        font-size: 1.5rem;
+        color: var(--admin-primary);
+    }
+
+    .content-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 1.5rem;
+    }
+
+    .content-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .content-card-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--admin-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+    }
+
+    .quick-action-btn {
+        padding: 1rem;
+        border: 2px dashed #d1d5db;
+        border-radius: 10px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+        color: #6b7280;
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .quick-action-btn:hover {
+        border-color: var(--admin-primary);
+        background: #faf5ff;
+        color: var(--admin-primary);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .quick-action-icon {
+        font-size: 1.75rem;
+    }
+
+    .quick-action-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .quick-action-subtitle {
+        font-size: 0.75rem;
+        color: #9ca3af;
+    }
+
+    /* Responsive optimizations */
+    @media (max-width: 768px) {
+        .dashboard-title {
+            font-size: 1.5rem;
+        }
+
+        .kpi-value {
+            font-size: 1.5rem;
+        }
+
+        .quick-actions {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-4">
-    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
-        <h1 class="mb-0"><i class="bi bi-shield-lock-fill text-primary me-2"></i>Admin-paneeli</h1>
-    </div>
-
-    <!-- Hakulomake -->
-    <div class="card shadow-sm mb-4 border-0">
-        <div class="card-body">
-            <form method="GET" action="{{ url_for('admin_route') }}" class="row g-3">
-                <div class="col-md-4">
-                    <label for="search" class="form-label fw-semibold">
-                        <i class="bi bi-search me-1"></i> Hae kysymyksistä
-                    </label>
-                    <input type="text" class="form-control" id="search" name="search" 
-                           placeholder="Etsi kysymystekstistä tai selityksestä..." 
-                           value="{{ search_query }}">
-                </div>
-                <div class="col-md-3">
-                    <label for="category" class="form-label fw-semibold">
-                        <i class="bi bi-folder me-1"></i> Kategoria
-                    </label>
-                    <select class="form-select" id="category" name="category">
-                        <option value="">Kaikki kategoriat</option>
-                        {% for cat in categories %}
-                        <option value="{{ cat }}" {% if cat == category_filter %}selected{% endif %}>
-                            {{ cat.title() }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label for="difficulty" class="form-label fw-semibold">
-                        <i class="bi bi-speedometer2 me-1"></i> Vaikeustaso
-                    </label>
-                    <select class="form-select" id="difficulty" name="difficulty">
-                        <option value="">Kaikki tasot</option>
-                        {% for diff in difficulties %}
-                        <option value="{{ diff }}" {% if diff == difficulty_filter %}selected{% endif %}>
-                            {{ diff.title() }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100 me-2">
-                        <i class="bi bi-funnel-fill me-1"></i> Hae
-                    </button>
-                    <a href="{{ url_for('admin_route') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-x-lg"></i>
-                    </a>
-                </div>
-            </form>
+<div class="container-fluid py-3"> {# Käytä fluidia, jos haluat leveämmän #}
+    <div class="dashboard-header">
+        <div class="container"> {# Tai container-fluid #}
+            <h1 class="dashboard-title">
+                <i class="fas fa-school me-2" style="color: var(--admin-primary);"></i>
+                {# Näytä organisaation nimi #}
+                {{ org_stats.organization_name if org_stats and org_stats.organization_name else 'Oma Organisaatio' }} - Hallintanäkymä
+            </h1>
+            <p class="dashboard-subtitle">Hallinnoi organisaatiosi käyttäjiä ja seuraa edistymistä</p>
         </div>
     </div>
 
-    <!-- Hallintakortit - Ensimmäinen rivi -->
     <div class="row g-3 mb-4">
-        <!-- Kysymysten hallinta -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-success bg-opacity-10 rounded-3 p-2 me-3">
-                            <i class="bi bi-plus-circle-fill text-success fs-4"></i>
-                        </div>
-                        <h6 class="card-title mb-0 fw-bold">Kysymykset</h6>
-                    </div>
-                    <p class="card-text text-muted small flex-grow-1">Lisää, muokkaa tai poista kysymyksiä tietokannasta.</p>
-                    <a href="{{ url_for('admin_add_question_route') }}" class="btn btn-outline-success btn-sm w-100">
-                        <i class="bi bi-plus-lg me-1"></i> Lisää kysymys
-                    </a>
+        <div class="col-md-4"> {# Käytetään 3 korttia #}
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: #d1fae5; color: #065f46;">
+                    <i class="fas fa-users"></i>
                 </div>
+                {# Näytä aktiivisten opiskelijoiden määrä #}
+                <h2 class="kpi-value">{{ org_stats.active_students if org_stats else 'N/A' }}</h2>
+                <p class="kpi-label">Aktiivista opiskelijaa</p>
             </div>
         </div>
-
-        <!-- Massalisäys -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-primary bg-opacity-10 rounded-3 p-2 me-3">
-                            <i class="bi bi-upload text-primary fs-4"></i>
-                        </div>
-                        <h6 class="card-title mb-0 fw-bold">Massalisäys</h6>
-                    </div>
-                    <p class="card-text text-muted small flex-grow-1">Lataa useita kysymyksiä JSON-tiedostosta.</p>
-                    <button type="button" class="btn btn-outline-primary btn-sm w-100" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                        <i class="bi bi-file-earmark-arrow-up me-1"></i> Lataa JSON
-                    </button>
-                </div>
-            </div>
+        <div class="col-md-4">
+             <div class="kpi-card">
+                 <div class="kpi-icon" style="background: #dbeafe; color: #1d4ed8;">
+                     <i class="fas fa-percentage"></i>
+                 </div>
+                 {# Näytä organisaation keskim. onnistumisprosentti #}
+                 <h2 class="kpi-value">{{ org_stats.avg_success_rate_org if org_stats else 'N/A' }}</h2>
+                 <p class="kpi-label">Keskim. onnistuminen (Organisaatio)</p>
+             </div>
+         </div>
+        <div class="col-md-4">
+             <div class="kpi-card">
+                 <div class="kpi-icon" style="background: #fef3c7; color: #92400e;">
+                     <i class="fas fa-question-circle"></i>
+                 </div>
+                 {# Voit näyttää yleisen kysymysmäärän tiedoksi #}
+                 <h2 class="kpi-value">{{ general_stats.total_questions if general_stats else 'N/A' }}</h2>
+                 <p class="kpi-label">Kysymystä yhteensä (järjestelmässä)</p>
+             </div>
         </div>
-
-        <!-- Varmuuskopio -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-info bg-opacity-10 rounded-3 p-2 me-3">
-                            <i class="bi bi-download text-info fs-4"></i>
-                        </div>
-                        <h6 class="card-title mb-0 fw-bold">Varmuuskopio</h6>
-                    </div>
-                    <p class="card-text text-muted small flex-grow-1">Vie kaikki kysymykset JSON-tiedostoon.</p>
-                    <a href="{{ url_for('admin_export_questions_route') }}" class="btn btn-outline-info btn-sm w-100">
-                        <i class="bi bi-file-earmark-arrow-down me-1"></i> Vie JSON
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Käyttäjähallinta -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-secondary bg-opacity-10 rounded-3 p-2 me-3">
-                            <i class="bi bi-people-fill text-secondary fs-4"></i>
-                        </div>
-                        <h6 class="card-title mb-0 fw-bold">Käyttäjät</h6>
-                    </div>
-                    <p class="card-text text-muted small flex-grow-1">Hallitse käyttäjiä ja oikeuksia.</p>
-                    <a href="{{ url_for('admin_users_route') }}" class="btn btn-outline-secondary btn-sm w-100">
-                        <i class="bi bi-gear me-1"></i> Hallitse
-                    </a>
-                </div>
-            </div>
-        </div>
+        {# Poistettu ylimääräiset kortit #}
     </div>
 
-    <!-- Toinen rivi: Työkalut -->
-    <div class="row g-3 mb-4">
-        <!-- Duplikaattien tarkistus -->
-        <div class="col-md-6 col-lg-3">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-warning bg-opacity-10 rounded-3 p-2 me-3">
-                            <i class="bi bi-search text-warning fs-4"></i>
-                        </div>
-                        <h6 class="card-title mb-0 fw-bold">Duplikaatit</h6>
-                    </div>
-                    <p class="card-text text-muted small flex-grow-1">Etsi ja poista päällekkäiset kysymykset.</p>
-                    <a href="{{ url_for('admin_find_duplicates_route') }}" class="btn btn-outline-warning btn-sm w-100">
-                        <i class="bi bi-search me-1"></i> Etsi duplikaatit
-                    </a>
-                </div>
-            </div>
+    <div class="content-card">
+        <div class="section-header">
+            <i class="fas fa-bolt section-icon"></i>
+            <h3 class="section-title">Pikavalinta</h3>
         </div>
-    </div>
-
-    <!-- Vie dokumenttiin -->
-<div class="col-md-6 col-lg-3">
-    <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body d-flex flex-column">
-            <div class="d-flex align-items-center mb-3">
-                <div class="bg-success bg-opacity-10 rounded-3 p-2 me-3">
-                    <i class="bi bi-file-earmark-arrow-down text-success fs-4"></i>
-                </div>
-                <h6 class="card-title mb-0 fw-bold">Vie dokumenttiin</h6>
-            </div>
-            <p class="card-text text-muted small flex-grow-1">Luo ammattimainen PDF tai Word-dokumentti kysymyksistä.</p>
-            <a href="{{ url_for('admin_export_questions_document_route') }}" class="btn btn-outline-success btn-sm w-100">
-                <i class="bi bi-download me-1"></i> Vie PDF/Word
+        <div class="quick-actions">
+            {# Linkki oman organisaation käyttäjähallintaan #}
+            <a href="{{ url_for('admin_users_route') }}" class="quick-action-btn">
+                <span class="quick-action-icon"><i class="fas fa-users-cog"></i></span>
+                <strong class="quick-action-title">Käyttäjähallinta</strong>
+                <small class="quick-action-subtitle">Hallinnoi opiskelijoita</small>
             </a>
+            {# Lisää linkki raportteihin, kun ne on toteutettu #}
+            <a href="#" class="quick-action-btn disabled" aria-disabled="true"> {# Esim. raportit #}
+                <span class="quick-action-icon"><i class="fas fa-chart-pie"></i></span>
+                <strong class="quick-action-title">Raportit</strong>
+                <small class="quick-action-subtitle">(Tulossa)</small>
+            </a>
+            {# Linkki omaan profiiliin/asetuksiin? #}
+             <a href="{{ url_for('settings_route') }}" class="quick-action-btn">
+                 <span class="quick-action-icon"><i class="fas fa-user-cog"></i></span>
+                 <strong class="quick-action-title">Omat Asetukset</strong>
+                 <small class="quick-action-subtitle">Vaihda salasana jne.</small>
+             </a>
+             {# Voit lisätä muita adminille relevantteja linkkejä #}
+             {# POISTETTU: Kysymysten hallintalinkit, ne ovat Superuserilla #}
         </div>
     </div>
+
+    {# POISTETTU: JSON Upload, Export Section ja Danger Zone -osiot #}
+    {# Nämä toiminnot ovat nyt Superuserin vastuulla #}
+
+    {# Voit lisätä tähän muita organisaation adminille hyödyllisiä osioita, #}
+    {# esim. viimeisimmän aktiivisuuden yhteenveto, heikoimmat kategoriat organisaatiossa jne. #}
+    <div class="content-card">
+         <div class="section-header">
+             <i class="fas fa-chart-bar section-icon"></i>
+             <h3 class="section-title">Organisaation Edistyminen (Esimerkki)</h3>
+         </div>
+         <p class="text-muted mb-3">Tähän voitaisiin lisätä visualisointeja organisaation oppimistuloksista.</p>
+         {# Esim. Chart.js-kaavio #}
+         <canvas id="organizationProgressChart" height="100"></canvas>
+    </div>
+
 </div>
 
-    <!-- VAARALLINEN ALUE -->
-    <div class="card border-danger shadow-sm mb-4">
-        <div class="card-header bg-danger text-white">
-            <h6 class="mb-0">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i>VAARALLINEN ALUE
-            </h6>
-        </div>
-        <div class="card-body">
-            <div class="d-flex align-items-start">
-                <div class="bg-danger bg-opacity-10 rounded-3 p-3 me-3">
-                    <i class="bi bi-trash text-danger fs-3"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h5 class="text-danger mb-2">Tyhjennä koko tietokanta</h5>
-                    <p class="text-muted mb-3">
-                        <strong>VAROITUS:</strong> Tämä poistaa KAIKKI kysymykset ja kaikkien käyttäjien edistymisen pysyvästi. 
-                        Toimintoa ei voi perua!
-                    </p>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#clearDatabaseModal">
-                        <i class="bi bi-trash me-2"></i>Tyhjennä tietokanta
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+{% endblock %}
 
-    <!-- Kysymyslista -->
-    <div class="card shadow-sm border-0">
-        <div class="card-header bg-white d-flex justify-content-between align-items-center">
-            <span class="fw-bold">
-                {% if search_query or category_filter or difficulty_filter %}
-                    <i class="bi bi-funnel-fill me-1"></i> Hakutulokset ({{ total_count }})
-                {% else %}
-                    <i class="bi bi-list-ul me-1"></i> Kaikki kysymykset ({{ total_count }})
-                {% endif %}
-            </span>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive" style="max-height: 600px;">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light sticky-top">
-                        <tr>
-                            <th style="width: 60px;">ID</th>
-                            <th>Kysymys</th>
-                            <th style="width: 150px;">Kategoria</th>
-                            <th style="width: 120px;">Vaikeustaso</th>
-                            <th style="width: 180px;">Toiminnot</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for q in questions %}
-                        <tr>
-                            <td class="align-middle"><span class="badge bg-light text-dark">{{ q['id'] }}</span></td>
-                            <td class="align-middle">{{ q['question']|truncate(100) }}</td>
-                            <td class="align-middle">
-                                <span class="badge bg-secondary">{{ q['category'].title() }}</span>
-                            </td>
-                            <td class="align-middle">
-                                {% if q['difficulty'] == 'helppo' %}
-                                <span class="badge bg-success">Helppo</span>
-                                {% elif q['difficulty'] == 'keskivaikea' %}
-                                <span class="badge bg-warning text-dark">Keskivaikea</span>
-                                {% else %}
-                                <span class="badge bg-danger">Vaikea</span>
-                                {% endif %}
-                            </td>
-                            <td class="align-middle">
-                                <a href="{{ url_for('admin_edit_question_route', question_id=q['id']) }}" 
-                                   class="btn btn-sm btn-outline-primary me-1">
-                                    <i class="bi bi-pencil"></i> Muokkaa
-                                </a>
-                                <button type="button" 
-                                        class="btn btn-sm btn-outline-danger" 
-                                        onclick="confirmDelete({{ q['id'] }}, '{{ q['question'][:50]|replace("'", "\\'") }}...')">
-                                    <i class="bi bi-trash"></i> Poista
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Upload Modal -->
-<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">
-                    <i class="bi bi-upload me-2"></i>Lataa kysymyksiä JSON-tiedostosta
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" action="{{ url_for('admin_bulk_upload_route') }}" enctype="multipart/form-data">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <div class="modal-body">
-                    <div class="alert alert-info">
-                        <strong><i class="bi bi-info-circle me-1"></i>JSON-tiedoston muoto:</strong>
-                        <pre class="mt-2 mb-0" style="font-size: 0.85em;">[
-  {
-    "question": "Kysymysteksti?",
-    "explanation": "Selitys",
-    "options": ["A", "B", "C", "D"],
-    "correct": 0,
-    "category": "kategoria",
-    "difficulty": "helppo"
-  }
-]</pre>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="json_file" class="form-label fw-bold">Valitse JSON-tiedosto</label>
-                        <input type="file" class="form-control" id="json_file" name="json_file" accept=".json" required>
-                        <div class="form-text">Tiedoston tulee olla .json -muotoinen</div>
-                    </div>
-                    
-                    <div class="alert alert-warning">
-                        <strong><i class="bi bi-exclamation-triangle me-1"></i>Huomio:</strong> 
-                        Duplikaatit ja virheelliset kysymykset ohitetaan automaattisesti. 
-                        Saat yhteenvedon latauksen jälkeen.
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-upload me-1"></i> Lataa tiedosto
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal tietokannan tyhjentämiselle -->
-<div class="modal fade" id="clearDatabaseModal" tabindex="-1" aria-labelledby="clearDatabaseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="clearDatabaseModalLabel">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Vahvista tietokannan tyhjennys
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" action="{{ url_for('admin_clear_database_route') }}">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                <div class="modal-body">
-                    <div class="alert alert-danger" role="alert">
-                        <strong><i class="bi bi-exclamation-triangle-fill me-1"></i>VAROITUS!</strong> Tämä toiminto:
-                        <ul class="mb-0 mt-2">
-                            <li>Poistaa KAIKKI kysymykset ({{ total_count }} kpl)</li>
-                            <li>Poistaa kaikkien käyttäjien edistymisen</li>
-                            <li>Nollaa kaikki tilastot</li>
-                            <li>On PERUUTTAMATON - dataa ei voi palauttaa</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="alert alert-warning">
-                        <strong><i class="bi bi-lightbulb me-1"></i>Vinkki:</strong> 
-                        Varmista että sinulla on varmuuskopio ennen tyhjentämistä. 
-                        Voit ladata JSON-varmuuskopion "Varmuuskopio"-kortista.
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="confirmation_input" class="form-label fw-bold">
-                            Kirjoita <code>TYHJENNA KAIKKI</code> vahvistaaksesi:
-                        </label>
-                        <input type="text" 
-                               class="form-control form-control-lg" 
-                               id="confirmation_input"
-                               name="confirmation" 
-                               placeholder="TYHJENNA KAIKKI"
-                               required
-                               autocomplete="off">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-lg me-1"></i> Peruuta
-                    </button>
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash-fill me-1"></i> Kyllä, tyhjennä tietokanta
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Poisto-vahvistus modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="deleteModalLabel">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Vahvista poisto
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-2">Haluatko varmasti poistaa tämän kysymyksen?</p>
-                <div class="alert alert-light border">
-                    <p class="fw-bold mb-0" id="deleteQuestionText"></p>
-                </div>
-                <p class="text-danger mb-0">
-                    <i class="bi bi-exclamation-octagon-fill me-1"></i>
-                    <strong>Huom:</strong> Tätä toimintoa ei voi perua. Kysymys poistetaan pysyvästi.
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                    <i class="bi bi-x-lg me-1"></i> Peruuta
-                </button>
-                <form id="deleteForm" method="POST" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash-fill me-1"></i> Poista kysymys
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block scripts %}
+{{ super() }} {# Sisällytä base.html:n skriptit #}
+{# Voit lisätä Chart.js-kirjaston ja piirtää kaavion, jos haluat #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-function confirmDelete(questionId, questionText) {
-    document.getElementById('deleteQuestionText').textContent = questionText;
-    document.getElementById('deleteForm').action = `/admin/delete_question/${questionId}`;
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
+document.addEventListener('DOMContentLoaded', () => {
+    // Voit alustaa Chart.js-kaavion tässä, jos haet datan API:sta tai välität sen templatessa
+    // Esimerkki:
+    /*
+    const ctx = document.getElementById('organizationProgressChart')?.getContext('2d');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Kategoria A', 'Kategoria B', 'Kategoria C'], // Hae oikeat kategoriat
+                datasets: [{
+                    label: 'Keskim. Onnistuminen (%)',
+                    data: [75, 62, 88], // Hae oikea data
+                    backgroundColor: 'rgba(90, 103, 216, 0.6)',
+                    borderColor: 'rgba(90, 103, 216, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 100 }
+                },
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+    */
+});
 </script>
 {% endblock %}

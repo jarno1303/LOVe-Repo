@@ -3,107 +3,114 @@
 
 {% block content %}
 <div class="container" style="max-width: 800px;">
-    
-    <div id="recommendation-container" class="mb-4"></div>
+    
+    <div id="recommendation-container" class="mb-4"></div>
 
-    <h1 class="mb-4">👤 Oma profiili</h1>
+    <h1 class="mb-4">👤 Oma profiili</h1>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-header">
-            Käyttäjän tiedot
-        </div>
-        <div class="card-body">
-            <p><strong>Käyttäjänimi:</strong> {{ current_user.username }}</p>
-            <p class="mb-0"><strong>Sähköposti:</strong> {{ current_user.email }}</p>
-        </div>
-    </div>
+    <div class="card shadow-sm mb-4">
+        <div class="card-header">
+            Käyttäjän tiedot
+        </div>
+        <div class="card-body">
+            <p><strong>Käyttäjänimi:</strong> {{ current_user.username }}</p>
+            <p class="mb-0"><strong>Sähköposti:</strong> {{ current_user.email }}</p>
+        </div>
+    </div>
 
-    <div class="card shadow-sm">
-        <div class="card-header">
-            Tilastojen yhteenveto
-        </div>
-        <div class="card-body">
-            {% if stats and stats['general']['total_attempts'] > 0 %}
-            <div class="row text-center">
-                <div class="col-md-4">
-                    <h3 class="display-6">{{ stats['general']['total_attempts'] }}</h3>
-                    <p class="text-muted">Vastattua kysymystä</p>
-                </div>
-                <div class="col-md-4">
-                    <h3 class="display-6">{{ '%.1f'|format(stats['general']['avg_success_rate'] * 100) }}%</h3>
-                    <p class="text-muted">Onnistumisprosentti</p>
-                </div>
-                <div class="col-md-4">
-                    <h3 class="display-6">{{ stats['weekly_progress']|length }}</h3>
-                    <p class="text-muted">Aktiivista päivää (viime viikko)</p>
-                </div>
-            </div>
-            <hr>
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <h5>Vahvin kategoria</h5>
-                    {% set best_category = stats['categories']|sort(attribute='success_rate', reverse=true)|first %}
-                    {% if best_category %}
-                        <p class="fs-5">{{ best_category['category'].title() }} <span class="badge bg-success">{{ '%.1f'|format(best_category['success_rate'] * 100) }}%</span></p>
-                    {% else %}
-                        <p class="text-muted">Ei vielä tarpeeksi dataa.</p>
-                    {% endif %}
-                </div>
-                <div class="col-md-6">
-                    <h5>Heikoin kategoria</h5>
-                    {% set worst_category = stats['categories']|sort(attribute='success_rate')|first %}
-                    {% if worst_category %}
-                         <p class="fs-5">{{ worst_category['category'].title() }} <span class="badge bg-danger">{{ '%.1f'|format(worst_category['success_rate'] * 100) }}%</span></p>
-                    {% else %}
-                         <p class="text-muted">Ei vielä tarpeeksi dataa.</p>
-                    {% endif %}
-                </div>
-            </div>
-            {% else %}
-            <p class="text-muted">Tilastoja ei ole vielä saatavilla. Tee harjoituksia kerätäksesi dataa!</p>
-            {% endif %}
-        </div>
-    </div>
+    <div class="card shadow-sm">
+        <div class="card-header">
+            Tilastojen yhteenveto
+        </div>
+        <div class="card-body">
+            {% if stats.general and stats.general.total_attempts > 0 %}
+            <div class="row text-center">
+                <div class="col-md-4">
+                    <h3 class="display-6">{{ stats.general.total_attempts }}</h3>
+                    <p class="text-muted">Vastattua kysymystä</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="display-6">{{ '%.1f'|format(stats.general.avg_success_rate * 100) }}%</h3>
+                    <p class="text-muted">Onnistumisprosentti</p>
+                </div>
+                <div class="col-md-4">
+                    <h3 class="display-6">{{ stats.weekly_progress|length }}</h3>
+                    <p class="text-muted">Aktiivista päivää (viime viikko)</p>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Vahvin kategoria</h5>
+                    {% set best_category = stats.categories|sort(attribute='success_rate', reverse=true)|first %}
+                    {% if best_category %}
+                        <p class="fs-5">{{ best_category.category.title() }} <span class="badge bg-success">{{ '%.1f'|format(best_category.success_rate * 100) }}%</span></p>
+                    {% else %}
+                        <p class="text-muted">Ei vielä tarpeeksi dataa.</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <h5>Heikoin kategoria</h5>
+                    {% set worst_category = stats.categories|sort(attribute='success_rate')|first %}
+                    {% if worst_category %}
+                         <p class="fs-5">{{ worst_category.category.title() }} <span class="badge bg-danger">{{ '%.1f'|format(worst_category.success_rate * 100) }}%</span></p>
+                    {% else %}
+                         <p class="text-muted">Ei vielä tarpeeksi dataa.</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p class="text-muted">Tilastoja ei ole vielä saatavilla. Tee harjoituksia kerätäksesi dataa!</p>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const recommendationContainer = document.getElementById('recommendation-container');
-    async function fetchRecommendations() {
-        try {
-            const response = await fetch('/api/recommendations');
-            if (!response.ok) return;
-            const recommendations = await response.json();
-            if (recommendations && recommendations.length > 0) {
-                const weakest = recommendations[0];
-                if (weakest.type === 'weakest_category' && weakest.category) {
-                    const practiceUrl = `/practice?categories=${encodeURIComponent(weakest.category)}&count=5`;
-                    const recommendationHtml = `
-                        <div class="card bg-info-subtle text-info-emphasis shadow-sm border-info">
-                            <div class="card-body">
-                                <div class="d-flex align-items-center">
-                                    <div class="fs-2 me-3">💡</div>
-                                    <div>
-                                        <h5 class="card-title">Henkilökohtainen suositus</h5>
-                                        <p class="card-text mb-2">
-                                            Huomasimme, että kategoriassa <strong>${weakest.category.charAt(0).toUpperCase() + weakest.category.slice(1)}</strong> on eniten kehitettävää (${weakest.accuracy.toFixed(0)}% oikein).
-                                        </p>
-                                        <a href="${practiceUrl}" class="btn btn-primary btn-sm">Aloita 5 kysymyksen kertaus</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    recommendationContainer.innerHTML = recommendationHtml;
-                }
-            }
-        } catch (error) {
-            console.error("Suositusten hakeminen epäonnistui:", error);
-        }
-    }
-    fetchRecommendations();
+    const recommendationContainer = document.getElementById('recommendation-container');
+    async function fetchRecommendations() {
+        try {
+            // HUOM: api/recommendations ei ollut mukana, tämä pitää lisätä app.py:hin
+            // tai suosituslogiikka pitää siirtää Python-puolelle (kuten dashboardissa jo on)
+            const response = await fetch('/api/recommendations');
+            if (!response.ok) return;
+            const recommendations = await response.json();
+            if (recommendations && recommendations.length > 0) {
+                const weakest = recommendations[0];
+                if (weakest.type === 'weakest_category' && weakest.category) {
+                    const practiceUrl = `/practice?categories=${encodeURIComponent(weakest.category)}&count=5`;
+                    // Oletetaan, että accuracy on 0-100 välillä, jos .toFixed(0) antaa kokonaisluvun.
+                    // Korjataan se nyt vastaamaan Jinja-logiikkaa (0.0-1.0), jos accuracy on 0.0-1.0
+                    // Laske uudelleen: jos accuracy on esim. 0.85, se * 100
+                    const accuracyPercent = (weakest.accuracy > 1.0) ? weakest.accuracy.toFixed(0) : (weakest.accuracy * 100).toFixed(0); 
+
+                    const recommendationHtml = `
+                        <div class="card bg-info-subtle text-info-emphasis shadow-sm border-info">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-2 me-3">💡</div>
+                                    <div>
+                                        <h5 class="card-title">Henkilökohtainen suositus</h5>
+                                        <p class="card-text mb-2">
+                                            Huomasimme, että kategoriassa <strong>${weakest.category.charAt(0).toUpperCase() + weakest.category.slice(1)}</strong> on eniten kehitettävää (${accuracyPercent}% oikein).
+                                        </p>
+                                        <a href="${practiceUrl}" class="btn btn-primary btn-sm">Aloita 5 kysymyksen kertaus</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    recommendationContainer.innerHTML = recommendationHtml;
+                }
+            }
+        } catch (error) {
+            console.error("Suositusten hakeminen epäonnistui:", error);
+        }
+    }
+    fetchRecommendations();
 });
 </script>
 {% endblock %}

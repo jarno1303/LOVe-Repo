@@ -1,50 +1,99 @@
 # -*- coding: utf-8 -*-
 # models/models.py
-from dataclasses import dataclass
+from dataclasses import dataclass, field # Lisää 'field', jos tarvitset oletusarvoja listoille tms.
 from typing import List, Optional
 from datetime import datetime
 from flask_login import UserMixin
 
 @dataclass
 class User(UserMixin):
-    """Käyttäjämalli Flask-Login yhteensopiva."""
+    """
+    Käyttäjämalli Flask-Login yhteensopiva.
+    PÄIVITETTY: Lisätty organization_id ja helper-metodit rooleille.
+    """
     id: int
     username: str
     email: str
-    role: str = 'user'
-    distractors_enabled: bool = False
-    distractor_probability: int = 25
-    password: Optional[str] = None
+    role: str = 'user' # Voi olla 'user', 'admin', 'superuser'
+
+    # --- LISÄTTY MULTI-TENANT varten ---
+    organization_id: Optional[int] = None # Voi olla None superuserille/irrallisille
+
+    # --- Olemassa olevat kentät ---
+    distractors_enabled: bool = False # Oletusarvo, jos ei haeta tietokannasta
+    distractor_probability: int = 25 # Oletusarvo
     status: str = 'active'
-    created_at: Optional[str] = None
+    created_at: Optional[datetime] = None # Muuta tyyppi datetimeksi
     expires_at: Optional[datetime] = None
 
+    # HUOM: 'password'-kenttää ei yleensä tarvita User-oliossa itsessään,
+    # koska sitä käytetään vain autentikoinnissa (bcrypt.check_password_hash).
+    # Poistetaan se mallista selkeyden vuoksi. Jos tarvitset sitä johonkin
+    # muuhun, voit lisätä sen takaisin.
+    # password: Optional[str] = None
+
+    # --- UserMixin vaatimat metodit (osa automaattisia, osa hyvä lisätä) ---
     def get_id(self):
-        """Palauttaa käyttäjän ID:n merkkijonona."""
+        """Palauttaa käyttäjän ID:n merkkijonona (vaadittu UserMixin)."""
         return str(self.id)
-    
-    def is_admin(self):
-        """Tarkistaa onko käyttäjä admin."""
-        return self.role == 'admin'
+
+    @property
+    def is_active(self):
+        """Palauttaa True, jos käyttäjän status on 'active'."""
+        # Vaikka user_loader tarkistaa tämän, on hyvä olla myös oliossa.
+        return self.status == 'active'
+
+    @property
+    def is_authenticated(self):
+        """Palauttaa aina True kirjautuneille käyttäjille."""
+        return True
+
+    @property
+    def is_anonymous(self):
+        """Palauttaa aina False kirjautuneille käyttäjille."""
+        return False
+
+    # --- Helper-metodit rooleille (käytetään app.py:ssä) ---
+    def is_admin(self) -> bool:
+        """Tarkistaa, onko käyttäjä admin TAI superuser."""
+        return self.role in ['admin', 'superuser']
+
+    def is_superuser(self) -> bool:
+        """Tarkistaa, onko käyttäjä superuser."""
+        return self.role == 'superuser'
+
 
 @dataclass
 class Question:
     """Kysymysmalli."""
     id: int
     question: str
-    options: List[str]
+    options: List[str] # Varmista, että tämä on lista
     correct: int
     explanation: str
     category: str
     difficulty: str
+
+    # Käyttäjäkohtaiset progress-tiedot (tulevat LEFT JOINilla)
     times_shown: int = 0
     times_correct: int = 0
-    last_shown: Optional[str] = None
+    last_shown: Optional[datetime] = None # Käytä Optionalia
     ease_factor: float = 2.5
     interval: int = 1
-    hint_type: Optional[str] = None
-    created_at: Optional[str] = None
-    question_normalized: Optional[str] = None
+    mistake_acknowledged: bool = False # Lisätty aiemmissa vaiheissa
+
+    # Muut kysymyskentät
+    status: str = 'validated' # Muutettu oletus 'validated'
+    validated_by: Optional[int] = None # Käytä Optionalia
+    validated_at: Optional[datetime] = None # Käytä Optionalia
+    validation_comment: Optional[str] = None
+    question_normalized: Optional[str] = None # Käytä Optionalia
+    created_at: Optional[datetime] = None # Käytä Optionalia
+    hint_type: Optional[str] = None # Käytä Optionalia
+
+
+# --- Muut dataclassit (pysyvät ennallaan) ---
+# Voit säilyttää nämä, jos käytät niitä jossain sovelluksen osassa.
 
 @dataclass
 class QuestionAttempt:
@@ -52,9 +101,9 @@ class QuestionAttempt:
     id: int
     user_id: int
     question_id: int
-    is_correct: bool
-    time_taken: int
-    created_at: Optional[str] = None
+    is_correct: bool # Muutettu booliksi
+    time_taken: float # Muutettu floatiksi (sekunnit)
+    timestamp: Optional[datetime] = None # Muutettu datetimeksi
 
 @dataclass
 class Achievement:
@@ -66,6 +115,10 @@ class Achievement:
     unlocked: bool = False
     unlocked_at: Optional[datetime] = None
 
+# UserStats, DistractorAttempt, SpacedRepetitionCard, LearningSession, CategoryProgress
+# dataclassit voivat myös pysyä ennallaan, jos käytät niitä esim. tilastojen koostamiseen.
+# Muutin kuitenkin aikaleimat datetime-objekteiksi selkeyden vuoksi.
+
 @dataclass
 class UserStats:
     """Käyttäjän tilastot."""
@@ -75,7 +128,7 @@ class UserStats:
     success_rate: float
     avg_time_per_question: float
     current_streak: int
-    best_streak: int
+    longest_streak: int # Muutettu nimestä 'best_streak'
     last_activity: Optional[datetime] = None
 
 @dataclass
@@ -87,41 +140,17 @@ class DistractorAttempt:
     user_choice: int
     correct_choice: int
     is_correct: bool
-    response_time: int
-    created_at: Optional[str] = None
+    response_time: Optional[int] = None # Voi olla None, jos ei mitattu
+    created_at: Optional[datetime] = None # Muutettu datetimeksi
 
-@dataclass
-class SpacedRepetitionCard:
-    """Väliajoin kertauksen kortti."""
-    id: int
-    user_id: int
-    question_id: int
-    ease_factor: float
-    interval_days: int
-    repetitions: int
-    next_review: datetime
-    last_reviewed: Optional[datetime] = None
-    quality: int = 0
+# @dataclass
+# class SpacedRepetitionCard: # Tämä ei välttämättä ole tarpeen, jos SR-logiikka on managerissa
+#     # ...
 
-@dataclass
-class LearningSession:
-    """Oppimissessio."""
-    id: int
-    user_id: int
-    session_type: str
-    questions_answered: int
-    correct_answers: int
-    session_duration: int
-    started_at: datetime
-    completed_at: Optional[datetime] = None
-    
-@dataclass
-class CategoryProgress:
-    """Kategoriakohtainen edistyminen."""
-    category: str
-    total_questions: int
-    attempted_questions: int
-    correct_answers: int
-    success_rate: float
-    avg_difficulty: float
-    last_activity: Optional[datetime] = None
+# @dataclass
+# class LearningSession: # Tämä ei välttämättä ole tarpeen, jos sessiologiikka on managerissa
+#     # ...
+
+# @dataclass
+# class CategoryProgress: # Tämä ei välttämättä ole tarpeen, jos tilastot kootaan lennosta
+#     # ...
