@@ -1,0 +1,434 @@
+{% extends "base.html" %}
+
+{% block title %}Kysymysten validointi - LOVe Enhanced{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="fas fa-check-double text-success me-2"></i>
+            Kysymysten validointi
+        </h2>
+        <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Takaisin
+        </a>
+    </div>
+
+    <!-- Välilehdet -->
+    <ul class="nav nav-tabs" id="validationTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" 
+                    data-bs-target="#pending" type="button" role="tab">
+                <i class="fas fa-clock text-warning me-2"></i>
+                Odottaa validointia 
+                <span class="badge bg-warning text-dark ms-2">{{ pending_count }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="validated-tab" data-bs-toggle="tab" 
+                    data-bs-target="#validated" type="button" role="tab">
+                <i class="fas fa-check-circle text-success me-2"></i>
+                Validoidut 
+                <span class="badge bg-success ms-2">{{ validated_count }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <!-- Välilehtien sisältö -->
+    <div class="tab-content" id="validationTabContent">
+        
+        <!-- VÄLILEHTI 1: Odottaa validointia -->
+        <div class="tab-pane fade show active" id="pending" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    {% if pending_count == 0 %}
+                        <div class="alert alert-success text-center">
+                            <i class="fas fa-check-circle fa-3x mb-3"></i>
+                            <h4>Ei kysymyksiä validoitavana!</h4>
+                            <p>Kaikki kysymykset on validoitu. Hyvää työtä! 🎉</p>
+                        </div>
+                    {% else %}
+                        <!-- Bulk-validoinnin työkalut -->
+                        <div class="alert alert-info mb-4">
+                            <h5><i class="fas fa-tasks me-2"></i>Bulk-validointi</h5>
+                            <p class="mb-3">Valitse kysymykset ja validoi useita kerralla:</p>
+                            
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="selectAll()">
+                                        <i class="fas fa-check-square"></i> Valitse kaikki
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-secondary me-2" onclick="deselectAll()">
+                                        <i class="fas fa-square"></i> Tyhjennä valinnat
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info" onclick="selectByCategory()">
+                                        <i class="fas fa-filter"></i> Valitse kategoria
+                                    </button>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <span id="selectedCount" class="badge bg-primary">0 valittu</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3">
+                                <input type="text" id="bulkComment" class="form-control mb-2" 
+                                       placeholder="Valinnainen kommentti bulk-validoinnille...">
+                                <button class="btn btn-success" onclick="bulkValidate()">
+                                    <i class="fas fa-check-double me-2"></i>
+                                    Validoi valitut kysymykset
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Kysymyslista -->
+                        <div id="questionsList">
+                            {% for question in pending_questions %}
+                            <div class="card mb-3 question-card" data-category="{{ question.category }}">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <div class="form-check">
+                                        <input class="form-check-input question-checkbox" 
+                                               type="checkbox" 
+                                               value="{{ question.id }}" 
+                                               id="q{{ question.id }}"
+                                               onchange="updateSelectedCount()">
+                                        <label class="form-check-label fw-bold" for="q{{ question.id }}">
+                                            ID: {{ question.id }} | {{ question.category }} | {{ question.difficulty }}
+                                        </label>
+                                    </div>
+                                    <button class="btn btn-sm btn-success" 
+                                            onclick="validateSingle({{ question.id }})">
+                                        <i class="fas fa-check"></i> Validoi
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ question.question }}</h5>
+                                    
+                                    <div class="mt-3">
+                                        <strong>Vastausvaihtoehdot:</strong>
+                                        <ol type="A">
+                                            {% for option in question.options %}
+                                            <li {% if loop.index0 == question.correct %}class="text-success fw-bold"{% endif %}>
+                                                {{ option }}
+                                                {% if loop.index0 == question.correct %}
+                                                <i class="fas fa-check-circle text-success"></i>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ol>
+                                    </div>
+                                    
+                                    <div class="alert alert-light mt-3">
+                                        <strong>Selitys:</strong> {{ question.explanation }}
+                                    </div>
+                                    
+                                    <!-- Kommentti-kenttä yksittäiselle validoinnille -->
+                                    <div class="mt-3">
+                                        <input type="text" 
+                                               class="form-control form-control-sm" 
+                                               id="comment-{{ question.id }}"
+                                               placeholder="Valinnainen kommentti...">
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- VÄLILEHTI 2: Validoidut kysymykset -->
+        <div class="tab-pane fade" id="validated" role="tabpanel">
+            <div class="card mt-3">
+                <div class="card-body">
+                    {% if validated_count == 0 %}
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                            <h4>Ei validoituja kysymyksiä</h4>
+                            <p>Aloita validoimalla kysymyksiä "Odottaa validointia" välilehdeltä.</p>
+                        </div>
+                    {% else %}
+                        <!-- Suodattimet -->
+                        <div class="mb-3">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="text" id="searchValidated" class="form-control" 
+                                           placeholder="🔍 Etsi kysymystä..." 
+                                           onkeyup="filterValidated()">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="filterValidator" onchange="filterValidated()">
+                                        <option value="">Kaikki validoijat</option>
+                                        {% set validators = [] %}
+                                        {% for q in validated_questions %}
+                                            {% if q.validator_name and q.validator_name not in validators %}
+                                                {% set _ = validators.append(q.validator_name) %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% for validator in validators %}
+                                            <option value="{{ validator }}">{{ validator }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="filterCategory" onchange="filterValidated()">
+                                        <option value="">Kaikki kategoriat</option>
+                                        {% set categories = [] %}
+                                        {% for q in validated_questions %}
+                                            {% if q.category and q.category not in categories %}
+                                                {% set _ = categories.append(q.category) %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% for category in categories %}
+                                            <option value="{{ category }}">{{ category }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Validoidut kysymykset -->
+                        <div id="validatedList">
+                            {% for question in validated_questions %}
+                            <div class="card mb-3 validated-question" 
+                                 data-validator="{{ question.validator_name }}" 
+                                 data-category="{{ question.category }}"
+                                 data-question="{{ question.question|lower }}">
+                                <div class="card-header">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>ID: {{ question.id }}</strong> | 
+                                            {{ question.category }} | 
+                                            {{ question.difficulty }}
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-success me-2">
+                                                <i class="fas fa-user"></i> {{ question.validator_name }}
+                                            </span>
+                                            <span class="badge bg-info me-2">
+                                                <i class="fas fa-calendar"></i> 
+                                                {{ question.validated_at.strftime('%d.%m.%Y %H:%M') if question.validated_at else 'N/A' }}
+                                            </span>
+                                            <button class="btn btn-sm btn-warning" 
+                                                    onclick="unvalidate({{ question.id }})">
+                                                <i class="fas fa-undo"></i> Poista validointi
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h5>{{ question.question }}</h5>
+                                    
+                                    {% if question.validation_comment %}
+                                    <div class="alert alert-secondary mt-2">
+                                        <i class="fas fa-comment"></i> 
+                                        <strong>Kommentti:</strong> {{ question.validation_comment }}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    <button class="btn btn-sm btn-outline-primary mt-2" 
+                                            onclick="toggleDetails({{ question.id }})">
+                                        <i class="fas fa-eye"></i> Näytä lisätiedot
+                                    </button>
+                                    
+                                    <div id="details-{{ question.id }}" style="display: none;" class="mt-3">
+                                        <strong>Vastausvaihtoehdot:</strong>
+                                        <ol type="A">
+                                            {% for option in question.options %}
+                                            <li {% if loop.index0 == question.correct %}class="text-success fw-bold"{% endif %}>
+                                                {{ option }}
+                                                {% if loop.index0 == question.correct %}
+                                                <i class="fas fa-check-circle"></i>
+                                                {% endif %}
+                                            </li>
+                                            {% endfor %}
+                                        </ol>
+                                        <div class="alert alert-light">
+                                            <strong>Selitys:</strong> {{ question.explanation }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // CSRF Token
+    let csrfToken = '{{ csrf_token() }}';
+
+    // Päivitä valittujen määrä
+    function updateSelectedCount() {
+        const count = document.querySelectorAll('.question-checkbox:checked').length;
+        document.getElementById('selectedCount').textContent = `${count} valittu`;
+    }
+
+    // Valitse kaikki
+    function selectAll() {
+        document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = true);
+        updateSelectedCount();
+    }
+
+    // Tyhjennä valinnat
+    function deselectAll() {
+        document.querySelectorAll('.question-checkbox').forEach(cb => cb.checked = false);
+        updateSelectedCount();
+    }
+
+    // Valitse kategoria
+    function selectByCategory() {
+        const category = prompt("Syötä kategoria (esim. Laskut):");
+        if (category) {
+            document.querySelectorAll('.question-card').forEach(card => {
+                if (card.dataset.category.toLowerCase() === category.toLowerCase()) {
+                    card.querySelector('.question-checkbox').checked = true;
+                }
+            });
+            updateSelectedCount();
+        }
+    }
+
+    // Validoi yksittäinen kysymys
+    function validateSingle(questionId) {
+        const comment = document.getElementById(`comment-${questionId}`).value;
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/validate_question/${questionId}`;
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        if (comment) {
+            const commentInput = document.createElement('input');
+            commentInput.type = 'hidden';
+            commentInput.name = 'comment';
+            commentInput.value = comment;
+            form.appendChild(commentInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Bulk-validointi
+    function bulkValidate() {
+        const selected = Array.from(document.querySelectorAll('.question-checkbox:checked'))
+                              .map(cb => cb.value);
+        
+        if (selected.length === 0) {
+            alert('Valitse vähintään yksi kysymys!');
+            return;
+        }
+        
+        if (!confirm(`Validoidaanko ${selected.length} kysymystä?`)) {
+            return;
+        }
+        
+        const comment = document.getElementById('bulkComment').value;
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/admin/bulk_validate';
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        const idsInput = document.createElement('input');
+        idsInput.type = 'hidden';
+        idsInput.name = 'question_ids';
+        idsInput.value = selected.join(',');
+        form.appendChild(idsInput);
+        
+        if (comment) {
+            const commentInput = document.createElement('input');
+            commentInput.type = 'hidden';
+            commentInput.name = 'bulk_comment';
+            commentInput.value = comment;
+            form.appendChild(commentInput);
+        }
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Poista validointi
+    function unvalidate(questionId) {
+        if (!confirm(`Poistetaanko validointi kysymykseltä #${questionId}?`)) {
+            return;
+        }
+        
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/unvalidate/${questionId}`;
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    // Näytä lisätiedot
+    function toggleDetails(questionId) {
+        const details = document.getElementById(`details-${questionId}`);
+        if (details.style.display === 'none') {
+            details.style.display = 'block';
+        } else {
+            details.style.display = 'none';
+        }
+    }
+
+    // Suodata validoituja
+    function filterValidated() {
+        const searchTerm = document.getElementById('searchValidated').value.toLowerCase();
+        const validator = document.getElementById('filterValidator').value;
+        const category = document.getElementById('filterCategory').value;
+        
+        document.querySelectorAll('.validated-question').forEach(card => {
+            const matchesSearch = card.dataset.question.includes(searchTerm);
+            const matchesValidator = !validator || card.dataset.validator === validator;
+            const matchesCategory = !category || card.dataset.category === category;
+            
+            if (matchesSearch && matchesValidator && matchesCategory) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+
+<style>
+    .question-card {
+        transition: all 0.3s ease;
+    }
+    
+    .question-card:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .form-check-label {
+        cursor: pointer;
+    }
+    
+    .validated-question {
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

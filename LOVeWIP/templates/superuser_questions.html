@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% block title %}Kysymysten Hallinta (Superuser){% endblock %}
+
+{% block extra_head %}
+<style>
+    .status-badge-validated { background-color: var(--success-color); color: white; }
+    .status-badge-needs_review { background-color: var(--warning-color); color: #4d2d00; } /* Tummempi teksti keltaisella */
+    .table-hover tbody tr:hover { background-color: var(--light-hover); }
+    body.dark-mode .table-hover tbody tr:hover { background-color: var(--light-hover); }
+    .question-text-preview {
+        max-width: 400px; /* Rajoita leveyttä */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block; /* Tarvitaan text-overflowille */
+        vertical-align: middle; /* Linjaa paremmin muiden kanssa */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="dashboard-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="dashboard-title">
+                    <i class="fas fa-list-alt me-2 text-primary"></i> Kysymysten Hallinta (Superuser)
+                </h1>
+                <p class="dashboard-subtitle">Hallinnoi järjestelmän globaalia kysymyspankkia.</p>
+            </div>
+            <div>
+                {# Nappi uuden kysymyksen lisäämiseen #}
+                <a href="{{ url_for('superuser_add_question_route') }}" class="btn btn-success me-2">
+                    <i class="fas fa-plus me-2"></i>Luo uusi kysymys
+                </a>
+                <a href="{{ url_for('admin_route') }}" class="btn btn-secondary"> {# admin_route ohjaa superuser dashboardiin #}
+                    <i class="fas fa-arrow-left me-1"></i>Palaa Superuser Dashboardiin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Flash-viestit näytetään base.html:ssä Toasteina #}
+
+    <div class="content-card">
+        <div class="content-card-header">
+            <h3 class="content-card-title">
+                <i class="fas fa-database me-2 text-secondary"></i> Kysymyspankki ({{ questions|length }})
+            </h3>
+            {# Tähän voisi lisätä suodattimet (kategoria, status, vaikeus) ja haun myöhemmin #}
+            <div>
+                <a href="{{ url_for('superuser_find_duplicates_route') }}" class="btn btn-sm btn-outline-warning me-2">
+                    <i class="fas fa-search me-1"></i> Etsi duplikaatteja
+                </a>
+                {# Lisää linkki Bulk Upload -sivulle, jos sellainen on #}
+                {# <a href="{{ url_for('superuser_bulk_upload_page_route') }}" class="btn btn-sm btn-outline-info">
+                    <i class="fas fa-file-upload me-1"></i> Bulk Upload
+                </a> #}
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Kysymys (alku)</th>
+                        <th>Kategoria</th>
+                        <th>Vaikeus</th>
+                        <th class="text-center">Tila</th>
+                        <th>Luotu</th>
+                        <th>Toiminnot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr id="question-row-{{ q.id }}">
+                        <td>{{ q.id }}</td>
+                        <td>
+                            {# Lyhennetty esikatselu kysymyksestä #}
+                            <span class="question-text-preview" title="{{ q.question }}">
+                                {{ q.question | truncate(80, True) }} {# truncate lyhentää, True lisää ... #}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ q.category }}</span>
+                        </td>
+                        <td>
+                            {% if q.difficulty == 'helppo' %}
+                                <span class="badge bg-success">Helppo</span>
+                            {% elif q.difficulty == 'keskivaikea' %}
+                                <span class="badge bg-warning text-dark">Keskivaikea</span>
+                            {% elif q.difficulty == 'vaikea' %}
+                                <span class="badge bg-danger">Vaikea</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ q.difficulty }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {# Käytä omia luokkia statukselle #}
+                            {% if q.status == 'validated' %}
+                                <span class="badge status-badge-validated">Validoitu</span>
+                            {% elif q.status == 'needs_review' %}
+                                <span class="badge status-badge-needs_review">Odottaa tarkistusta</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ q.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ q.created_at.strftime('%d.%m.%Y') if q.created_at else '-' }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('superuser_edit_question_route', question_id=q.id) }}" class="btn btn-outline-primary" title="Muokkaa kysymystä">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                {# Poistonappi, joka avaa vahvistuksen (voi olla modaali tai confirm) #}
+                                <button type="button" class="btn btn-outline-danger" onclick="confirmDeleteQuestion({{ q.id }}, '{{ q.question[:50] | escape }}')" title="Poista kysymys pysyvästi">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                            {# Piilotettu lomake poistoa varten #}
+                            <form id="delete-question-form-{{ q.id }}" action="{{ url_for('superuser_delete_question_route', question_id=q.id) }}" method="POST" class="d-none">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                {# Lisää vahvistuskenttä, jos haluat tarkemman varmistuksen #}
+                                <input type="hidden" name="confirmation" value="DELETE">
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4 fst-italic">
+                            Kysymyspankki on tyhjä. <a href="{{ url_for('superuser_add_question_route') }}">Luo ensimmäinen kysymys</a>.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> {# End table-responsive #}
+    </div> {# End content-card #}
+
+</div> {# End container #}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }} {# Sisällytä base.html:n skriptit #}
+<script>
+// JavaScript kysymyksen poiston vahvistamiseen
+function confirmDeleteQuestion(questionId, questionPreview) {
+    // Käytä selaimen perusvahvistusta tai omaa modaalia
+    const confirmationMessage = `Haluatko varmasti poistaa kysymyksen #${questionId} ("${questionPreview}...") pysyvästi?\n\nTämä poistaa myös kaikki käyttäjien vastaukset ja edistymisen tähän kysymykseen.\nTätä toimintoa EI VOI PERUA.`;
+
+    if (confirm(confirmationMessage)) {
+        // Etsi ja lähetä piilotettu lomake
+        const form = document.getElementById(`delete-question-form-${questionId}`);
+        if (form) {
+            form.submit();
+        } else {
+            console.error(`Poistolomaketta ei löytynyt ID:lle ${questionId}`);
+            alert("Poisto epäonnistui: Lomaketta ei löytynyt.");
+        }
+    }
+}
+
+// Voit lisätä tähän JavaScriptiä suodatukseen ja hakuun myöhemmin
+</script>
+{% endblock %}

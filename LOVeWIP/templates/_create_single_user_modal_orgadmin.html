@@ -1,0 +1,51 @@
+{# templates/_create_single_user_modal_orgadmin.html #}
+{# Tämä modaali on tarkoitettu Organisaation Adminille (Opettaja) #}
+<div class="modal fade" id="createSingleUserModal" tabindex="-1" aria-labelledby="createSingleUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            {# Käytä oikeaa reittiä actionissa (admin_create_user_route) #}
+            <form action="{{ url_for('admin_create_user_route') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {# organization_id tulee automaattisesti backendissä current_userista #}
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createSingleUserModalLabel">
+                        <i class="fas fa-user-plus me-2"></i>Luo uusi opiskelijatili
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {# Hae organisaation nimi templatemuuttujasta (välitettävä admin_users.html:stä) #}
+                    <p class="small text-muted mb-3">
+                        Uusi opiskelija luodaan automaattisesti organisaatioosi: <strong>{{ organization_name | default('Oma organisaatio') }}</strong>. Salasana generoidaan automaattisesti ja näytetään sinulle tallennuksen jälkeen.
+                    </p>
+                    <hr>
+                    <div class="mb-3">
+                        <label for="admin-create-username" class="form-label fw-bold">Käyttäjänimi *</label>
+                        <input type="text" class="form-control" id="admin-create-username" name="username" required minlength="3" placeholder="Esim. opiskelija123">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="admin-create-email" class="form-label fw-bold">Sähköpostiosoite *</label>
+                        <input type="email" class="form-control" id="admin-create-email" name="email" required placeholder="nimi@example.com">
+                    </div>
+
+                    {# Rooli-valinta POISTETTU - admin luo aina 'user'-roolin #}
+
+                    <div class="mb-3">
+                        <label for="admin-create-expires-at" class="form-label fw-bold">Vanhenemispäivä (valinnainen)</label>
+                        <input type="date" class="form-control" id="admin-create-expires-at" name="expires_at" placeholder="VVVV-KK-PP">
+                        <div class="form-text">Jätä tyhjäksi, jos tili ei vanhene.</div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Luo opiskelija
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

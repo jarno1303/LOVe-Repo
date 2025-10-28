@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Testikäyttäjät luotu{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 900px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">✅ Testikäyttäjät luotu</h1>
+        <a href="{{ url_for('admin_users_route') }}" class="btn btn-secondary">← Takaisin käyttäjälistaan</a>
+    </div>
+
+    {% if created_users %}
+        <div class="alert alert-success">
+            Luotiin <strong>{{ created_users|length }}</strong> uutta testikäyttäjää. Tunnukset ovat voimassa 
+            <strong>{{ expiration_days }}</strong> päivää, eli {{ expires_at.strftime('%d.%m.%Y') }} asti.
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                Kopioitava lista
+            </div>
+            <div class="card-body">
+                <p>Voit kopioida alla olevan listan ja liittää sen esimerkiksi Exceliin tai tekstidokumenttiin.</p>
+                <textarea id="copy-area" class="form-control" rows="10" readonly>Käyttäjätunnus,Salasana
+{%- for user in created_users -%}
+{{ user.username }},{{ user.password }}
+{% endfor -%}
+</textarea>
+                <button class="btn btn-primary mt-3" onclick="copyToClipboard()">
+                    <i class="fas fa-copy me-2"></i>Kopioi leikepöydälle
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Luodut käyttäjätunnukset
+            </div>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Käyttäjätunnus</th>
+                            <th>Salasana</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in created_users %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ user.username }}</td>
+                            <td><code>{{ user.password }}</code></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            Ei uusia käyttäjiä luotu. Tämä voi johtua siitä, että kaikki ehdotetut käyttäjänimet olivat jo olemassa.
+        </div>
+    {% endif %}
+</div>
+
+<script>
+function copyToClipboard() {
+    const copyText = document.getElementById("copy-area");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); // Mobiililaitteille
+    document.execCommand("copy");
+
+    // Voisit näyttää tässä pienen ilmoituksen kopioinnin onnistumisesta
+    alert("Tunnukset kopioitu leikepöydälle!");
+}
+</script>
+{% endblock %}

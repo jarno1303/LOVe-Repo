@@ -744,9 +744,21 @@ class DatabaseManager:
                 params.extend(categories)
 
             if difficulties:
-                placeholders = ', '.join([self.param_style] * len(difficulties))
-                where_clauses.append(f"difficulty IN ({placeholders})")
-                params.extend(difficulties)
+    # MUUNNOS: Muutetaan käyttöliittymän lähettämät tekstit ('easy', 'medium', 'hard')
+    # numeroiksi (1, 2, 3) tietokantakyselyä varten.
+    difficulty_map = {'easy': 1, 'medium': 2, 'hard': 3}
+    numeric_difficulties = [difficulty_map.get(d) for d in difficulties if difficulty_map.get(d) is not None]
+
+    if numeric_difficulties: # Lisää ehto vain jos löytyi kelvollisia numeroita
+        placeholders = ', '.join([self.param_style] * len(numeric_difficulties)) # Käytä oikeaa placeholderia
+        where_clauses.append(f"difficulty IN ({placeholders})")
+        params.extend(numeric_difficulties)
+    else:
+        # Jos muunnos ei tuottanut numeroita (esim. lähetettiin 'helppo'),
+        # älä lisää difficulty-ehtoa lainkaan tai käsittele virhe.
+        # Tässä tapauksessa emme lisää ehtoa, jotta haku ei epäonnistu kokonaan.
+        logger.warning(f"Vaikeustasoja {difficulties} ei voitu muuntaa numeroiksi.")
+        pass
 
             if where_clauses:
                 query_ids += " AND " + " AND ".join(where_clauses)

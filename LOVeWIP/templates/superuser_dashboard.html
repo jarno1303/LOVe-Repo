@@ -1,0 +1,111 @@
+
+{% extends "base.html" %}
+{% block title %}Organisaatioiden Hallinta{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="dashboard-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="dashboard-title">
+                    <i class="fas fa-building me-2 text-primary"></i> Organisaatioiden Hallinta
+                </h1>
+                <p class="dashboard-subtitle">Luo, tarkastele ja hallinnoi asiakasorganisaatioita.</p>
+            </div>
+            <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Palaa Superuser Dashboardiin
+            </a>
+        </div>
+    </div>
+
+    {# Flash-viestit näytetään base.html:ssä Toasteina #}
+
+    <div class="content-card mb-4">
+        <div class="content-card-header">
+             <h3 class="content-card-title">
+                 <i class="fas fa-plus-circle me-2 text-success"></i> Luo uusi organisaatio
+             </h3>
+        </div>
+        <form action="{{ url_for('superuser_create_org_route') }}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-md-5">
+                    <label for="org-name" class="form-label fw-bold">Organisaation nimi *</label>
+                    <input type="text" class="form-control" id="org-name" name="name" required placeholder="Oppilaitos Oy">
+                </div>
+                <div class="col-md-3">
+                    <label for="org-contact-person" class="form-label">Yhteyshenkilö</label>
+                    <input type="text" class="form-control" id="org-contact-person" name="contact_person" placeholder="Matti Meikäläinen">
+                </div>
+                <div class="col-md-3">
+                    <label for="org-contact-email" class="form-label">Sähköposti</label>
+                    <input type="email" class="form-control" id="org-contact-email" name="contact_email" placeholder="matti@oppilaitos.fi">
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-save"></i> Luo
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="content-card">
+        <div class="content-card-header">
+            <h3 class="content-card-title">
+                <i class="fas fa-list me-2 text-secondary"></i> Olemassa olevat organisaatiot ({{ organizations|length }})
+            </h3>
+            {# Lisää tähän hakukenttä myöhemmin, jos organisaatioita tulee paljon #}
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nimi</th>
+                        <th>Yhteyshenkilö</th>
+                        <th>Sähköposti</th>
+                        <th class="text-center">Aktiivisia käyttäjiä</th>
+                        <th>Luotu</th>
+                        <th>Toiminnot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for org in organizations %}
+                    <tr>
+                        <td>{{ org.id }}</td>
+                        <td>
+                            {# Linkki organisaation käyttäjäsivulle #}
+                            <a href="{{ url_for('superuser_view_organization_route', org_id=org.id) }}" class="fw-bold text-decoration-none">
+                                {{ org.name }}
+                            </a>
+                        </td>
+                        <td>{{ org.contact_person | default('-', true) }}</td>
+                        <td>{{ org.contact_email | default('-', true) }}</td>
+                        <td class="text-center">
+                            <span class="badge rounded-pill bg-secondary">{{ org.user_count | default('0', true) }}</span>
+                        </td>
+                        <td>{{ org.created_at.strftime('%d.%m.%Y') if org.created_at else '-' }}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="{{ url_for('superuser_view_organization_route', org_id=org.id) }}" class="btn btn-outline-primary" title="Näytä käyttäjät">
+                                    <i class="fas fa-users"></i> Käyttäjät
+                                </a>
+                                {# Lisää Muokkaa- ja Poista (soft delete) -napit myöhemmin #}
+                                <button type="button" class="btn btn-outline-secondary disabled" title="Muokkaa (tulossa)" disabled><i class="fas fa-edit"></i></button>
+                                <button type="button" class="btn btn-outline-danger disabled" title="Poista (tulossa)" disabled><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">Ei organisaatioita. Luo ensimmäinen yllä olevalla lomakkeella.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div> {# End content-card #}
+
+</div> {# End container #}
+{% endblock %}

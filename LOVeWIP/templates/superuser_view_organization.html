@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Organisaatio: {{ organization.name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+    .user-row-inactive {
+        opacity: 0.6;
+        background-color: #f8f9fa; /* Vaalea harmaa inaktiivisille */
+        font-style: italic;
+    }
+    body.dark-mode .user-row-inactive {
+        background-color: #374151; /* Tummempi harmaa dark modessa */
+         opacity: 0.5;
+    }
+    .status-badge {
+        min-width: 80px; /* Varmista tasainen leveys badgeille */
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-3">
+    <div class="dashboard-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="dashboard-title">
+                    <i class="fas fa-building me-2 text-primary"></i> Organisaatio: {{ organization.name }}
+                </h1>
+                <p class="dashboard-subtitle">Hallinnoi organisaation käyttäjiä ja asetuksia (ID: {{ organization.id }})</p>
+            </div>
+            <div>
+                {# Nappi uuden käyttäjän luomiseen TÄHÄN organisaatioon #}
+                <button type="button" class="btn btn-success me-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#createSingleUserModalSuperuser"
+                        data-org-id="{{ organization.id }}"
+                        data-org-name="{{ organization.name }}">
+                    <i class="fas fa-user-plus me-2"></i>Luo käyttäjä tähän organisaatioon
+                </button>
+                <a href="{{ url_for('superuser_orgs_route') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Takaisin organisaatiolistaan
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Flash-viestit näytetään base.html:ssä Toasteina #}
+
+    <div class="content-card">
+        <div class="content-card-header">
+            <h3 class="content-card-title">
+                <i class="fas fa-users me-2 text-secondary"></i> Organisaation käyttäjät ({{ users|length }})
+            </h3>
+            {# Tähän voisi lisätä suodattimen näyttämään vain aktiiviset/inaktiiviset #}
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Käyttäjänimi</th>
+                        <th>Sähköposti</th>
+                        <th>Rooli</th>
+                        <th class="text-center">Tila</th>
+                        <th>Vanhenee</th>
+                        <th>Luotu</th>
+                        <th>Toiminnot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    {# Lisätään luokka inaktiivisille riveille #}
+                    <tr id="user-row-{{ user.id }}" class="{{ 'user-row-inactive' if user.status == 'inactive' }}">
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            {% if user.role == 'admin' %}
+                                <span class="badge bg-primary">Admin</span>
+                            {% elif user.role == 'user' %}
+                                <span class="badge bg-secondary">Opiskelija</span>
+                            {% elif user.role == 'superuser' %}
+                                 <span class="badge bg-warning text-dark">Superuser</span> {# Superuser ei pitäisi kuulua organisaatioon #}
+                            {% else %}
+                                 <span class="badge bg-dark">{{ user.role }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if user.status == 'active' %}
+                                <span class="badge bg-success status-badge">Aktiivinen</span>
+                            {% elif user.status == 'inactive' %}
+                                <span class="badge bg-danger status-badge">Deaktivoitu</span>
+                            {% else %}
+                                 <span class="badge bg-warning status-badge">{{ user.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.expires_at.strftime('%d.%m.%Y') if user.expires_at else '-' }}</td>
+                        <td>{{ user.created_at.strftime('%d.%m.%Y') if user.created_at else '-' }}</td>
+                        <td>
+                            {# Superuser voi tehdä enemmän toimintoja #}
+                            {# Estä itsensä tai ID 1 muokkaus/poisto #}
+                            {% if user.id != 1 and user.id != current_user.id %}
+                            <div class="btn-group btn-group-sm">
+                                {# Aktivointi/Deaktivointi (soft) #}
+                                {% if user.status == 'active' %}
+                                    <button type="button" class="btn btn-outline-warning" onclick="showSuperuserConfirm('deactivate', {{ user.id }}, '{{ user.username }}')" title="Deaktivoi käyttäjä (soft delete)">
+                                        <i class="fas fa-user-slash"></i>
+                                    </button>
+                                {% else %} {# status == 'inactive' #}
+                                     <form action="{{ url_for('superuser_reactivate_user_route', user_id=user.id) }}" method="POST" class="d-inline">
+                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                         <button type="submit" class="btn btn-outline-success" title="Aktivoi käyttäjä uudelleen">
+                                             <i class="fas fa-user-check"></i>
+                                         </button>
+                                     </form>
+                                {% endif %}
+
+                                {# Muokkaa (linkki käyttäjän muokkaussivulle - luo tämä myöhemmin) #}
+                                <a href="{{ url_for('superuser_edit_user_route', user_id=user.id) }}" class="btn btn-outline-info disabled" title="Muokkaa käyttäjää (tulossa)"> {# OLETETTU REITTI: superuser_edit_user_route #}
+                                    <i class="fas fa-edit"></i>
+                                </a>
+
+                                {# Pysyvä Poisto (Hard Delete) -nappi, avaa vahvistusmodaalin #}
+                                <button type="button" class="btn btn-outline-danger"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#hardDeleteUserModal"
+                                        data-user-id="{{ user.id }}"
+                                        data-username="{{ user.username }}"
+                                        title="Poista käyttäjä pysyvästi">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                            {% elif user.id == 1 %}
+                                <span class="text-muted small fst-italic">Pääkäyttäjä</span>
+                            {% elif user.id == current_user.id %}
+                                <span class="text-muted small fst-italic">Tämä olet sinä</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4 fst-italic">
+                            Tässä organisaatiossa ei ole käyttäjiä. Voit luoda uuden yllä olevasta napista.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> {# End table-responsive #}
+    </div> {# End content-card #}
+
+</div> {# End container #}
+
+{# Sisällytä Superuserin käyttäjänluontimodaali #}
+{% include '_create_single_user_modal_superuser.html' %}
+
+{# Lisää Pysyvän Poiston Vahvistusmodaali #}
+<div class="modal fade" id="hardDeleteUserModal" tabindex="-1" aria-labelledby="hardDeleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger">
+            <form id="hardDeleteForm" method="POST"> {# Action asetetaan JS:llä #}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="hardDeleteUserModalLabel">
+                       <i class="fas fa-exclamation-triangle me-2"></i> Vahvista PYSYVÄ poisto
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Olet aikeissa <strong>poistaa pysyvästi</strong> käyttäjän <strong id="hardDeleteUsername"></strong> (ID: <span id="hardDeleteUserId"></span>) ja kaikki hänen tietonsa (vastaukset, edistyminen jne.).</p>
+                    <p class="text-danger fw-bold">TÄTÄ TOIMINTOA EI VOI PERUA.</p>
+                    <hr>
+                    <label for="hardDeleteConfirmationInput" class="form-label">Vahvista kirjoittamalla: <strong class="text-danger" id="hardDeleteConfirmationText">POISTA/käyttäjänimi</strong></label>
+                    <input type="text" class="form-control" id="hardDeleteConfirmationInput" name="confirmation" required autocomplete="off">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    <button type="submit" class="btn btn-danger" id="hardDeleteSubmitBtn" disabled>
+                        <i class="fas fa-trash-alt me-1"></i>Vahvista PYSYVÄ poisto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }} {# Sisällytä base.html:n skriptit #}
+<script>
+// JavaScript Superuserin vahvistuksia ja modaalin asetuksia varten
+const hardDeleteModal = document.getElementById('hardDeleteUserModal');
+if (hardDeleteModal) {
+    const confirmationInput = document.getElementById('hardDeleteConfirmationInput');
+    const confirmationTextSpan = document.getElementById('hardDeleteConfirmationText');
+    const submitBtn = document.getElementById('hardDeleteSubmitBtn');
+    const usernameSpan = document.getElementById('hardDeleteUsername');
+    const userIdSpan = document.getElementById('hardDeleteUserId');
+    const deleteForm = document.getElementById('hardDeleteForm');
+
+    // Kun modaali avataan, aseta oikeat tiedot ja tyhjennä kenttä
+    hardDeleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const userId = button.getAttribute('data-user-id');
+        const username = button.getAttribute('data-username');
+        const expectedConfirmation = `POISTA/${username}`;
+
+        // Aseta tiedot modaaliin
+        usernameSpan.textContent = username;
+        userIdSpan.textContent = userId;
+        confirmationTextSpan.textContent = expectedConfirmation;
+        deleteForm.action = `/superuser/hard_delete_user/${userId}`; // Aseta oikea action
+
+        // Tyhjennä ja disabloi nappi
+        confirmationInput.value = '';
+        submitBtn.disabled = true;
+
+        // Lisää input-kuuntelija vahvistusta varten
+        confirmationInput.oninput = function() {
+             submitBtn.disabled = confirmationInput.value !== expectedConfirmation;
+        };
+    });
+}
+
+// Yksinkertainen vahvistus soft deletelle (deaktivoinnille)
+function showSuperuserConfirm(action, userId, username) {
+    let message = '';
+    let formAction = '';
+
+    if (action === 'deactivate') {
+        message = `Haluatko varmasti deaktivoida käyttäjän ${username}? Käyttäjä piilotetaan listoilta, mutta hänen datansa säilyy ja hänet voi palauttaa.`;
+        // Käytä samaa reittiä kuin organisaation admin, mutta superuser-oikeuksin
+        formAction = `/admin/deactivate_user/${userId}`; // Tai luo oma /superuser/deactivate_user reitti
+    } else {
+        console.warn("Tuntematon toiminto showSuperuserConfirm:", action);
+        return;
+    }
+
+    if (confirm(message)) {
+        // Luo ja lähetä lomake
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = formAction;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        form.appendChild(csrfInput);
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
+}
+
+// Voit lisätä tähän hakutoiminnallisuuden käyttäjälistalle JavaScriptillä myöhemmin
+
+</script>
+{% endblock %}

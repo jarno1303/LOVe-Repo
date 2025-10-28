@@ -5,7 +5,15 @@
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">👥 Käyttäjien hallinta</h1>
-        <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">← Palaa Admin-paneeliin</a>
+        <div>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSingleUserModal">
+                <i class="fas fa-user-plus me-2"></i>Luo yksittäinen käyttäjä
+            </button>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTestUsersModal">
+                <i class="fas fa-users me-2"></i>Luo testikäyttäjiä
+            </button>
+            <a href="{{ url_for('admin_route') }}" class="btn btn-secondary">← Palaa Admin-paneeliin</a>
+        </div>
     </div>
     
     <div class="card shadow-sm">
@@ -23,14 +31,13 @@
                             <th>Rooli</th>
                             <th>Luotu</th>
                             <th>Tila</th>
-                            <th>Häiriötekijät Päällä</th>
-                            <th>Häiriötekijöiden Todennäköisyys (%)</th>
+                            <th>Häiriötekijät</th>
                             <th>Toiminnot</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
-                        <tr id="user-row-{{ user.id }}">
+                        <tr>
                             <td>{{ user.id }}</td>
                             <td>{{ user.username }}</td>
                             <td>{{ user.email }}</td>
@@ -41,7 +48,7 @@
                                     <span class="badge bg-secondary">Käyttäjä</span>
                                 {% endif %}
                             </td>
-                            <td>{{ user.created_at }}</td>
+                            <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '-' }}</td>
                             <td>
                                 {% if user.status == 'active' %}
                                     <span class="badge bg-success">Aktiivinen</span>
@@ -49,44 +56,20 @@
                                     <span class="badge bg-danger">Estetty</span>
                                 {% endif %}
                             </td>
-                            <td>{{ 'Kyllä' if user.distractors_enabled else 'Ei' }}</td>
-                            <td>{{ user.distractor_probability }}</td>
+                            <td>
+                                {{ 'Kyllä' if user.distractors_enabled else 'Ei' }} ({{ user.distractor_probability }}%)
+                            </td>
                             <td>
                                 {% if user.id != 1 %}
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-danger" onclick="showConfirm('delete', {{ user.id }}, '{{ user.username }}')">
-                                        Poista
-                                    </button>
-                                    <button type="button" class="btn btn-outline-warning" onclick="showConfirm('toggle', {{ user.id }}, '{{ user.username }}', '{{ user.status }}')">
-                                        {{ 'Estä' if user.status == 'active' else 'Salli' }}
-                                    </button>
-                                    <button type="button" class="btn btn-outline-primary" onclick="showConfirm('role', {{ user.id }}, '{{ user.username }}', '{{ user.role }}')">
-                                        {{ 'Tee ylläpitäjäksi' if user.role == 'user' else 'Poista ylläpito' }}
-                                    </button>
-                                    <button type="button" class="btn btn-outline-info" onclick="showConfirm('edit_settings', {{ user.id }}, '{{ user.username }}', {{ user.distractors_enabled|tojson }}, {{ user.distractor_probability }})">
-                                        Muokkaa asetuksia
-                                    </button>
+                                    <button type="button" class="btn btn-outline-danger" onclick="showConfirm('delete', {{ user.id }}, '{{ user.username }}')">Poista</button>
+                                    <button type="button" class="btn btn-outline-warning" onclick="showConfirm('toggle', {{ user.id }}, '{{ user.username }}')">{{ 'Estä' if user.status == 'active' else 'Salli' }}</button>
+                                    <button type="button" class="btn btn-outline-primary" onclick="showConfirm('role', {{ user.id }}, '{{ user.username }}')">{{ 'Tee admin' if user.role == 'user' else 'Poista admin' }}</button>
+                                    <button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#editSettingsModal-{{ user.id }}">Muokkaa</button>
                                 </div>
                                 {% else %}
                                 <span class="text-muted small">Pääkäyttäjä</span>
                                 {% endif %}
-                            </td>
-                        </tr>
-                        <!-- Vahvistusrivi (oletuksena piilotettu) -->
-                        <tr id="confirm-row-{{ user.id }}" class="confirm-row" style="display: none;">
-                            <td colspan="9" class="bg-warning bg-opacity-10">
-                                <div class="p-3">
-                                    <div class="mb-3">
-                                        <strong id="confirm-text-{{ user.id }}"></strong>
-                                    </div>
-                                    <form id="confirm-form-{{ user.id }}" method="POST">
-                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                        <input type="hidden" name="confirm" value="true">
-                                        <button type="submit" class="btn btn-danger btn-sm" id="confirm-btn-{{ user.id }}">
-                                            Vahvista
-                                        </button>
-                                    </form>
-                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -96,108 +79,115 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="confirmModalLabel">Vahvista poisto</h5>
+            </div>
+            <div class="modal-body" id="confirmModalBody">
+                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                <form id="confirmDeleteForm" method="POST" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Vahvista poisto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for user in users %}
+{% if user.id != 1 %}
+<div class="modal fade" id="editSettingsModal-{{ user.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="{{ url_for('edit_user_settings', user_id=user.id) }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="confirm" value="true">
+                <div class="modal-header">
+                    <h5 class="modal-title">Muokkaa asetuksia: {{ user.username }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Häiriötekijät Päällä</label>
+                        <select class="form-select" name="distractors_enabled">
+                            <option value="1" {% if user.distractors_enabled %}selected{% endif %}>✅ Kyllä</option>
+                            <option value="0" {% if not user.distractors_enabled %}selected{% endif %}>❌ Ei</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Todennäköisyys (%)</label>
+                        <input type="number" class="form-control" name="distractor_probability" value="{{ user.distractor_probability }}" min="0" max="100" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    <button type="submit" class="btn btn-primary">Tallenna muutokset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endfor %}
+
+{% include 'create_test_users_modal.html' %}
+{% include 'create_single_user_modal.html' %}
+
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-function showConfirm(action, userId, username, extra = null, extra2 = null) {
-    // Piilota kaikki vahvistusrivit
-    document.querySelectorAll('.confirm-row').forEach(row => {
-        row.style.display = 'none';
-    });
-    
-    const confirmRow = document.getElementById(`confirm-row-${userId}`);
-    const confirmText = document.getElementById(`confirm-text-${userId}`);
-    const confirmForm = document.getElementById(`confirm-form-${userId}`);
-    const confirmBtn = document.getElementById(`confirm-btn-${userId}`);
-    
-    if (action === 'delete') {
-        confirmText.innerHTML = `⚠️ Haluatko varmasti <strong>POISTAA</strong> käyttäjän <strong>${username}</strong> ja kaikki hänen tietonsa?`;
-        confirmForm.action = `/admin/delete_user/${userId}`;
-        confirmForm.innerHTML = `
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="confirm" value="true">
-        `;
-        confirmBtn.className = 'btn btn-danger btn-sm';
-        confirmBtn.textContent = 'Kyllä, poista';
-        confirmBtn.style.display = 'inline-block';
-        
-    } else if (action === 'toggle') {
-        const statusText = extra === 'active' ? 'ESTÄÄ' : 'SALLIA';
-        confirmText.innerHTML = `Haluatko varmasti <strong>${statusText}</strong> käyttäjän <strong>${username}</strong>?`;
-        confirmForm.action = `/admin/toggle_user/${userId}`;
-        confirmForm.innerHTML = `
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="confirm" value="true">
-        `;
-        confirmBtn.className = 'btn btn-warning btn-sm';
-        confirmBtn.textContent = 'Vahvista';
-        confirmBtn.style.display = 'inline-block';
-        
-    } else if (action === 'role') {
-        const roleText = extra === 'user' ? 'tehdä YLLÄPITÄJÄKSI' : 'poistaa YLLÄPITO-OIKEUDET';
-        confirmText.innerHTML = `Haluatko varmasti <strong>${roleText.toUpperCase()}</strong> käyttäjältä <strong>${username}</strong>?`;
-        confirmForm.action = `/admin/toggle_role/${userId}`;
-        confirmForm.innerHTML = `
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="confirm" value="true">
-        `;
-        confirmBtn.className = 'btn btn-primary btn-sm';
-        confirmBtn.textContent = 'Vahvista';
-        confirmBtn.style.display = 'inline-block';
-        
-    } else if (action === 'edit_settings') {
-        confirmText.innerHTML = `Muokkaa häiriötekijäasetuksia käyttäjälle <strong>${username}</strong>`;
-        confirmForm.action = `/admin/edit_user_settings/${userId}`;
-        confirmForm.innerHTML = `
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="confirm" value="true">
-            
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">
-                        <i class="fas fa-toggle-on me-1"></i> Häiriötekijät Päällä
-                    </label>
-                    <select class="form-select" name="distractors_enabled">
-                        <option value="1" ${extra === true || extra === 1 || extra === '1' ? 'selected' : ''}>✅ Kyllä</option>
-                        <option value="0" ${extra === false || extra === 0 || extra === '0' ? 'selected' : ''}>❌ Ei</option>
-                    </select>
-                </div>
-                
-                <div class="col-md-6">
-                    <label class="form-label fw-bold">
-                        <i class="fas fa-percentage me-1"></i> Todennäköisyys (%)
-                    </label>
-                    <input type="number" 
-                           class="form-control" 
-                           name="distractor_probability" 
-                           value="${extra2 || 25}" 
-                           min="0" 
-                           max="100" 
-                           required>
-                    <div class="form-text">0-100% välillä</div>
-                </div>
-            </div>
-            
-            <div class="d-flex gap-2">
-                <button type="button" class="btn btn-secondary btn-sm" onclick="hideConfirm(${userId})">
-                    <i class="fas fa-times me-1"></i> Peruuta
-                </button>
-                <button type="submit" class="btn btn-success btn-sm">
-                    <i class="fas fa-save me-1"></i> Tallenna muutokset
-                </button>
-            </div>
-        `;
-        confirmBtn.style.display = 'none'; // Piilotetaan ulkopuolinen nappi
-    }
-    
-    confirmRow.style.display = 'table-row';
-    confirmRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
+let confirmDeleteModal = null;
 
-function hideConfirm(userId) {
-    const confirmRow = document.getElementById(`confirm-row-${userId}`);
-    confirmRow.style.display = 'none';
+document.addEventListener('DOMContentLoaded', function() {
+    confirmDeleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+});
+
+// UUSI: Täysin uusittu vahvistuslogiikka
+function showConfirm(action, userId, username) {
+    // 1. Käsittele poisto uudella modaalilla
+    if (action === 'delete') {
+        document.getElementById('confirmModalLabel').textContent = `Vahvista käyttäjän poisto`;
+        document.getElementById('confirmModalBody').innerHTML = `Haluatko varmasti <strong>poistaa pysyvästi</strong> käyttäjän <strong>${username}</strong> ja kaikki hänen tietonsa? Toimintoa ei voi perua.`;
+        document.getElementById('confirmDeleteForm').action = `/admin/delete_user/${userId}`;
+        confirmDeleteModal.show();
+        return;
+    }
+
+    // 2. Käsittele muut toiminnot yksinkertaisella selaimen varmistuksella
+    let message = '';
+    let formAction = '';
+
+    if (action === 'toggle') {
+        const statusText = document.querySelector(`#user-row-${userId} .badge.bg-success`) ? 'estää' : 'sallia';
+        message = `Haluatko varmasti ${statusText} käyttäjän ${username}?`;
+        formAction = `/admin/toggle_user/${userId}`;
+    } else if (action === 'role') {
+        const roleText = document.querySelector(`#user-row-${userId} .badge.bg-primary`) ? 'poistaa admin-oikeudet' : 'tehdä adminiksi';
+        message = `Haluatko varmasti ${roleText} käyttäjältä ${username}?`;
+        formAction = `/admin/toggle_role/${userId}`;
+    }
+
+    if (message && confirm(message)) {
+        // Luo ja lähetä lomake taustalla
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = formAction;
+        
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        form.appendChild(csrfInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+    }
 }
 </script>
 {% endblock %}

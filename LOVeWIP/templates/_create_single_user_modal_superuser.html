@@ -1,0 +1,90 @@
+{# templates/_create_single_user_modal_superuser.html #}
+{# Tämä modaali on tarkoitettu Superuserille #}
+<div class="modal fade" id="createSingleUserModalSuperuser" tabindex="-1" aria-labelledby="createSingleUserModalSuperuserLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"> {# Lisätty centered #}
+        <div class="modal-content">
+             {# Käytä oikeaa Superuser-reittiä #}
+            <form action="{{ url_for('superuser_create_user_route') }}" method="POST" id="createUserFormSuperuser">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {# LISÄTTY: Piilotettu kenttä organisaatiolle. Sen arvo asetetaan, kun modaali avataan. #}
+                <input type="hidden" name="organization_id" id="superuser-create-organization-id" value="">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createSingleUserModalSuperuserLabel"><i class="fas fa-user-plus me-2"></i>Luo uusi käyttäjä organisaatioon</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small mb-3">
+                        Järjestelmä luo käyttäjälle automaattisesti turvallisen salasanan, joka näytetään sinulle tallennuksen jälkeen. Valitse organisaatio ennen tallennusta.
+                    </p>
+                    <hr>
+                     {# HUOM: Organisaation nimi pitäisi näyttää tässä, jos modaali avataan tietyn organisaation sivulta #}
+                     <p><strong>Organisaatio:</strong> <span id="superuser-create-org-name">Valitse organisaatio ensin</span></p>
+
+                    <div class="mb-3">
+                        <label for="superuser-create-username" class="form-label fw-bold">Käyttäjänimi *</label> {# Parempi id #}
+                        <input type="text" class="form-control" id="superuser-create-username" name="username" required minlength="3">
+                    </div>
+                    <div class="mb-3">
+                        <label for="superuser-create-email" class="form-label fw-bold">Sähköposti *</label> {# Parempi id #}
+                        <input type="email" class="form-control" id="superuser-create-email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="superuser-create-role" class="form-label fw-bold">Rooli *</label> {# Parempi id #}
+                        <select class="form-select" id="superuser-create-role" name="role" required>
+                            {# Superuser voi luoda user tai admin rooleja #}
+                            <option value="user" selected>Opiskelija (User)</option>
+                            <option value="admin">Organisaation Admin</option>
+                            {# Superuser-roolia ei voi asettaa tätä kautta #}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="superuser-create-expiration" class="form-label fw-bold">Tunnuksen voimassaoloaika (päivinä)</label> {# Parempi id #}
+                        <input type="number" class="form-control" id="superuser-create-expiration" name="expiration_days" min="1" placeholder="365">
+                        <div class="form-text">Jätä tyhjäksi, jos tunnus ei vanhene.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    {# Varmista, että submit-nappi toimii oikein #}
+                    <button type="submit" class="btn btn-primary" id="superuserCreateUserSubmitBtn">
+                         <i class="fas fa-save me-1"></i>Luo käyttäjä
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{# Lisää JavaScriptiä asettamaan organization_id, kun modaali avataan #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const createUserModalSuperuser = document.getElementById('createSingleUserModalSuperuser');
+    if (createUserModalSuperuser) {
+        createUserModalSuperuser.addEventListener('show.bs.modal', function (event) {
+            // Nappi, joka avasi modaalin (pitää lisätä data-attribuutit siihen nappiin!)
+            const button = event.relatedTarget;
+            // Hae organisaation ID ja nimi napin data-attribuuteista
+            const orgId = button.getAttribute('data-org-id');
+            const orgName = button.getAttribute('data-org-name');
+
+            const modalOrgIdInput = document.getElementById('superuser-create-organization-id');
+            const modalOrgNameSpan = document.getElementById('superuser-create-org-name');
+            const submitButton = document.getElementById('superuserCreateUserSubmitBtn');
+
+            if (orgId && orgName && modalOrgIdInput && modalOrgNameSpan && submitButton) {
+                modalOrgIdInput.value = orgId;
+                modalOrgNameSpan.textContent = orgName;
+                submitButton.disabled = false; // Salli lähetys
+                 // Tyhjennä lomake edellisistä arvoista
+                document.getElementById('createUserFormSuperuser').reset();
+            } else {
+                console.error("Ei voitu asettaa organisaatiotietoja modaaliin. Varmista data-attribuutit.");
+                modalOrgNameSpan.textContent = "VIRHE - Organisaatiota ei valittu";
+                modalOrgIdInput.value = "";
+                submitButton.disabled = true; // Estä lähetys ilman organisaatiota
+            }
+        });
+    }
+});
+</script>

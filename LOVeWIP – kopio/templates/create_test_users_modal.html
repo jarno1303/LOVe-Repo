@@ -1,0 +1,29 @@
+<div class="modal fade" id="createTestUsersModal" tabindex="-1" aria-labelledby="createTestUsersModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTestUsersModalLabel"><i class="fas fa-users me-2"></i>Luo testikäyttäjiä</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin_create_test_users_route') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="user_count" class="form-label">Luotavien käyttäjien määrä</label>
+                        <input type="number" class="form-control" id="user_count" name="user_count" value="10" min="1" max="200" required>
+                        <div class="form-text">Syötä numero 1-200 väliltä.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiration_days" class="form-label">Tunnusten voimassaoloaika (päivinä)</label>
+                        <input type="number" class="form-control" id="expiration_days" name="expiration_days" value="30" min="1" max="365" required>
+                        <div class="form-text">Syötä, kuinka monen päivän kuluttua tunnukset vanhenevat (1-365).</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    <button type="submit" class="btn btn-success">Luo käyttäjät</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

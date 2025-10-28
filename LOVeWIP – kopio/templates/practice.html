@@ -28,14 +28,12 @@
 
     <div id="questionScreen" style="display: none;">
          <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-            
             <div class="mb-2 mb-md-0">
                 <h2 class="mb-0">
                     <i class="fas fa-book-open text-primary me-2"></i>
                     Harjoittele
                 </h2>
             </div>
-            
             <div class="flex-grow-1 ms-md-4">
                 <div class="d-flex justify-content-end mb-1">
                     <span id="progressText" class="fw-bold text-muted">Kysymys 0 / 0</span>
@@ -44,7 +42,6 @@
                     <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-
         </div>
 
         <div class="card shadow-sm mb-4">
@@ -110,7 +107,6 @@
     </div>
 </div>
 
-<!-- Häiriötekijä Modal -->
 <div class="modal fade" id="distractorModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-warning">
@@ -122,58 +118,11 @@
             <div class="modal-body">
                 <p class="fw-bold" id="distractor-scenario"></p>
                 <p><strong>Miten toimit?</strong></p>
-                <div id="distractor-options"></div>
+                <div id="distractor-options" class="d-grid gap-2"></div>
                 <div id="distractor-feedback" class="d-none mt-3"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" id="submit-distractor" class="btn btn-warning" onclick="submitDistractor()">Vastaa</button>
-                <button type="button" id="continue-quiz" class="btn btn-primary d-none" data-bs-dismiss="modal">Jatka harjoitusta</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<button id="floating-calculator-btn" class="btn btn-primary rounded-circle shadow-lg" 
-        onclick="toggleCalculator()" 
-        title="Avaa laskin"
-        style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 1000;">
-    <i class="fas fa-calculator fa-lg"></i>
-</button>
-
-<div id="calculator-modal" style="display: none; position: fixed; bottom: 90px; right: 20px; z-index: 1001; width: 300px;">
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" 
-             id="calc-header" 
-             style="cursor: move;">
-            <span><i class="fas fa-calculator me-2"></i>Laskin <small class="text-white-50">(vedä siirtääksesi)</small></span>
-            <button class="btn btn-sm btn-outline-light" onclick="toggleCalculator()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="card-body p-3">
-            <input type="text" id="calc-display" class="form-control form-control-lg text-end mb-3" readonly value="0">
-            <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
-                <button class="btn btn-outline-secondary" onclick="calcInput('7')">7</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('8')">8</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('9')">9</button>
-                <button class="btn btn-warning" onclick="calcInput('/')">/</button>
-                
-                <button class="btn btn-outline-secondary" onclick="calcInput('4')">4</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('5')">5</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('6')">6</button>
-                <button class="btn btn-warning" onclick="calcInput('*')">×</button>
-                
-                <button class="btn btn-outline-secondary" onclick="calcInput('1')">1</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('2')">2</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('3')">3</button>
-                <button class="btn btn-warning" onclick="calcInput('-')">−</button>
-                
-                <button class="btn btn-outline-secondary" onclick="calcInput('0')">0</button>
-                <button class="btn btn-outline-secondary" onclick="calcInput('.')">.</button>
-                <button class="btn btn-success" onclick="calcEqual()">=</button>
-                <button class="btn btn-warning" onclick="calcInput('+')">+</button>
-                
-                <button class="btn btn-danger" onclick="calcClear()" style="grid-column: span 4;">C</button>
+                <button type="button" id="distractor-action-btn" class="btn btn-warning">Vastaa</button>
             </div>
         </div>
     </div>
@@ -208,65 +157,6 @@
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="helperBody">
-                </div>
-
-            <div id="mnemonic-templates" style="display: none;">
-                <style>
-                    .mnemonic-card { border-radius: 8px; padding: 1.5rem; text-align: center; color: #fff; }
-                    .mnemonic-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
-                    .mnemonic-card h4 { font-weight: bold; }
-                    .mnemonic-card .subtitle { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }
-                    .mnemonic-card p { margin-bottom: 1.25rem; }
-                    .mnemonic-card .formula-box { background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 4px; font-family: monospace, monospace; font-size: 1.1rem; }
-                    .theme-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-                    .theme-info { background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%); }
-                    .theme-warning { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
-                    .theme-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
-                    .theme-danger { background: linear-gradient(135deg, #e53935 0%, #e35d5b 100%); }
-                    .theme-accent { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
-                </style>
-                <div id="mnemonic-dose" class="mnemonic-card theme-primary">
-                    <div class="icon"><i class="fas fa-calculator"></i></div>
-                    <h4>Annoslaskennan perussääntö</h4>
-                    <p class="subtitle">Jakolaskukaava</p>
-                    <p>Jaa lääkärin määräämä annos lääkkeen saatavilla olevalla vahvuudella.</p>
-                    <div class="formula-box">Määrätty &divide; Saatavilla = Tarvittava määrä</div>
-                </div>
-                <div id="mnemonic-infusion" class="mnemonic-card theme-info">
-                    <div class="icon"><i class="fas fa-tint"></i></div>
-                    <h4>Tippojen perusmuunnos</h4>
-                    <p class="subtitle">1 ml = 20 gtt</p>
-                    <p>Standardi tippakerroin on 20 tippaa per millilitra, ellei infuusiovälineistössä toisin mainita.</p>
-                    <div class="formula-box">Helppo muistaa: "kaksi-nolla"</div>
-                </div>
-                <div id="mnemonic-percent" class="mnemonic-card theme-warning">
-                     <div class="icon"><i class="fas fa-percentage"></i></div>
-                     <h4>Prosenttiliuoksen periaate</h4>
-                     <p class="subtitle">% = grammaa / 100 ml</p>
-                     <p>Liuoksen prosentti tarkoittaa aina, kuinka monta grammaa vaikuttavaa ainetta on 100 ml:ssa nestettä.</p>
-                     <div class="formula-box">Esim: 5 % glukoosi = 5g / 100ml</div>
-                </div>
-                <div id="mnemonic-conversion" class="mnemonic-card theme-success">
-                    <div class="icon"><i class="fas fa-exchange-alt"></i></div>
-                    <h4>Yksikkömuunnokset</h4>
-                    <p class="subtitle">Tuhannen potenssit</p>
-                    <p>Suuremmasta pienempään: kerro tuhannella. Pienemmästä suurempaan: jaa tuhannella.</p>
-                    <div class="formula-box">g &rarr; mg: &times;1000 <br>L &rarr; ml: &times;1000</div>
-                </div>
-                <div id="mnemonic-check" class="mnemonic-card theme-danger">
-                    <div class="icon"><i class="fas fa-clipboard-check"></i></div>
-                    <h4>Tuloksen tarkistus</h4>
-                    <p class="subtitle">Järkevyysarviointi</p>
-                    <p>Varmista aina, että laskun lopputulos on käytännössä järkevä. Suuret tai hyvin pienet luvut ovat usein virheen merkki.</p>
-                    <div class="formula-box">Jos vastaus tuntuu oudolta, laske uudelleen.</div>
-                </div>
-                <div id="mnemonic-percent-shortcut" class="mnemonic-card theme-accent">
-                    <div class="icon"><i class="fas fa-bolt"></i></div>
-                    <h4>Prosenttien pikalasku</h4>
-                    <p class="subtitle">% &rarr; mg/ml</p>
-                    <p>Saat muutettua prosenttiluvun vahvuudeksi (mg/ml) nopeasti kertomalla sen kymmenellä.</p>
-                    <div class="formula-box">0,9 % &times; 10 = 9 mg/ml</div>
-                </div>
             </div>
             <div class="modal-footer">
                 <a href="{{ url_for('calculator_route') }}" class="btn btn-outline-primary" target="_blank">
@@ -278,29 +168,368 @@
     </div>
 </div>
 
+<div id="mnemonic-templates" style="display: none;">
+    <style>
+        .mnemonic-card { border-radius: 8px; padding: 1.5rem; text-align: center; color: #fff; }
+        .mnemonic-card .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .mnemonic-card h4 { font-weight: bold; }
+        .mnemonic-card .subtitle { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem; }
+        .mnemonic-card p { margin-bottom: 1.25rem; }
+        .mnemonic-card .formula-box { background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 4px; font-family: monospace, monospace; font-size: 1.1rem; }
+        .theme-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .theme-info { background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%); }
+        .theme-warning { background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%); }
+        .theme-success { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .theme-danger { background: linear-gradient(135deg, #e53935 0%, #e35d5b 100%); }
+        .theme-accent { background: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%); }
+    </style>
+    <div id="mnemonic-dose" class="mnemonic-card theme-primary">
+        <div class="icon"><i class="fas fa-calculator"></i></div>
+        <h4>Annoslaskennan perussääntö</h4>
+        <p class="subtitle">Jakolaskukaava</p>
+        <p>Jaa lääkärin määräämä annos lääkkeen saatavilla olevalla vahvuudella.</p>
+        <div class="formula-box">Määrätty &divide; Saatavilla = Tarvittava määrä</div>
+    </div>
+    <div id="mnemonic-infusion" class="mnemonic-card theme-info">
+        <div class="icon"><i class="fas fa-tint"></i></div>
+        <h4>Tippojen perusmuunnos</h4>
+        <p class="subtitle">1 ml = 20 gtt</p>
+        <p>Standardi tippakerroin on 20 tippaa per millilitra, ellei infuusiovälineistössä toisin mainita.</p>
+        <div class="formula-box">Helppo muistaa: "kaksi-nolla"</div>
+    </div>
+    <div id="mnemonic-percent" class="mnemonic-card theme-warning">
+         <div class="icon"><i class="fas fa-percentage"></i></div>
+         <h4>Prosenttiliuoksen periaate</h4>
+         <p class="subtitle">% = grammaa / 100 ml</p>
+         <p>Liuoksen prosentti tarkoittaa aina, kuinka monta grammaa vaikuttavaa ainetta on 100 ml:ssa nestettä.</p>
+         <div class="formula-box">Esim: 5 % glukoosi = 5g / 100ml</div>
+    </div>
+    <div id="mnemonic-conversion" class="mnemonic-card theme-success">
+        <div class="icon"><i class="fas fa-exchange-alt"></i></div>
+        <h4>Yksikkömuunnokset</h4>
+        <p class="subtitle">Tuhannen potenssit</p>
+        <p>Suuremmasta pienempään: kerro tuhannella. Pienemmästä suurempaan: jaa tuhannella.</p>
+        <div class="formula-box">g &rarr; mg: &times;1000 <br>L &rarr; ml: &times;1000</div>
+    </div>
+    <div id="mnemonic-check" class="mnemonic-card theme-danger">
+        <div class="icon"><i class="fas fa-clipboard-check"></i></div>
+        <h4>Tuloksen tarkistus</h4>
+        <p class="subtitle">Järkevyysarviointi</p>
+        <p>Varmista aina, että laskun lopputulos on käytännössä järkevä. Suuret tai hyvin pienet luvut ovat usein virheen merkki.</p>
+        <div class="formula-box">Jos vastaus tuntuu oudolta, laske uudelleen.</div>
+    </div>
+    <div id="mnemonic-percent-shortcut" class="mnemonic-card theme-accent">
+        <div class="icon"><i class="fas fa-bolt"></i></div>
+        <h4>Prosenttien pikalasku</h4>
+        <p class="subtitle">% &rarr; mg/ml</p>
+        <p>Saat muutettua prosenttiluvun vahvuudeksi (mg/ml) nopeasti kertomalla sen kymmenellä.</p>
+        <div class="formula-box">0,9 % &times; 10 = 9 mg/ml</div>
+    </div>
+</div>
+
+<!-- Floating Calculator -->
+<div id="floatingCalculator" class="floating-calculator">
+    <div class="calculator-header" id="calcHeader">
+        <span>🧮 Laskin</span>
+        <button id="closeCalculator" class="btn-close btn-close-white btn-sm"></button>
+    </div>
+    <div class="calculator-body">
+        <input type="text" id="calcDisplay" class="calculator-display" readonly value="0">
+        <div class="calculator-buttons">
+            <button class="calc-btn" data-value="7">7</button>
+            <button class="calc-btn" data-value="8">8</button>
+            <button class="calc-btn" data-value="9">9</button>
+            <button class="calc-btn calc-operator" data-value="/">÷</button>
+            
+            <button class="calc-btn" data-value="4">4</button>
+            <button class="calc-btn" data-value="5">5</button>
+            <button class="calc-btn" data-value="6">6</button>
+            <button class="calc-btn calc-operator" data-value="*">×</button>
+            
+            <button class="calc-btn" data-value="1">1</button>
+            <button class="calc-btn" data-value="2">2</button>
+            <button class="calc-btn" data-value="3">3</button>
+            <button class="calc-btn calc-operator" data-value="-">−</button>
+            
+            <button class="calc-btn" data-value="0">0</button>
+            <button class="calc-btn" data-value=".">.</button>
+            <button class="calc-btn calc-equals" id="calcEquals">=</button>
+            <button class="calc-btn calc-operator" data-value="+">+</button>
+            
+            <button class="calc-clear" id="calcClear">Tyhjennä</button>
+        </div>
+    </div>
+</div>
+
+<!-- Calculator Toggle Button -->
+<button id="calculatorToggle" class="floating-calculator-toggle">
+    <i class="fas fa-calculator"></i> Laskin
+</button>
+
 <script>
     let questions = [];
     let currentQuestionIndex = 0;
     let correctAnswers = 0;
     let selectedOption = null;
     let startTime = null;
+    let distractorStartTime = null;
     let explanationModal = null;
     let helperModal = null;
-
-    // Häiriötekijä-muuttujat
-    let selectedDistractorOption = null;
     let currentDistractor = null;
     let distractorModalInstance = null;
+    let csrfToken = '';
 
-    let calcCurrentValue = '0', calcOperator = '', calcPreviousValue = '';
-    let isDragging = false, currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+    const DISTRACTORS = {{ constants.DISTRACTORS|tojson|safe }};
+    const userDistractorsEnabled = {{ current_user.distractors_enabled|tojson|safe }};
+    const userDistractorProbability = {{ current_user.distractor_probability|tojson|safe }} / 100.0;
 
     document.addEventListener('DOMContentLoaded', function() {
-        explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
-        helperModal = new bootstrap.Modal(document.getElementById('helperModal'));
-        initCalculatorDrag();
-        fetchQuestions();
+        fetchCSRFToken().then(() => {
+            explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
+            helperModal = new bootstrap.Modal(document.getElementById('helperModal'));
+            distractorModalInstance = new bootstrap.Modal(document.getElementById('distractorModal'));
+            initCalculator();
+            fetchQuestions();
+        });
     });
+
+    // Calculator functionality - WORKING VERSION from simulation.html
+    function initCalculator() {
+        const calcDisplay = document.getElementById('calcDisplay');
+        const calculator = document.getElementById('floatingCalculator');
+        const toggleBtn = document.getElementById('calculatorToggle');
+        const closeBtn = document.getElementById('closeCalculator');
+        const calcHeader = document.getElementById('calcHeader');
+
+        if (!calculator || !toggleBtn || !calcDisplay) {
+            console.error('Calculator elements not found');
+            return;
+        }
+
+        // Calculator state
+        let currentValue = '0';
+        let previousValue = '';
+        let operation = null;
+        let shouldResetDisplay = false;
+
+        // Drag state
+        let isDragging = false;
+        let currentX = 0;
+        let currentY = 0;
+        let initialX = 0;
+        let initialY = 0;
+
+        // Toggle calculator
+        toggleBtn.addEventListener('click', () => {
+            calculator.classList.add('show');
+            toggleBtn.style.display = 'none';
+        });
+
+        // Close calculator
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                calculator.classList.remove('show');
+                toggleBtn.style.display = 'block';
+            });
+        }
+
+        // Calculator buttons
+        document.querySelectorAll('.calc-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const value = this.dataset.value;
+                
+                if (['+', '-', '*', '/'].includes(value)) {
+                    // Operator clicked
+                    if (operation !== null && !shouldResetDisplay) {
+                        calculateResult();
+                    }
+                    previousValue = currentValue;
+                    operation = value;
+                    shouldResetDisplay = true;
+                } else if (value === '.') {
+                    if (!currentValue.includes('.')) {
+                        currentValue += '.';
+                        calcDisplay.value = currentValue;
+                    }
+                } else {
+                    // Number clicked
+                    if (shouldResetDisplay) {
+                        currentValue = value;
+                        shouldResetDisplay = false;
+                    } else {
+                        currentValue = currentValue === '0' ? value : currentValue + value;
+                    }
+                    calcDisplay.value = currentValue;
+                }
+            });
+        });
+
+        // Clear button
+        const clearBtn = document.getElementById('calcClear');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                currentValue = '0';
+                previousValue = '';
+                operation = null;
+                shouldResetDisplay = false;
+                calcDisplay.value = currentValue;
+            });
+        }
+
+        // Equals button
+        const equalsBtn = document.getElementById('calcEquals');
+        if (equalsBtn) {
+            equalsBtn.addEventListener('click', () => {
+                calculateResult();
+            });
+        }
+
+        function calculateResult() {
+            if (operation === null || previousValue === '') return;
+            
+            try {
+                const prev = parseFloat(previousValue);
+                const current = parseFloat(currentValue);
+                let result = 0;
+
+                switch(operation) {
+                    case '+': result = prev + current; break;
+                    case '-': result = prev - current; break;
+                    case '*': result = prev * current; break;
+                    case '/': result = prev / current; break;
+                }
+
+                currentValue = result.toString();
+                calcDisplay.value = currentValue;
+                operation = null;
+                previousValue = '';
+                shouldResetDisplay = true;
+            } catch (e) {
+                calcDisplay.value = 'Virhe';
+                currentValue = '0';
+                operation = null;
+                previousValue = '';
+            }
+        }
+
+        // DRAG FUNCTIONALITY
+        if (!calcHeader) return;
+
+        function dragStart(e) {
+            if (e.target === calcHeader || calcHeader.contains(e.target)) {
+                if (e.target.classList.contains('btn-close')) return;
+                
+                isDragging = true;
+                
+                if (e.type === "touchstart") {
+                    initialX = e.touches[0].clientX - currentX;
+                    initialY = e.touches[0].clientY - currentY;
+                } else {
+                    initialX = e.clientX - currentX;
+                    initialY = e.clientY - currentY;
+                }
+                
+                calculator.style.transition = 'none';
+            }
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                
+                let clientX, clientY;
+                if (e.type === "touchmove") {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+
+                currentX = clientX - initialX;
+                currentY = clientY - initialY;
+
+                calculator.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            }
+        }
+
+        function dragEnd() {
+            isDragging = false;
+            calculator.style.transition = '';
+        }
+
+        // Mouse events
+        calcHeader.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        // Touch events
+        calcHeader.addEventListener('touchstart', dragStart, { passive: false });
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+    }
+
+    async function fetchCSRFToken() {
+        try {
+            const response = await fetch('/api/csrf-token');
+            const data = await response.json();
+            csrfToken = data.csrf_token;
+            console.log('CSRF-token haettu onnistuneesti');
+        } catch (error) {
+            console.error('CSRF-tokenin haku epäonnistui:', error);
+            setTimeout(fetchCSRFToken, 2000);
+        }
+    }
+
+    // practice.html - sisällä <script> tagia
+
+async function fetchQuestions() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categories = urlParams.getAll('categories');
+        const difficulties = urlParams.getAll('difficulties');
+        const limit = urlParams.get('count') || '10';
+        const source = urlParams.get('source'); // <-- LISÄTTY: Luetaan lähde-parametri
+
+        const limitNum = parseInt(limit);
+
+        // KORJATTU: Tarkistetaan rajoitus vain, jos lähde EI OLE 'mistakes'
+        if (source !== 'mistakes') {
+            if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+                throw new Error('Kysymysten määrän tulee olla 1-100 välillä');
+            }
+        }
+        
+        const apiUrl = new URL('/api/questions', window.location.origin);
+        // Huom: Vaikka ohitamme rajoituksen tässä, lähetämme silti oikean määrän API:lle
+        apiUrl.searchParams.append('count', limitNum); 
+        categories.forEach(cat => apiUrl.searchParams.append('categories', cat));
+        difficulties.forEach(diff => apiUrl.searchParams.append('difficulties', diff));
+        
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+            throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä.');
+        }
+        
+        questions = data.questions;
+        startTime = Date.now();
+        showScreen('question');
+        displayCurrentQuestion();
+    } catch (error) {
+        let userMessage = error.message.includes('NetworkError') || error.message.includes('Failed to fetch') 
+            ? 'Verkkovirhe. Tarkista internet-yhteytesi ja yritä uudelleen.'
+            : error.message || 'Kysymysten lataaminen epäonnistui.';
+        showScreen('error', userMessage);
+    }
+}
 
     function continueToNext() {
         explanationModal.hide();
@@ -327,157 +556,124 @@
         }
     }
 
-    async function fetchQuestions() {
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoriesArray = urlParams.getAll('categories');
-            const difficultiesArray = urlParams.getAll('difficulties');
-            const categories = categoriesArray.join(',');
-            const difficulties = difficultiesArray.join(',');
-            const limit = urlParams.get('count') || '10';
-            
-            const limitNum = parseInt(limit);
-            if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) throw new Error('Kysymysten määrän tulee olla 1-100 välillä');
-            
-            const response = await fetch(`/api/questions?limit=${limit}&category=${encodeURIComponent(categories)}&difficulties=${encodeURIComponent(difficulties)}`);
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            
-            const data = await response.json();
-            if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä.');
-            
-            questions = data.questions;
-            startTime = Date.now();
-            showScreen('question');
-            displayCurrentQuestion();
-        } catch (error) {
-            let userMessage = error.message.includes('NetworkError') || error.message.includes('Failed to fetch') 
-                ? 'Verkkovirhe. Tarkista internet-yhteytesi ja yritä uudelleen.'
-                : error.message || 'Kysymysten lataaminen epäonnistui.';
-            showScreen('error', userMessage);
-        }
-    }
-
     function displayCurrentQuestion() {
-        if (currentQuestionIndex >= questions.length) {
-            showResults();
-            return;
-        }
-        const question = questions[currentQuestionIndex];
-        selectedOption = null;
-        document.getElementById('progressBar').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
-        document.getElementById('progressText').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
-        loadQuestionProgress(question.id);
-        document.getElementById('questionText').textContent = question.question;
-        const optionsContainer = document.getElementById('optionsContainer');
-        optionsContainer.innerHTML = '';
-        question.options.forEach((option, index) => {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'form-check p-3 mb-2 border rounded option-item';
-            optionDiv.style.cursor = 'pointer';
-            optionDiv.onclick = () => selectOption(index);
-            optionDiv.innerHTML = `
-                <input class="form-check-input" type="radio" name="answer" id="option${index}" value="${index}">
-                <label class="form-check-label w-100" for="option${index}" style="cursor: pointer;">${String.fromCharCode(65 + index)}. ${option}</label>
-            `;
-            optionsContainer.appendChild(optionDiv);
-        });
-        document.getElementById('submitBtn').style.display = 'inline-block';
-        document.getElementById('nextBtn').style.display = 'none';
-
-        // Tarkista häiriötekijä toisen kysymyksen jälkeen
-        if (currentQuestionIndex > 0) {
-            checkForDistractor();
-        }
+    if (currentQuestionIndex >= questions.length) {
+        showResults();
+        return;
     }
+    const question = questions[currentQuestionIndex];
+    selectedOption = null;
+    document.getElementById('progressBar').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+    document.getElementById('progressText').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+    loadQuestionProgress(question.id);
+    document.getElementById('questionText').textContent = question.question;
+    const optionsContainer = document.getElementById('optionsContainer');
+    optionsContainer.innerHTML = '';
+    question.options.forEach((option, index) => {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'form-check p-3 mb-2 border rounded option-item';
+        optionDiv.style.cursor = 'pointer';
+        optionDiv.onclick = () => selectOption(index);
+        optionDiv.innerHTML = `
+            <input class="form-check-input" type="radio" name="answer" id="option${index}" value="${index}">
+            <label class="form-check-label w-100" for="option${index}" style="cursor: pointer;">${String.fromCharCode(65 + index)}. ${option}</label>
+        `;
+        optionsContainer.appendChild(optionDiv);
+    });
 
-    // Häiriötekijän tarkistus
-    async function checkForDistractor() {
-        try {
-            console.log("Tarkistetaan häiriötekijä...");
-            const response = await fetch('/api/check_distractor');
-            const data = await response.json();
-            
-            if (data.success && data.distractor) {
-                console.log('Häiriötekijä saatu:', data.distractor);
-                const delay = 2000 + Math.random() * 4000;
-                setTimeout(() => showDistractor(data.distractor), delay);
-            } else {
-                console.log("Ei häiriötekijää.");
-            }
-        } catch (error) {
-            console.error('Häiriötekijän tarkistus epäonnistui:', error);
-        }
+    // KORJAUS TÄSSÄ: Varmistetaan, että oikeat napit näkyvät uuden kysymyksen alussa
+    document.getElementById('submitBtn').style.display = 'inline-block'; // <-- TÄMÄ RIVI LISÄTTIIN
+    document.getElementById('nextBtn').style.display = 'none'; // <-- TÄMÄ RIVI LISÄTTIIN
+    
+    if (currentQuestionIndex > 0 && userDistractorsEnabled && Math.random() < userDistractorProbability) {
+        showDistractor();
     }
-
-    // Näytä häiriötekijä
-    function showDistractor(distractor) {
-        if (!distractorModalInstance) {
-            distractorModalInstance = new bootstrap.Modal(document.getElementById('distractorModal'));
-        }
+}
+    
+    function showDistractor() {
+        distractorStartTime = Date.now();
+        currentDistractor = DISTRACTORS[Math.floor(Math.random() * DISTRACTORS.length)];
         
-        currentDistractor = distractor;
-        selectedDistractorOption = null;
-        
-        document.getElementById('distractor-scenario').textContent = distractor.scenario;
+        document.getElementById('distractor-scenario').textContent = currentDistractor.scenario;
         const optionsContainer = document.getElementById('distractor-options');
         optionsContainer.innerHTML = '';
         
-        distractor.options.forEach((option, index) => {
-            const div = document.createElement('div');
-            div.className = 'distractor-option border rounded p-3 mb-2';
-            div.style.cursor = 'pointer';
-            div.textContent = option;
-            div.onclick = () => selectDistractorOption(index);
-            optionsContainer.appendChild(div);
+        const actionBtn = document.getElementById('distractor-action-btn');
+        actionBtn.style.display = 'none';
+
+        currentDistractor.options.forEach((opt, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline-secondary distractor-option';
+            button.textContent = opt;
+            button.onclick = () => submitDistractor(index);
+            optionsContainer.appendChild(button);
         });
-        
+
         document.getElementById('distractor-feedback').classList.add('d-none');
-        document.getElementById('submit-distractor').classList.remove('d-none');
-        document.getElementById('continue-quiz').classList.add('d-none');
-        
         distractorModalInstance.show();
     }
 
-    // Valitse häiriötekijän vaihtoehto
-    function selectDistractorOption(index) {
-        selectedDistractorOption = index;
-        document.querySelectorAll('.distractor-option').forEach(option => {
-            option.classList.remove('border-primary', 'bg-light');
+    async function submitDistractor(selectedOptionIndex) {
+        document.querySelectorAll('.distractor-option').forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === currentDistractor.options[selectedOptionIndex]) {
+                btn.classList.add('active');
+            }
         });
-        document.querySelectorAll('.distractor-option')[index].classList.add('border-primary', 'bg-light');
-    }
-
-    // Lähetä häiriötekijän vastaus
-    async function submitDistractor() {
-        if (selectedDistractorOption === null) {
-            alert('Valitse vastaus ensin!');
-            return;
-        }
+        
+        const responseTime = Math.floor((Date.now() - distractorStartTime) / 1000);
         
         try {
+            if (!csrfToken) {
+                await fetchCSRFToken();
+            }
+            
             const response = await fetch('/api/submit_distractor', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
                 body: JSON.stringify({
                     scenario: currentDistractor.scenario,
-                    user_choice: selectedDistractorOption,
-                    response_time: 5000
+                    user_choice: selectedOptionIndex,
+                    response_time: responseTime
                 })
             });
-            const result = await response.json();
             
+            if (!response.ok) {
+                throw new Error('Distractorin tallennus epäonnistui');
+            }
+            
+            const data = await response.json();
+            const isCorrect = data.is_correct;
             const feedback = document.getElementById('distractor-feedback');
-            const isCorrect = result.is_correct;
             
-            feedback.className = `alert ${isCorrect ? 'alert-success' : 'alert-danger'} mt-3`;
-            feedback.innerHTML = `<strong>${isCorrect ? '✅ Oikein!' : '❌ Väärin!'}</strong><br>${isCorrect ? 'Hyvä ratkaisu!' : 'Parempi vastaus olisi ollut: ' + currentDistractor.options[result.correct_choice]}`;
             feedback.classList.remove('d-none');
-            
-            document.getElementById('submit-distractor').classList.add('d-none');
-            document.getElementById('continue-quiz').classList.remove('d-none');
-        } catch (error) {
-            console.error('Virhe häiriötekijän lähetyksessä:', error);
-            alert('Vastauksen lähetys epäonnistui. Yritä uudelleen.');
+            feedback.className = `alert mt-3 ${isCorrect ? 'alert-success' : 'alert-warning'}`;
+            feedback.innerHTML = isCorrect ? 
+                '<strong>Oikein!</strong> Hyvä päätös paineen alla.' : 
+                `<strong>Huomio!</strong> Oikea toimintatapa olisi ollut: <i>"${currentDistractor.options[currentDistractor.correct]}"</i>`;
+                
+            const actionBtn = document.getElementById('distractor-action-btn');
+            actionBtn.textContent = 'Jatka harjoitusta';
+            actionBtn.className = 'btn btn-primary';
+            actionBtn.onclick = closeDistractor;
+            actionBtn.style.display = 'block';
+
+        } catch(e) {
+            console.error("Häiriötekijän tallennus epäonnistui", e);
+            const actionBtn = document.getElementById('distractor-action-btn');
+            actionBtn.textContent = 'Sulje';
+            actionBtn.className = 'btn btn-secondary';
+            actionBtn.onclick = closeDistractor;
+            actionBtn.style.display = 'block';
+        }
+    }
+    
+    function closeDistractor() {
+        if (distractorModalInstance) {
+            distractorModalInstance.hide();
         }
     }
 
@@ -485,6 +681,9 @@
         const progressInfo = document.getElementById('question-progress-info');
         try {
             const response = await fetch(`/api/question_progress/${questionId}`);
+            if (!response.ok) {
+                throw new Error('Edistymisen haku epäonnistui');
+            }
             const data = await response.json();
             if (data.times_shown > 0) {
                 document.getElementById('prog-times-shown').textContent = data.times_shown;
@@ -520,37 +719,62 @@
     }
 
     async function submitAnswer() {
-        if (selectedOption === null) {
-            alert('Valitse vastaus ensin!');
-            return;
+    if (selectedOption === null) {
+        alert('Valitse vastaus ensin!');
+        return;
+    }
+    const question = questions[currentQuestionIndex];
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+    
+    try {
+        if (!csrfToken) {
+            await fetchCSRFToken();
         }
-        const question = questions[currentQuestionIndex];
-        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-        try {
-            const response = await fetch('/api/submit_answer', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    question_id: question.id,
-                    selected_option_text: question.options[selectedOption],
-                    time_taken: timeTaken
-                })
-            });
-            if (!response.ok) throw new Error('Vastauksen lähetys epäonnistui');
-            const data = await response.json();
-            if (data.correct) correctAnswers++;
-            showAnswerFeedback(data.correct, data.correct_answer_index);
-            showExplanation(data.explanation, data.correct);
-            document.getElementById('submitBtn').style.display = 'none';
-        } catch (error) {
-            console.error('Virhe vastauksen lähetyksessä:', error);
-            alert('Vastauksen lähetys epäonnistui. Yritä uudelleen.');
+        
+        const response = await fetch('/api/submit_answer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                question_id: question.id,
+                selected_option_text: question.options[selectedOption],
+                time_taken: timeTaken
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Vastauksen lähetys epäonnistui');
+        }
+        
+        const data = await response.json();
+        if (data.correct) correctAnswers++;
+        showAnswerFeedback(data.correct, data.correct_answer_index);
+        showExplanation(data.explanation, data.correct);
+        
+        // KORJAUS TÄSSÄ: Piilota 'Vastaa'-nappi ja näytä 'Seuraava'-nappi
+        document.getElementById('submitBtn').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'inline-block'; // <-- TÄMÄ RIVI LISÄTTIIN
+        
+    } catch (error) {
+        console.error('Virhe vastauksen lähetyksessä:', error);
+        
+        if (error.message.includes('CSRF') || error.message.includes('token')) {
+            console.log('CSRF-virhe, yritetään uudelleen...');
+            await fetchCSRFToken();
+            setTimeout(submitAnswer, 100);
+        } else {
+            alert(`Vastauksen lähetys epäonnistui: ${error.message}`);
         }
     }
+}
 
     function showAnswerFeedback(isCorrect, correctIndex) {
         document.querySelectorAll('.option-item').forEach((item, index) => {
             item.classList.remove('border-primary', 'bg-light');
+            item.onclick = null;
             if (index === correctIndex) item.classList.add('border-success', 'bg-success', 'bg-opacity-10');
             else if (index === selectedOption && !isCorrect) item.classList.add('border-danger', 'bg-danger', 'bg-opacity-10');
         });
@@ -599,156 +823,37 @@
         showScreen('results');
     }
 
-    function toggleCalculator() {
-        document.getElementById('calculator-modal').style.display = document.getElementById('calculator-modal').style.display === 'none' ? 'block' : 'none';
-    }
-
-    function calcInput(value) {
-        const display = document.getElementById('calc-display');
-        if (['+', '-', '*', '/'].includes(value)) {
-            calcOperator = value;
-            calcPreviousValue = calcCurrentValue;
-            calcCurrentValue = '0';
-        } else if (value === '.') {
-            if (!calcCurrentValue.includes('.')) calcCurrentValue += '.';
-        } else {
-            calcCurrentValue = calcCurrentValue === '0' ? value : calcCurrentValue + value;
-        }
-        display.value = calcCurrentValue;
-    }
-
-    function calcEqual() {
-        const display = document.getElementById('calc-display');
-        let result = 0;
-        const prev = parseFloat(calcPreviousValue), curr = parseFloat(calcCurrentValue);
-        switch(calcOperator) {
-            case '+': result = prev + curr; break;
-            case '-': result = prev - curr; break;
-            case '*': result = prev * curr; break;
-            case '/': result = prev / curr; break;
-            default: return;
-        }
-        calcCurrentValue = result.toString();
-        calcOperator = ''; calcPreviousValue = '';
-        display.value = calcCurrentValue;
-    }
-
-    function calcClear() {
-        calcCurrentValue = '0'; calcOperator = ''; calcPreviousValue = '';
-        document.getElementById('calc-display').value = '0';
-    }
-
-    function initCalculatorDrag() {
-        const calcHeader = document.getElementById('calc-header');
-        calcHeader.addEventListener('mousedown', dragStart);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', dragEnd);
-        calcHeader.addEventListener('touchstart', dragStart);
-        document.addEventListener('touchmove', drag);
-        document.addEventListener('touchend', dragEnd);
-    }
-
-    function dragStart(e) {
-        if (e.type === "touchstart") {
-            initialX = e.touches[0].clientX - xOffset;
-            initialY = e.touches[0].clientY - yOffset;
-        } else {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-        }
-        if (e.target.closest('#calc-header')) isDragging = true;
-    }
-
-    function drag(e) {
-        if (isDragging) {
-            e.preventDefault();
-            const calcModal = document.getElementById('calculator-modal');
-            if (e.type === "touchmove") {
-                currentX = e.touches[0].clientX - initialX;
-                currentY = e.touches[0].clientY - initialY;
-            } else {
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-            }
-            xOffset = currentX; yOffset = currentY;
-            const rect = calcModal.getBoundingClientRect();
-            calcModal.style.right = 'auto'; calcModal.style.bottom = 'auto';
-            calcModal.style.left = `${rect.left + currentX}px`;
-            calcModal.style.top = `${rect.top + currentY}px`;
-        }
-    }
-
-    function dragEnd() {
-        initialX = currentX; initialY = currentY;
-        isDragging = false;
-    }
-
     function identifyQuestionType(question) {
-    const text = question.question.toLowerCase();
-    const category = (question.category || '').toLowerCase();
-
-    // 1. If the category is NOT 'lääkelaskenta', it's a theory question.
-    if (category !== 'lääkelaskenta') {
-        return 'theory';
-    }
-
-    // 2. If the category IS 'lääkelaskenta', then figure out which type of calculation it is.
-    if (text.includes('infuusio') || text.includes('tippa') || text.includes('gtt') || text.includes('ml/h')) {
-        return 'infusion';
-    }
-    if (text.includes('%') || text.includes('prosentti')) {
-        return 'percent';
-    }
-    if (text.includes('muunna') || text.includes('monta gramma') || text.includes('monta milligramma') || text.includes('monta mikrogramma') || text.includes('monta millilitra') || text.includes('monta litra')) {
-        return 'conversion';
-    }
-    if (text.includes('paino') || text.includes('/kg')) {
-        return 'weight';
+        const text = question.question.toLowerCase();
+        const category = (question.category || '').toLowerCase();
+        if (category !== 'lääkelaskenta') return 'theory';
+        if (text.includes('infuusio') || text.includes('tippa') || text.includes('gtt') || text.includes('ml/h')) return 'infusion';
+        if (text.includes('%') || text.includes('prosentti')) return 'percent';
+        if (text.includes('muunna') || text.includes('monta gramma') || text.includes('monta milligramma') || text.includes('monta mikrogramma') || text.includes('monta millilitra') || text.includes('monta litra')) return 'conversion';
+        if (text.includes('paino') || text.includes('/kg')) return 'weight';
+        return 'dose';
     }
     
-    // If it's a calculation but doesn't match a specific sub-type, default to dose calculation.
-    return 'dose';
-}
-    
-    // --- NÄMÄ OVAT UUSIA TAI MUOKATTUJA ---
     function generateDoseHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; }
     function generateInfusionHelper(question) { return document.getElementById('mnemonic-infusion').innerHTML; }
     function generatePercentHelper(question) { return document.getElementById('mnemonic-percent').innerHTML; }
     function generateConversionHelper(question) { return document.getElementById('mnemonic-conversion').innerHTML; }
-    function generateWeightHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; } // Käyttää annoslaskennan pohjaa
-    
-    function generateGenericHelper(question) {
-        // Tämän pitäisi nyt osua vain aitoihin teoriakysymyksiin
-        return `<div class="alert alert-info"><h5><i class="fas fa-book me-2"></i>Teoriakysymys</h5><p>Lue kysymys huolella ja pohdi vastausta potilasturvallisuuden näkökulmasta.</p></div>`;
-    }
+    function generateWeightHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; }
+    function generateGenericHelper(question) { return `<div class="alert alert-info"><h5><i class="fas fa-book me-2"></i>Teoriakysymys</h5><p>Lue kysymys huolella ja pohdi vastausta potilasturvallisuuden näkökulmasta.</p></div>`; }
 
     function openHelper() {
         const question = questions[currentQuestionIndex];
         const helperBody = document.getElementById('helperBody');
         const questionType = identifyQuestionType(question);
         let helperContent = '';
-        
         switch(questionType) {
-            case 'dose': 
-                helperContent = generateDoseHelper(question); 
-                break;
-            case 'infusion': 
-                helperContent = generateInfusionHelper(question); 
-                break;
-            case 'percent': 
-                helperContent = generatePercentHelper(question); 
-                break;
-            case 'conversion': 
-                helperContent = generateConversionHelper(question); 
-                break;
-            case 'weight': 
-                helperContent = generateWeightHelper(question); 
-                break;
-            default: 
-                helperContent = generateGenericHelper(question); 
-                break;
+            case 'dose': helperContent = generateDoseHelper(question); break;
+            case 'infusion': helperContent = generateInfusionHelper(question); break;
+            case 'percent': helperContent = generatePercentHelper(question); break;
+            case 'conversion': helperContent = generateConversionHelper(question); break;
+            case 'weight': helperContent = generateWeightHelper(question); break;
+            default: helperContent = generateGenericHelper(question); break;
         }
-        
         helperBody.innerHTML = helperContent;
         helperModal.show();
     }
@@ -763,19 +868,144 @@
     #question-progress-info.alert-success { border-left-color: #28a745; }
     #question-progress-info.alert-warning { border-left-color: #ffc107; }
     #question-progress-info.alert-danger { border-left-color: #dc3545; }
-    #floating-calculator-btn { transition: all 0.3s ease; }
-    #floating-calculator-btn:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; }
-    #calculator-modal .btn { padding: 12px; font-size: 1.1rem; font-weight: bold; }
-    #calc-header { user-select: none; }
-    #calc-header:active { cursor: grabbing !important; }
-
-    /* Häiriötekijä-tyylit */
-    .distractor-option {
-        transition: all 0.2s ease;
+    .distractor-option { transition: all 0.2s ease; }
+    .distractor-option:hover { background-color: #f8f9fa; transform: translateX(5px); }
+    
+    /* Floating Calculator Styles */
+    .floating-calculator {
+        position: fixed;
+        right: 20px;
+        bottom: 80px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        z-index: 1000;
+        width: 280px;
+        display: none;
     }
-    .distractor-option:hover {
-        background-color: #f8f9fa;
-        transform: translateX(5px);
+
+    .floating-calculator.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    .calculator-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 16px;
+        border-radius: 12px 12px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        cursor: move;
+        user-select: none;
+    }
+
+    .calculator-header:active {
+        cursor: grabbing;
+    }
+
+    .calculator-body {
+        padding: 16px;
+    }
+
+    .calculator-display {
+        width: 100%;
+        padding: 16px;
+        font-size: 24px;
+        text-align: right;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        background: #f7fafc;
+        font-weight: 600;
+    }
+
+    .calculator-buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+
+    .calc-btn {
+        padding: 16px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        background: #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 600;
+    }
+
+    .calc-btn:hover {
+        background: #cbd5e0;
+        transform: translateY(-2px);
+    }
+
+    .calc-operator {
+        background: #fbbf24;
+        color: white;
+    }
+
+    .calc-operator:hover {
+        background: #f59e0b;
+    }
+
+    .calc-equals {
+        background: #10b981;
+        color: white;
+    }
+
+    .calc-equals:hover {
+        background: #059669;
+    }
+
+    .calc-clear {
+        grid-column: span 4;
+        padding: 12px;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+
+    .calc-clear:hover {
+        background: #dc2626;
+    }
+
+    .floating-calculator-toggle {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        font-weight: 600;
+        z-index: 999;
+        transition: all 0.3s;
+    }
+
+    .floating-calculator-toggle:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .floating-calculator-toggle i {
+        margin-right: 8px;
     }
 </style>
 {% endblock %}

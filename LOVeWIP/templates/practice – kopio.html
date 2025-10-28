@@ -1,0 +1,687 @@
+{% extends "base.html" %}
+
+{% block title %}Harjoittele - LOVe Enhanced{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Korjaus: Varmistaa, että häiriötekijän napin teksti näkyy aina */
+    .distractor-option:hover {
+        background-color: #e9ecef; /* Vaaleanharmaa korostus */
+        color: #212529 !important; /* Pakotetaan teksti tummaksi hover-tilassa */
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div id="loadingScreen" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Ladataan...</span>
+        </div>
+        <p class="mt-3 text-muted">Ladataan kysymyksiä...</p>
+    </div>
+
+    <div id="errorScreen" class="text-center py-5" style="display: none;">
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+            <h4 class="alert-heading">Virhe kysymysten lataamisessa</h4>
+            <p id="errorMessage">Tapahtui odottamaton virhe.</p>
+            <hr>
+            <button class="btn btn-primary" onclick="location.reload()">
+                <i class="fas fa-redo me-2"></i>Yritä uudelleen
+            </button>
+            <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary">
+                <i class="fas fa-home me-2"></i>Palaa dashboardiin
+            </a>
+        </div>
+    </div>
+
+    <div id="questionScreen" style="display: none;">
+         <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <div class="mb-2 mb-md-0">
+                <h2 class="mb-0">
+                    <i class="fas fa-book-open text-primary me-2"></i>
+                    Harjoittele
+                </h2>
+            </div>
+            <div class="flex-grow-1 ms-md-4">
+                <div class="d-flex justify-content-end mb-1">
+                    <span id="progressText" class="fw-bold text-muted">Kysymys 0 / 0</span>
+                </div>
+                <div class="progress" style="height: 12px;">
+                    <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-body p-4">
+                <div id="question-progress-info" class="alert alert-info mb-3" style="display: none;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <small class="text-muted">Edistymisesi tässä kysymyksessä:</small>
+                            <div class="d-flex gap-3 mt-1">
+                                <span><i class="fas fa-eye"></i> Nähty: <strong id="prog-times-shown">0</strong> kertaa</span>
+                                <span><i class="fas fa-check-circle text-success"></i> Oikein: <strong id="prog-times-correct">0</strong></span>
+                                <span><i class="fas fa-chart-line"></i> Onnistuminen: <strong id="prog-success-rate">0%</strong></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <small class="text-muted">Viimeksi: <span id="prog-last-shown">-</span></small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4 class="card-title mb-0 flex-grow-1" id="questionText">Kysymystä ladataan...</h4>
+                    <button class="btn btn-outline-info btn-sm ms-3" onclick="openHelper()" title="Avaa avustaja">
+                        <i class="fas fa-lightbulb me-1"></i>Avustaja
+                    </button>
+                </div>
+                <div id="optionsContainer"></div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <button id="submitBtn" class="btn btn-primary btn-lg" onclick="submitAnswer()">
+                <i class="fas fa-check me-2"></i>Vastaa
+            </button>
+            <button id="nextBtn" class="btn btn-success btn-lg" onclick="nextQuestion()" style="display: none;">
+                <i class="fas fa-arrow-right me-2"></i>Seuraava
+            </button>
+            <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-times me-2"></i>Lopeta
+            </a>
+        </div>
+    </div>
+
+    <div id="resultsScreen" style="display: none;">
+        <div class="text-center py-5">
+            <i id="resultsIcon" class="fas fa-trophy fa-5x text-warning mb-4"></i>
+            <h2 id="resultsTitle" class="mb-3">Hienoa työtä!</h2>
+            <div class="card shadow-sm d-inline-block">
+                <div class="card-body p-4">
+                    <h3 class="display-4 mb-2" id="scoreText">0/0</h3>
+                    <p class="text-muted mb-0" id="percentageText">0%</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button class="btn btn-primary btn-lg me-2" onclick="location.reload()">
+                    <i class="fas fa-redo me-2"></i>Harjoittele uudelleen
+                </button>
+                <a href="{{ url_for('dashboard_route') }}" class="btn btn-secondary btn-lg">
+                    <i class="fas fa-home me-2"></i>Palaa dashboardiin
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="distractorModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-warning">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Häiriötilanne!
+                </h5>
+            </div>
+            <div class="modal-body">
+                <p class="fw-bold" id="distractor-scenario"></p>
+                <p><strong>Miten toimit?</strong></p>
+                <div id="distractor-options" class="d-grid gap-2"></div>
+                <div id="distractor-feedback" class="d-none mt-3"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="distractor-action-btn" class="btn btn-warning">Vastaa</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="floating-calculator-btn" class="btn btn-primary rounded-circle shadow-lg" 
+        onclick="toggleCalculator()" 
+        title="Avaa laskin"
+        style="position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; z-index: 1000;">
+    <i class="fas fa-calculator fa-lg"></i>
+</button>
+
+<div id="calculator-modal" style="display: none; position: fixed; bottom: 90px; right: 20px; z-index: 1001; width: 300px;">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center" 
+             id="calc-header" 
+             style="cursor: move;">
+            <span><i class="fas fa-calculator me-2"></i>Laskin</span>
+            <button class="btn btn-sm btn-outline-light" onclick="toggleCalculator()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="card-body p-3">
+            <input type="text" id="calc-display" class="form-control form-control-lg text-end mb-3" readonly value="0">
+            <div class="d-grid gap-2" style="grid-template-columns: repeat(4, 1fr);">
+                <button class="btn btn-outline-secondary" onclick="calcInput('7')">7</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('8')">8</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('9')">9</button>
+                <button class="btn btn-warning" onclick="calcInput('/')">/</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('4')">4</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('5')">5</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('6')">6</button>
+                <button class="btn btn-warning" onclick="calcInput('*')">×</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('1')">1</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('2')">2</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('3')">3</button>
+                <button class="btn btn-warning" onclick="calcInput('-')">−</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('0')">0</button>
+                <button class="btn btn-outline-secondary" onclick="calcInput('.')">.</button>
+                <button class="btn btn-success" onclick="calcEqual()">=</button>
+                <button class="btn btn-warning" onclick="calcInput('+')">+</button>
+                <button class="btn btn-danger" onclick="calcClear()" style="grid-column: span 4;">C</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="explanationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" id="modalHeader">
+                <h5 class="modal-title" id="modalTitle">Selitys</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Selitystä ladataan...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-lg" onclick="continueToNext()">
+                    <i class="fas fa-arrow-right me-2"></i>Jatka
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="helperModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-lightbulb me-2"></i>Avustaja - Askel askeleelta
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="helperBody">
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url_for('calculator_route') }}" class="btn btn-outline-primary" target="_blank">
+                    <i class="fas fa-calculator me-2"></i>Avaa laskuri
+                </a>
+                <button type="button" class="btn btn-info" data-bs-dismiss="modal">Sulje</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="mnemonic-templates" style="display: none;">
+    {% include '_mnemonics.html' %}
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let questions = [];
+    let currentQuestionIndex = 0;
+    let correctAnswers = 0;
+    let selectedOption = null;
+    let startTime = null;
+    let distractorStartTime = null;
+    let explanationModal = null;
+    let helperModal = null;
+    let currentDistractor = null;
+    let distractorModalInstance = null;
+    let calcCurrentValue = '0', calcOperator = '', calcPreviousValue = '';
+    let isDragging = false, xOffset = 0, yOffset = 0;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const DISTRACTORS = {{ constants.DISTRACTORS|tojson|safe }};
+    const userDistractorsEnabled = {{ current_user.distractors_enabled|tojson|safe }};
+    const userDistractorProbability = {{ current_user.distractor_probability|tojson|safe }} / 100.0;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        explanationModal = new bootstrap.Modal(document.getElementById('explanationModal'));
+        helperModal = new bootstrap.Modal(document.getElementById('helperModal'));
+        distractorModalInstance = new bootstrap.Modal(document.getElementById('distractorModal'));
+        initCalculatorDrag();
+        fetchQuestions();
+    });
+
+    async function fetchQuestions() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categories = urlParams.getAll('categories');
+            const difficulties = urlParams.getAll('difficulties');
+            const limit = urlParams.get('count') || '10';
+
+            const limitNum = parseInt(limit);
+            if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
+                throw new Error('Kysymysten määrän tulee olla 1-100 välillä');
+            }
+            
+            const apiUrl = new URL('/api/questions', window.location.origin);
+            apiUrl.searchParams.append('count', limit);
+            categories.forEach(cat => apiUrl.searchParams.append('categories', cat));
+            difficulties.forEach(diff => apiUrl.searchParams.append('difficulties', diff));
+            
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            
+            if (!data.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
+                throw new Error('Ei kysymyksiä saatavilla valituilla kriteereillä.');
+            }
+            
+            questions = data.questions;
+            startTime = Date.now();
+            showScreen('question');
+            displayCurrentQuestion();
+        } catch (error) {
+            let userMessage = error.message.includes('NetworkError') || error.message.includes('Failed to fetch') 
+                ? 'Verkkovirhe. Tarkista internet-yhteytesi ja yritä uudelleen.'
+                : error.message || 'Kysymysten lataaminen epäonnistui.';
+            showScreen('error', userMessage);
+        }
+    }
+
+    function continueToNext() {
+        explanationModal.hide();
+        nextQuestion();
+    }
+
+    function showScreen(screenName, errorMsg = null) {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('errorScreen').style.display = 'none';
+        document.getElementById('questionScreen').style.display = 'none';
+        document.getElementById('resultsScreen').style.display = 'none';
+
+        if (screenName === 'loading') {
+            document.getElementById('loadingScreen').style.display = 'block';
+        } else if (screenName === 'error') {
+            document.getElementById('errorScreen').style.display = 'block';
+            if (errorMsg) {
+                document.getElementById('errorMessage').textContent = errorMsg;
+            }
+        } else if (screenName === 'question') {
+            document.getElementById('questionScreen').style.display = 'block';
+        } else if (screenName === 'results') {
+            document.getElementById('resultsScreen').style.display = 'block';
+        }
+    }
+
+    function displayCurrentQuestion() {
+        if (currentQuestionIndex >= questions.length) {
+            showResults();
+            return;
+        }
+        const question = questions[currentQuestionIndex];
+        selectedOption = null;
+        document.getElementById('progressBar').style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+        document.getElementById('progressText').textContent = `${currentQuestionIndex + 1}/${questions.length}`;
+        loadQuestionProgress(question.id);
+        document.getElementById('questionText').textContent = question.question;
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        question.options.forEach((option, index) => {
+            const optionDiv = document.createElement('div');
+            optionDiv.className = 'form-check p-3 mb-2 border rounded option-item';
+            optionDiv.style.cursor = 'pointer';
+            optionDiv.onclick = () => selectOption(index);
+            optionDiv.innerHTML = `
+                <input class="form-check-input" type="radio" name="answer" id="option${index}" value="${index}">
+                <label class="form-check-label w-100" for="option${index}" style="cursor: pointer;">${String.fromCharCode(65 + index)}. ${option}</label>
+            `;
+            optionsContainer.appendChild(optionDiv);
+        });
+        document.getElementById('submitBtn').style.display = 'inline-block';
+        document.getElementById('nextBtn').style.display = 'none';
+        
+        if (currentQuestionIndex > 0 && userDistractorsEnabled && Math.random() < userDistractorProbability) {
+            showDistractor();
+        }
+    }
+    
+    function showDistractor() {
+        distractorStartTime = Date.now();
+        currentDistractor = DISTRACTORS[Math.floor(Math.random() * DISTRACTORS.length)];
+        
+        document.getElementById('distractor-scenario').textContent = currentDistractor.scenario;
+        const optionsContainer = document.getElementById('distractor-options');
+        optionsContainer.innerHTML = '';
+        
+        const actionBtn = document.getElementById('distractor-action-btn');
+        actionBtn.style.display = 'none';
+
+        currentDistractor.options.forEach((opt, index) => {
+            const button = document.createElement('button');
+            button.className = 'btn btn-outline-secondary distractor-option';
+            button.textContent = opt;
+            button.onclick = () => submitDistractor(index);
+            optionsContainer.appendChild(button);
+        });
+
+        document.getElementById('distractor-feedback').classList.add('d-none');
+        distractorModalInstance.show();
+    }
+
+    async function submitDistractor(selectedOptionIndex) {
+        document.querySelectorAll('.distractor-option').forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === currentDistractor.options[selectedOptionIndex]) {
+                btn.classList.add('active');
+            }
+        });
+        
+        const responseTime = Math.floor((Date.now() - distractorStartTime) / 1000);
+        
+        try {
+            const response = await fetch('/api/submit_distractor', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    scenario: currentDistractor.scenario,
+                    user_choice: selectedOptionIndex,
+                    response_time: responseTime
+                })
+            });
+            const data = await response.json();
+            const isCorrect = data.is_correct;
+            const feedback = document.getElementById('distractor-feedback');
+            
+            feedback.classList.remove('d-none');
+            feedback.className = `alert mt-3 ${isCorrect ? 'alert-success' : 'alert-warning'}`;
+            feedback.innerHTML = isCorrect ? 
+                '<strong>Oikein!</strong> Hyvä päätös paineen alla.' : 
+                `<strong>Huomio!</strong> Oikea toimintatapa olisi ollut: <i>"${currentDistractor.options[currentDistractor.correct]}"</i>`;
+                
+            const actionBtn = document.getElementById('distractor-action-btn');
+            actionBtn.textContent = 'Jatka harjoitusta';
+            actionBtn.className = 'btn btn-primary';
+            actionBtn.onclick = closeDistractor;
+            actionBtn.style.display = 'block';
+
+        } catch(e) {
+            console.error("Häiriötekijän tallennus epäonnistui", e);
+            const actionBtn = document.getElementById('distractor-action-btn');
+            actionBtn.textContent = 'Sulje';
+            actionBtn.className = 'btn btn-secondary';
+            actionBtn.onclick = closeDistractor;
+            actionBtn.style.display = 'block';
+        }
+    }
+    
+    function closeDistractor() {
+        if (distractorModalInstance) {
+            distractorModalInstance.hide();
+        }
+    }
+
+    async function loadQuestionProgress(questionId) {
+        const progressInfo = document.getElementById('question-progress-info');
+        try {
+            const response = await fetch(`/api/question_progress/${questionId}`);
+            if (!response.ok) {
+                throw new Error('Edistymisen haku epäonnistui');
+            }
+            const data = await response.json();
+            if (data.times_shown > 0) {
+                document.getElementById('prog-times-shown').textContent = data.times_shown;
+                document.getElementById('prog-times-correct').textContent = data.times_correct;
+                document.getElementById('prog-success-rate').textContent = data.success_rate + '%';
+                let lastShownText = '-';
+                if (data.last_shown) {
+                    const diffDays = Math.floor((new Date() - new Date(data.last_shown)) / (1000 * 60 * 60 * 24));
+                    if (diffDays === 0) lastShownText = 'Tänään';
+                    else if (diffDays === 1) lastShownText = 'Eilen';
+                    else if (diffDays < 7) lastShownText = `${diffDays} päivää sitten`;
+                    else lastShownText = `${Math.floor(diffDays / 7)} viikkoa sitten`;
+                }
+                document.getElementById('prog-last-shown').textContent = lastShownText;
+                progressInfo.className = data.success_rate >= 80 ? 'alert alert-success mb-3' : data.success_rate >= 50 ? 'alert alert-warning mb-3' : 'alert alert-danger mb-3';
+                progressInfo.style.display = 'block';
+            } else {
+                progressInfo.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Virhe edistymisen lataamisessa:', error);
+            progressInfo.style.display = 'none';
+        }
+    }
+
+    function selectOption(index) {
+        selectedOption = index;
+        document.querySelectorAll('.option-item').forEach((item, i) => {
+            item.classList.toggle('border-primary', i === index);
+            item.classList.toggle('bg-light', i === index);
+            item.querySelector('input').checked = (i === index);
+        });
+    }
+
+    async function submitAnswer() {
+        if (selectedOption === null) {
+            alert('Valitse vastaus ensin!');
+            return;
+        }
+        const question = questions[currentQuestionIndex];
+        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+        try {
+            const response = await fetch('/api/submit_answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({
+                    question_id: question.id,
+                    selected_option_text: question.options[selectedOption],
+                    time_taken: timeTaken
+                })
+            });
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Vastauksen lähetys epäonnistui');
+            }
+            const data = await response.json();
+            if (data.correct) correctAnswers++;
+            showAnswerFeedback(data.correct, data.correct_answer_index);
+            showExplanation(data.explanation, data.correct);
+            document.getElementById('submitBtn').style.display = 'none';
+        } catch (error) {
+            console.error('Virhe vastauksen lähetyksessä:', error);
+            alert(`Vastauksen lähetys epäonnistui: ${error.message}`);
+        }
+    }
+
+    function showAnswerFeedback(isCorrect, correctIndex) {
+        document.querySelectorAll('.option-item').forEach((item, index) => {
+            item.classList.remove('border-primary', 'bg-light');
+            item.onclick = null;
+            if (index === correctIndex) item.classList.add('border-success', 'bg-success', 'bg-opacity-10');
+            else if (index === selectedOption && !isCorrect) item.classList.add('border-danger', 'bg-danger', 'bg-opacity-10');
+        });
+    }
+
+    function showExplanation(explanation, isCorrect) {
+        const modalHeader = document.getElementById('modalHeader');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalBody = document.getElementById('modalBody');
+        if (isCorrect) {
+            modalHeader.className = 'modal-header bg-success text-white';
+            modalTitle.innerHTML = '<i class="fas fa-check-circle me-2"></i>Oikein!';
+        } else {
+            modalHeader.className = 'modal-header bg-danger text-white';
+            modalTitle.innerHTML = '<i class="fas fa-times-circle me-2"></i>Väärin';
+        }
+        modalBody.textContent = explanation;
+        explanationModal.show();
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        startTime = Date.now();
+        displayCurrentQuestion();
+    }
+
+    function showResults() {
+        const percentage = Math.round((correctAnswers / questions.length) * 100);
+        document.getElementById('scoreText').textContent = `${correctAnswers}/${questions.length}`;
+        document.getElementById('percentageText').textContent = `${percentage}%`;
+        const icon = document.getElementById('resultsIcon');
+        const title = document.getElementById('resultsTitle');
+        if (percentage >= 90) {
+            icon.className = 'fas fa-trophy fa-5x text-warning mb-4';
+            title.textContent = 'Erinomaista!';
+        } else if (percentage >= 70) {
+            icon.className = 'fas fa-star fa-5x text-primary mb-4';
+            title.textContent = 'Hyvä työ!';
+        } else if (percentage >= 50) {
+            icon.className = 'fas fa-check-circle fa-5x text-success mb-4';
+            title.textContent = 'Kohtuullista!';
+        } else {
+            icon.className = 'fas fa-book fa-5x text-info mb-4';
+            title.textContent = 'Harjoittelua lisää!';
+        }
+        showScreen('results');
+    }
+
+    function toggleCalculator() {
+        const modal = document.getElementById('calculator-modal');
+        modal.style.display = modal.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function calcInput(value) {
+        const display = document.getElementById('calc-display');
+        if (['+', '-', '*', '/'].includes(value)) {
+            calcOperator = value;
+            calcPreviousValue = calcCurrentValue;
+            calcCurrentValue = '0';
+        } else if (value === '.') {
+            if (!calcCurrentValue.includes('.')) calcCurrentValue += '.';
+        } else {
+            calcCurrentValue = calcCurrentValue === '0' ? value : calcCurrentValue + value;
+        }
+        display.value = calcCurrentValue;
+    }
+
+    function calcEqual() {
+        const display = document.getElementById('calc-display');
+        let result = 0;
+        const prev = parseFloat(calcPreviousValue), curr = parseFloat(calcCurrentValue);
+        switch(calcOperator) {
+            case '+': result = prev + curr; break;
+            case '-': result = prev - curr; break;
+            case '*': result = prev * curr; break;
+            case '/': result = prev / curr; break;
+            default: return;
+        }
+        calcCurrentValue = result.toString();
+        calcOperator = ''; calcPreviousValue = '';
+        display.value = calcCurrentValue;
+    }
+
+    function calcClear() {
+        calcCurrentValue = '0'; calcOperator = ''; calcPreviousValue = '';
+        document.getElementById('calc-display').value = '0';
+    }
+
+    function initCalculatorDrag() {
+        const calcHeader = document.getElementById('calc-header');
+        const calcModal = document.getElementById('calculator-modal');
+        if (!calcHeader || !calcModal) return;
+
+        calcHeader.addEventListener('mousedown', dragStart);
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('mousemove', drag);
+
+        calcHeader.addEventListener('touchstart', dragStart, { passive: false });
+        document.addEventListener('touchend', dragEnd);
+        document.addEventListener('touchmove', drag, { passive: false });
+    }
+
+    function dragStart(e) {
+        const calcModal = document.getElementById('calculator-modal');
+        isDragging = true;
+        
+        const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+        const rect = calcModal.getBoundingClientRect();
+        
+        if (calcModal.style.right || calcModal.style.bottom) {
+            calcModal.style.right = 'auto';
+            calcModal.style.bottom = 'auto';
+            calcModal.style.top = rect.top + 'px';
+            calcModal.style.left = rect.left + 'px';
+        }
+
+        xOffset = clientX - calcModal.offsetLeft;
+        yOffset = clientY - calcModal.offsetTop;
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault();
+            const calcModal = document.getElementById('calculator-modal');
+            const clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            const clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            
+            calcModal.style.left = (clientX - xOffset) + 'px';
+            calcModal.style.top = (clientY - yOffset) + 'px';
+        }
+    }
+
+    function dragEnd() {
+        isDragging = false;
+    }
+
+    function identifyQuestionType(question) {
+        const text = question.question.toLowerCase();
+        const category = (question.category || '').toLowerCase();
+        if (category !== 'lääkelaskenta') return 'theory';
+        if (text.includes('infuusio') || text.includes('tippa') || text.includes('gtt') || text.includes('ml/h')) return 'infusion';
+        if (text.includes('%') || text.includes('prosentti')) return 'percent';
+        if (text.includes('muunna') || text.includes('monta gramma') || text.includes('monta milligramma') || text.includes('monta mikrogramma') || text.includes('monta millilitra') || text.includes('monta litra')) return 'conversion';
+        if (text.includes('paino') || text.includes('/kg')) return 'weight';
+        return 'dose';
+    }
+    
+    function generateDoseHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; }
+    function generateInfusionHelper(question) { return document.getElementById('mnemonic-infusion').innerHTML; }
+    function generatePercentHelper(question) { return document.getElementById('mnemonic-percent').innerHTML; }
+    function generateConversionHelper(question) { return document.getElementById('mnemonic-conversion').innerHTML; }
+    function generateWeightHelper(question) { return document.getElementById('mnemonic-dose').innerHTML; }
+    function generateGenericHelper(question) { return `<div class="alert alert-info"><h5><i class="fas fa-book me-2"></i>Teoriakysymys</h5><p>Lue kysymys huolella ja pohdi vastausta potilasturvallisuuden näkökulmasta.</p></div>`; }
+
+    function openHelper() {
+        const question = questions[currentQuestionIndex];
+        const helperBody = document.getElementById('helperBody');
+        const questionType = identifyQuestionType(question);
+        let helperContent = '';
+        switch(questionType) {
+            case 'dose': helperContent = generateDoseHelper(question); break;
+            case 'infusion': helperContent = generateInfusionHelper(question); break;
+            case 'percent': helperContent = generatePercentHelper(question); break;
+            case 'conversion': helperContent = generateConversionHelper(question); break;
+            case 'weight': helperContent = generateWeightHelper(question); break;
+            default: helperContent = generateGenericHelper(question); break;
+        }
+        helperBody.innerHTML = helperContent;
+        helperModal.show();
+    }
+</script>
+{% endblock %}

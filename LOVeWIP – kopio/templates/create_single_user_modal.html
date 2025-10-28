@@ -1,0 +1,41 @@
+<div class="modal fade" id="createSingleUserModal" tabindex="-1" aria-labelledby="createSingleUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createSingleUserModalLabel"><i class="fas fa-user-plus me-2"></i>Luo uusi yksittäinen käyttäjä</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('admin_create_single_user_route') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-body">
+                    <p class="text-muted small">Järjestelmä luo käyttäjälle automaattisesti turvallisen salasanan, joka näytetään sinulle tallennuksen jälkeen.</p>
+                    <hr>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Käyttäjänimi *</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Sähköposti *</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Rooli</label>
+                        <select class="form-select" id="role" name="role">
+                            <option value="user" selected>Käyttäjä</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="expiration_days" class="form-label">Tunnuksen voimassaoloaika (päivinä)</label>
+                        <input type="number" class="form-control" id="expiration_days" name="expiration_days" min="1" placeholder="365">
+                        <div class="form-text">Jätä tyhjäksi, jos tunnus ei vanhene.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Peruuta</button>
+                    <button type="submit" class="btn btn-primary">Luo käyttäjä</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -84,28 +84,41 @@ class EnhancedStatsManager:
             analytics_data['categories'] = [{'category': r['category'], 'attempts': r['attempts'], 'success_rate': (r['corrects'] / r['attempts']) if r['attempts'] > 0 else 0} for r in category_stats]
 
             difficulty_stats_q = """
-                SELECT q.difficulty, SUM(p.times_shown) as attempts, SUM(p.times_correct) as corrects
-                FROM questions q JOIN user_question_progress p ON q.id = p.question_id
-                WHERE p.user_id = ? AND p.times_shown > 0 GROUP BY q.difficulty"""
-            difficulty_stats = self.db_manager._execute(difficulty_stats_q, (user_id,), fetch='all') or []
-            analytics_data['difficulties'] = [{'difficulty': r['difficulty'], 'attempts': r['attempts'], 'success_rate': (r['corrects'] / r['attempts']) if r['attempts'] > 0 else 0} for r in difficulty_stats]
+            SELECT
+                CASE
+                    WHEN q.difficulty = 1 THEN 'helppo'
+                    WHEN q.difficulty = 2 THEN 'keskivaikea'
+                    WHEN q.difficulty = 3 THEN 'vaikea'
+                    ELSE 'tuntematon' -- Varmuuden vuoksi, jos data on epäkuranttia
+                END as difficulty_label,
+                SUM(p.times_shown) as attempts,
+                SUM(p.times_correct) as corrects
+            FROM questions q
+            JOIN user_question_progress p ON q.id = p.question_id
+            WHERE p.user_id = ? AND p.times_shown > 0
+            GROUP BY q.difficulty""" # Ryhmittely edelleen numeron perusteella
+        difficulty_stats = self.db_manager._execute(difficulty_stats_q, (user_id,), fetch='all') or []
 
-            days_ago_30 = date.today() - timedelta(days=30)
-            
-            if self.db_manager.is_postgres:
-                weekly_progress_q = """
-                    SELECT CAST(timestamp AS DATE) as date, COUNT(*) as questions_answered,
-                           SUM(CASE WHEN correct THEN 1 ELSE 0 END) as corrects
-                    FROM question_attempts WHERE user_id = %s AND timestamp >= %s
-                    GROUP BY CAST(timestamp AS DATE) ORDER BY date"""
-            else:
-                weekly_progress_q = """
-                    SELECT date(timestamp) as date, COUNT(*) as questions_answered,
-                           SUM(CASE WHEN correct THEN 1 ELSE 0 END) as corrects
-                    FROM question_attempts WHERE user_id = ? AND date(timestamp) >= ?
-                    GROUP BY date(timestamp) ORDER BY date"""
-            weekly_progress = self.db_manager._execute(weekly_progress_q, (user_id, days_ago_30), fetch='all') or []
-            analytics_data['weekly_progress'] = [dict(row) for row in weekly_progress]
+        # KORJATTU AVAIN: Käytetään 'difficulty_label' alkuperäisen 'difficulty' sijaan dictionaryn avaimena
+        analytics_data['difficulties'] = [{'difficulty': r['difficulty_label'], 'attempts': r['attempts'], 'success_rate': (r['corrects'] / r['attempts']) if r.get('attempts') and r['attempts'] > 0 else 0} for r in difficulty_stats]
+
+        # --- Tämän jälkeen koodi jatkuu ennallaan ---
+        days_ago_30 = date.today() - timedelta(days=30)
+
+        if self.db_manager.is_postgres:
+             weekly_progress_q = """
+                 SELECT CAST(timestamp AS DATE) as date, COUNT(*) as questions_answered,
+                        SUM(CASE WHEN correct THEN 1 ELSE 0 END) as corrects
+                 FROM question_attempts WHERE user_id = %s AND timestamp >= %s
+                 GROUP BY CAST(timestamp AS DATE) ORDER BY date"""
+        else:
+             weekly_progress_q = """
+                 SELECT date(timestamp) as date, COUNT(*) as questions_answered,
+                        SUM(CASE WHEN correct THEN 1 ELSE 0 END) as corrects
+                 FROM question_attempts WHERE user_id = ? AND date(timestamp) >= ?
+                 GROUP BY date(timestamp) ORDER BY date"""
+        weekly_progress = self.db_manager._execute(weekly_progress_q, (user_id, days_ago_30), fetch='all') or []
+        analytics_data['weekly_progress'] = [dict(row) for row in weekly_progress]
 
             return analytics_data
         except Exception as e:

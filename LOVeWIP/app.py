@@ -1,4 +1,4 @@
-# update 26.10.25 klo 18:52
+# update 28.10.25 klo 18:52
 # app.py
 
 # ============================================================================
@@ -989,7 +989,71 @@ def save_user_preferences_api():
     else:
         app.logger.error(f"Virhe harjoitteluasetusten tallennuksessa käyttäjälle {current_user.id}: {error}")
         return jsonify({'status': 'error', 'message': error or 'Tallennus epäonnistui.'}), 500
-    
+
+# ============================================================================
+# POSTGRESQL YHTEENSOPIVUUS - HELPER FUNKTIO (Varmista, että tämä on tiedostossa)
+# ============================================================================
+# Oletetaan, että execute_query-funktio on jo määritelty tiedoston alussa
+# def execute_query(query, params=(), fetch='all'):
+#     return db_manager._execute(query, params, fetch)
+# ============================================================================
+
+@app.route("/api/question_counts")
+@login_required
+@limiter.limit("60 per minute")
+def get_question_counts_api():
+    """Hakee kysymysmäärät kategorioittain ja vaikeustasoittain."""
+    try:
+        # Hae kategoriat ID:n ja nimen kera
+        category_rows = db_manager.get_categories() # Olettaa palauttavan [{'id': 1, 'name': 'Nimi'}, ...]
+        category_map = {cat['id']: {'name': cat['name'], 'count': 0} for cat in category_rows} if category_rows else {}
+
+        # Laske kysymykset per kategoria ID
+        category_counts_db = db_manager._execute("""
+            SELECT category_id, COUNT(*) as count
+            FROM questions
+            WHERE status = 'validated' -- Laske vain validoidut
+            GROUP BY category_id
+        """, fetch='all')
+
+        # Päivitä lukumäärät mappiin
+        if category_counts_db:
+            for row in category_counts_db:
+                cat_id = row['category_id']
+                if cat_id in category_map:
+                    category_map[cat_id]['count'] = row['count']
+
+        # Laske kysymykset per vaikeustaso (KORJATTU KYSYELY)
+        difficulty_query = """
+            SELECT
+                CASE
+                    WHEN difficulty = 1 THEN 'helppo'
+                    WHEN difficulty = 2 THEN 'keskivaikea'
+                    WHEN difficulty = 3 THEN 'vaikea'
+                    ELSE 'tuntematon'
+                END as difficulty_label,
+                COUNT(*) as count
+            FROM questions
+            WHERE status = 'validated' -- Laske vain validoidut
+            GROUP BY difficulty
+        """
+        difficulty_counts_rows = db_manager._execute(difficulty_query, fetch='all')
+
+        # Laske kokonaismäärä (vain validoidut)
+        total_result = db_manager._execute("SELECT COUNT(*) as count FROM questions WHERE status = 'validated'", fetch='one')
+        total_count = total_result['count'] if total_result else 0
+
+        return jsonify({
+            # Palauta kategoriat muodossa {id: {name: 'Nimi', count: 123}, ...}
+            'categories': category_map,
+            # Palauta vaikeustasot muodossa {'helppo': 200, ...}
+            'difficulties': {row['difficulty_label']: row['count'] for row in difficulty_counts_rows} if difficulty_counts_rows else {},
+            'total': total_count
+        })
+    except Exception as e:
+        app.logger.error(f"Virhe /api/question_counts haussa: {e}", exc_info=True)
+        return jsonify({'error': 'Virhe kysymysmäärien haussa.'}), 500
+
 # --- Simulaatio API ---
 # Nämä reitit käyttävät Flaskin server-puolen sessiota simulaation tilan tallentamiseen.
 

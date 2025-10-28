@@ -88,7 +88,7 @@
         </div>
 
         <!-- Häiriötekijätilastot -->
-        <div class="card shadow-sm border-0 mb-4">
+        <div class="card shadow-sm border-0 mb-4" id="distractor-card" style="display: none;">
             <div class="card-header bg-white">
                 <h5 class="mb-0">
                     <i class="fas fa-exclamation-triangle text-warning me-2"></i>
@@ -140,7 +140,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-6 mb-4" id="distractor-chart-card" style="display: none;">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-white">
                         <h5 class="mb-0">
@@ -187,7 +187,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-6 mb-4" id="recent-distractors-card" style="display: none;">
                 <div class="card shadow-sm border-0">
                     <div class="card-header bg-white">
                         <h5 class="mb-0">
@@ -205,7 +205,7 @@
         </div>
 
         <!-- 30 päivän aktiivisuus -->
-        <div class="card shadow-sm border-0 mb-4">
+        <div class="card shadow-sm border-0 mb-4" id="weekly-progress-card">
             <div class="card-header bg-white">
                 <h5 class="mb-0">
                     <i class="fas fa-calendar-week me-2"></i>
@@ -223,60 +223,81 @@
 <script>
 let categoryChart, distractorChart, weeklyChart;
 
+// ✅ KORJATTU: Paikalliset funktiot uusilla nimillä (ei konfliktoi base.html:n kanssa)
+function showStatsLoading() {
+    const spinner = document.getElementById('loading-spinner');
+    const emptyState = document.getElementById('empty-state');
+    const statsContent = document.getElementById('stats-content');
+    
+    if (spinner) spinner.style.display = 'block';
+    if (emptyState) emptyState.style.display = 'none';
+    if (statsContent) statsContent.style.display = 'none';
+}
+
+function hideStatsLoading() {
+    const spinner = document.getElementById('loading-spinner');
+    if (spinner) spinner.style.display = 'none';
+}
+
+function showStatsEmptyState() {
+    const spinner = document.getElementById('loading-spinner');
+    const emptyState = document.getElementById('empty-state');
+    const statsContent = document.getElementById('stats-content');
+    
+    if (spinner) spinner.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'block';
+    if (statsContent) statsContent.style.display = 'none';
+}
+
+// ✅ KORJATTU: loadStats käyttää uusia funktioiden nimiä
 async function loadStats() {
+    showStatsLoading();
+    
     try {
-        showLoading();
+        const response = await fetch('/api/stats');
         
-        // Lataa molemmat API:t
-        const [statsResponse, distractorResponse] = await Promise.all([
-            fetch('/api/stats'),
-            fetch('/api/distractor_stats')
-        ]);
-        
-        if (!statsResponse.ok || !distractorResponse.ok) {
-            throw new Error('Virhe tilastojen lataamisessa');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const statsData = await statsResponse.json();
-        const distractorData = await distractorResponse.json();
+        const data = await response.json();
         
-        // Tarkista onko dataa
-        if (!statsData.general || statsData.general.total_attempts === 0) {
-            showEmptyState();
+        console.log('📊 Stats data received:', data);
+        
+        if (!data || !data.general || data.general.answered_questions === 0) {
+            console.log('⚠️ No stats data available');
+            showStatsEmptyState();
             return;
         }
         
-        // Näytä tilastot
-        showStats(statsData, distractorData);
+        hideStatsLoading();
+        showStats(data);
         
     } catch (error) {
-        console.error('Virhe tilastojen lataamisessa:', error);
-        showEmptyState();
+        console.error('❌ Error loading stats:', error);
+        showStatsEmptyState();
     }
 }
 
-function showLoading() {
-    document.getElementById('loading-spinner').style.display = 'block';
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('stats-content').style.display = 'none';
-}
-
-function showEmptyState() {
-    document.getElementById('loading-spinner').style.display = 'none';
-    document.getElementById('empty-state').style.display = 'block';
-    document.getElementById('stats-content').style.display = 'none';
-}
-
 function showStats(statsData, distractorData) {
-    document.getElementById('loading-spinner').style.display = 'none';
-    document.getElementById('empty-state').style.display = 'none';
-    document.getElementById('stats-content').style.display = 'block';
+    const spinner = document.getElementById('loading-spinner');
+    const emptyState = document.getElementById('empty-state');
+    const statsContent = document.getElementById('stats-content');
+    
+    if (spinner) spinner.style.display = 'none';
+    if (emptyState) emptyState.style.display = 'none';
+    if (statsContent) statsContent.style.display = 'block';
     
     // Päivitä yleiset tilastot
     updateGeneralStats(statsData);
     
-    // Päivitä häiriötekijätilastot
-    updateDistractorStats(distractorData);
+    // Päivitä häiriötekijätilastot VAIN jos data on olemassa
+    if (distractorData && distractorData.total_attempts > 0) {
+        document.getElementById('distractor-card').style.display = 'block';
+        updateDistractorStats(distractorData);
+    } else {
+        document.getElementById('distractor-card').style.display = 'none';
+    }
     
     // Päivitä kaaviot
     updateCharts(statsData, distractorData);
@@ -292,21 +313,26 @@ function showStats(statsData, distractorData) {
 }
 
 function updateGeneralStats(data) {
-    document.getElementById('total-questions').textContent = data.general.total_attempts || 0;
-    document.getElementById('success-rate').textContent = 
-        Math.round((data.general.avg_success_rate || 0) * 100) + '%';
-    document.getElementById('avg-time').textContent = 
-        (data.general.avg_time_per_question || 0).toFixed(1) + 's';
-    document.getElementById('current-streak').textContent = '0'; // Päivitetään jos streak-data saatavilla
+    const general = data.general;
+    
+    document.getElementById('total-questions').textContent = general.total_attempts || 0;
+    
+    const successRate = Math.round((general.avg_success_rate || 0) * 100);
+    document.getElementById('success-rate').textContent = successRate + '%';
+    
+    const avgTime = Math.round(general.avg_time_per_question || 0);
+    document.getElementById('avg-time').textContent = avgTime + 's';
+    
+    document.getElementById('current-streak').textContent = '0';
 }
 
 function updateDistractorStats(data) {
     document.getElementById('distractor-attempts').textContent = data.total_attempts || 0;
-    document.getElementById('distractor-success').textContent = data.success_rate + '%' || '0%';
-    document.getElementById('distractor-response-time').textContent = 
-        Math.round((data.avg_response_time || 0) / 1000) + 's';
+    document.getElementById('distractor-success').textContent = (data.success_rate || 0) + '%';
     
-    // Kehityssuunta
+    const avgResponseTime = Math.round((data.avg_response_time || 0) / 1000);
+    document.getElementById('distractor-response-time').textContent = avgResponseTime + 's';
+    
     const successRate = data.success_rate || 0;
     let improvement = '📊';
     if (successRate >= 80) improvement = '⬆️';
@@ -317,7 +343,9 @@ function updateDistractorStats(data) {
 
 function updateCharts(statsData, distractorData) {
     // Kategoriakaavio
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    const categoryCtx = document.getElementById('categoryChart');
+    if (!categoryCtx) return;
+    
     if (categoryChart) categoryChart.destroy();
     
     const categories = statsData.categories || [];
@@ -355,11 +383,13 @@ function updateCharts(statsData, distractorData) {
     }
     
     // Häiriötekijäkaavio
-    const distractorCtx = document.getElementById('distractorChart').getContext('2d');
-    if (distractorChart) distractorChart.destroy();
-    
-    const distractorCategories = distractorData.category_stats || [];
-    if (distractorCategories.length > 0) {
+    if (distractorData && distractorData.category_stats && distractorData.category_stats.length > 0) {
+        document.getElementById('distractor-chart-card').style.display = 'block';
+        
+        const distractorCtx = document.getElementById('distractorChart');
+        if (distractorChart) distractorChart.destroy();
+        
+        const distractorCategories = distractorData.category_stats || [];
         distractorChart = new Chart(distractorCtx, {
             type: 'bar',
             data: {
@@ -394,11 +424,15 @@ function updateCharts(statsData, distractorData) {
                 }
             }
         });
+    } else {
+        document.getElementById('distractor-chart-card').style.display = 'none';
     }
 }
 
 function updateDifficultyStats(data) {
     const container = document.getElementById('difficulty-stats-container');
+    if (!container) return;
+    
     container.innerHTML = '';
     
     const difficulties = data.difficulties || [];
@@ -407,6 +441,11 @@ function updateDifficultyStats(data) {
         'keskivaikea': 'Keskivaikea',
         'vaikea': 'Vaikea'
     };
+    
+    if (difficulties.length === 0) {
+        container.innerHTML = '<p class="text-muted text-center">Ei vaikeustasotilastoja</p>';
+        return;
+    }
     
     difficulties.forEach(diff => {
         const successRate = (diff.success_rate || 0) * 100;
@@ -466,12 +505,12 @@ function updateRecentActivities(statsData, distractorData) {
     }
     
     // Häiriötilanteet
-    const distractorsContainer = document.getElementById('recent-distractors-container');
-    const distractors = distractorData.recent_attempts || [];
-    
-    if (distractors.length === 0) {
-        distractorsContainer.innerHTML = '<p class="text-muted text-center">Ei viimeaikaisia häiriötilanteita</p>';
-    } else {
+    if (distractorData && distractorData.recent_attempts && distractorData.recent_attempts.length > 0) {
+        document.getElementById('recent-distractors-card').style.display = 'block';
+        
+        const distractorsContainer = document.getElementById('recent-distractors-container');
+        const distractors = distractorData.recent_attempts || [];
+        
         distractorsContainer.innerHTML = '';
         distractors.slice(0, 5).forEach(distractor => {
             const date = new Date(distractor.created_at);
@@ -497,65 +536,111 @@ function updateRecentActivities(statsData, distractorData) {
                 </div>
             `;
         });
+    } else {
+        document.getElementById('recent-distractors-card').style.display = 'none';
     }
 }
 
 function updateWeeklyProgress(data) {
-    const ctx = document.getElementById('weekly-progress-chart').getContext('2d');
+    const chartCard = document.getElementById('weekly-progress-card');
+    const ctx = document.getElementById('weekly-progress-chart');
+    
+    if (!ctx) return;
+    
     if (weeklyChart) weeklyChart.destroy();
     
     const weeklyData = data.weekly_progress || [];
     
-    if (weeklyData.length > 0) {
-        const labels = weeklyData.map(d => {
-            const date = new Date(d.date);
-            return date.toLocaleDateString('fi-FI', { day: 'numeric', month: 'short' });
-        });
-        
-        weeklyChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Vastatut kysymykset',
-                        data: weeklyData.map(d => d.questions_answered || 0),
-                        borderColor: 'rgb(90, 103, 216)',
-                        backgroundColor: 'rgba(90, 103, 216, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    },
-                    {
-                        label: 'Oikeat vastaukset',
-                        data: weeklyData.map(d => d.corrects || 0),
-                        borderColor: 'rgb(40, 167, 69)',
-                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: true, position: 'top' }
+    if (!weeklyData || weeklyData.length === 0) {
+        if (chartCard) chartCard.style.display = 'none';
+        console.log('⚠️ Weekly progress data not available');
+        return;
+    }
+    
+    if (chartCard) chartCard.style.display = 'block';
+    
+    const labels = weeklyData.map(d => {
+        const date = new Date(d.date);
+        return date.toLocaleDateString('fi-FI', { day: 'numeric', month: 'short' });
+    });
+    
+    weeklyChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Vastatut kysymykset',
+                    data: weeklyData.map(d => d.questions_answered || 0),
+                    borderColor: 'rgb(90, 103, 216)',
+                    backgroundColor: 'rgba(90, 103, 216, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1 }
+                {
+                    label: 'Oikeat vastaukset',
+                    data: weeklyData.map(d => d.corrects || 0),
+                    borderColor: 'rgb(40, 167, 69)',
+                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointHoverRadius: 6
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            plugins: {
+                legend: { 
+                    display: true, 
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 15
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y + ' kpl';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { 
+                        stepSize: 1,
+                        callback: function(value) {
+                            return value + ' kpl';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
                     }
                 }
             }
-        });
-    }
+        }
+    });
 }
 
 // Event listeners
 document.getElementById('refresh-stats').addEventListener('click', loadStats);
 
 // Lataa tilastot sivun latautuessa
-document.addEventListener('DOMContentLoaded', loadStats);
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(loadStats, 100);
+});
 </script>
 {% endblock %}
