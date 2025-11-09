@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# models/models.py uusin
-from dataclasses import dataclass, field # Lisää 'field', jos tarvitset oletusarvoja listoille tms.
+# models/models.py
+from dataclasses import dataclass, field
 from typing import List, Optional
 from datetime import datetime
 from flask_login import UserMixin
@@ -26,12 +26,6 @@ class User(UserMixin):
     created_at: Optional[datetime] = None # Muuta tyyppi datetimeksi
     expires_at: Optional[datetime] = None
 
-    # HUOM: 'password'-kenttää ei yleensä tarvita User-oliossa itsessään,
-    # koska sitä käytetään vain autentikoinnissa (bcrypt.check_password_hash).
-    # Poistetaan se mallista selkeyden vuoksi. Jos tarvitset sitä johonkin
-    # muuhun, voit lisätä sen takaisin.
-    # password: Optional[str] = None
-
     # --- UserMixin vaatimat metodit (osa automaattisia, osa hyvä lisätä) ---
     def get_id(self):
         """Palauttaa käyttäjän ID:n merkkijonona (vaadittu UserMixin)."""
@@ -40,7 +34,6 @@ class User(UserMixin):
     @property
     def is_active(self):
         """Palauttaa True, jos käyttäjän status on 'active'."""
-        # Vaikka user_loader tarkistaa tämän, on hyvä olla myös oliossa.
         return self.status == 'active'
 
     @property
@@ -93,7 +86,6 @@ class Question:
 
 
 # --- Muut dataclassit (pysyvät ennallaan) ---
-# Voit säilyttää nämä, jos käytät niitä jossain sovelluksen osassa.
 
 @dataclass
 class QuestionAttempt:
@@ -114,10 +106,6 @@ class Achievement:
     icon: str
     unlocked: bool = False
     unlocked_at: Optional[datetime] = None
-
-# UserStats, DistractorAttempt, SpacedRepetitionCard, LearningSession, CategoryProgress
-# dataclassit voivat myös pysyä ennallaan, jos käytät niitä esim. tilastojen koostamiseen.
-# Muutin kuitenkin aikaleimat datetime-objekteiksi selkeyden vuoksi.
 
 @dataclass
 class UserStats:
@@ -142,15 +130,3 @@ class DistractorAttempt:
     is_correct: bool
     response_time: Optional[int] = None # Voi olla None, jos ei mitattu
     created_at: Optional[datetime] = None # Muutettu datetimeksi
-
-# @dataclass
-# class SpacedRepetitionCard: # Tämä ei välttämättä ole tarpeen, jos SR-logiikka on managerissa
-#     # ...
-
-# @dataclass
-# class LearningSession: # Tämä ei välttämättä ole tarpeen, jos sessiologiikka on managerissa
-#     # ...
-
-# @dataclass
-# class CategoryProgress: # Tämä ei välttämättä ole tarpeen, jos tilastot kootaan lennosta
-#     # ...
