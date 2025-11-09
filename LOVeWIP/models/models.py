@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# models/models.py
+# models/models.py uusin
 from dataclasses import dataclass, field # Lisää 'field', jos tarvitset oletusarvoja listoille tms.
 from typing import List, Optional
 from datetime import datetime
